@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="RemoteMappingsManager">
+    <list>
+      <list>
+        <remote-mappings server-id="python@d60e598a-194c-4690-b05f-97c687b90611" />
+        <remote-mappings server-id="python@sftp://pi@192.168.0.20:22/usr/bin/python3" />
+        <remote-mappings server-id="python@sftp://pi@raspberrypi:22/usr/bin/python3" />
+        <remote-mappings server-id="python@ssh://pi@192.168.1.111:22/usr/bin/python">
+          <settings>
+            <list>
+              <mapping local-root="$PROJECT_DIR$/Plank" remote-root="/home/pi/PyCharmProjects/PlankProject" />
+            </list>
+          </settings>
+        </remote-mappings>
+      </list>
+    </list>
+  </component>
+</project>
