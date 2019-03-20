@@ -1,14 +1,13 @@
 import RPi.GPIO as GPIO
-import time
-# from MCP230XX import MCP23018 as MCP
 from Plank.ArduinoIO import *
 
 GPIO.setmode( GPIO.BCM )
 
+CLOCKWISE = 1
+ANTICLOCKWISE = 0
+
 
 class Engine:
-    CLOCKWISE = True
-    ANTICLOCKWISE = False
 
     def __init__( self, arduinoIO, pwmPin, runPin, dirPin, dutyCycle = 100, frequency = 1500 ):
 
@@ -17,7 +16,7 @@ class Engine:
         self.__runPin = runPin
         self.__dirPin = dirPin
         self.__speed = dutyCycle
-        self.__direction = Engine.CLOCKWISE
+        self.__direction = CLOCKWISE
 
         GPIO.setup( pwmPin, GPIO.OUT )
         self.__pwm = GPIO.PWM( pwmPin, frequency )
@@ -55,12 +54,16 @@ class Engine:
         self.__pwm.ChangeDutyCycle( value )
 
     def setForward( self ):
-        self.__arduinoIO.write( self.__dirPin, Engine.CLOCKWISE )
-        self.__direction = Engine.CLOCKWISE
+        self.__arduinoIO.write( self.__dirPin, CLOCKWISE )
+        self.__direction = CLOCKWISE
 
     def setBackward( self ):
-        self.__arduinoIO.write( self.__dirPin, Engine.ANTICLOCKWISE )
-        self.__direction = Engine.ANTICLOCKWISE
+        self.__arduinoIO.write( self.__dirPin, ANTICLOCKWISE )
+        self.__direction = ANTICLOCKWISE
+
+    def setDirection( self, direction ):
+        self.__arduinoIO.write( self.__dirPin, direction )
+        self.__direction = direction
 
     def reverse( self ):
         self.__arduinoIO.write( self.__dirPin, int( not self.__direction ) )
@@ -69,8 +72,6 @@ class Engine:
     def getDirection( self ):
         return self.__direction
 
+
 if __name__ == "__main__":
-    arduinoIO = ArduinoIO( ArduinoSerialPortFinder.ARDUINO_UNO_SERIAL_NUMBER )
-    engine = Engine( mcp, pwmPin = 23, runPin = 13, dirPin = 10, dutyCycle = 0, frequency = 1500 )
-    engine.setSpeed( 50 )
-    engine.slowStart( 10 )
+    pass

@@ -1,7 +1,6 @@
 import time
-from Plank.Engine import Engine
 from Plank.Encoder import Encoder
-from MCP230XX.MCP230XX import MCP230XX
+from Trashed.MCP230XX import MCP230XX
 
 mcp = MCP230XX( 0x22 )
 
@@ -10,7 +9,7 @@ engine.setSpeed( 100 )
 
 encoder = Encoder()
 
-engine.start( )
+engine.runCycle( )
 try:
     pos = int( encoder.serial.readline( ) )
 except ValueError:

@@ -1,4 +1,4 @@
-from MCP230XX import MCP230XX as MCP
+from Trashed.MCP230XX import MCP230XX as MCP
 
 
 class Input:

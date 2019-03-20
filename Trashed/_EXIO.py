@@ -1,6 +1,4 @@
-import RPi.GPIO as GPIO
-from MCP230XX import MCP230XX as MCP
-import time, math
+from Trashed.MCP230XX import MCP230XX as MCP
 
 
 class EXIO:

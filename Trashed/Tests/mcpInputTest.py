@@ -1,6 +1,6 @@
 import time
 import RPi.GPIO as GPIO
-from MCP230XX import MCP23018
+from Trashed.MCP230XX import MCP23018
 
 mcp = None
 pressCounter = 0

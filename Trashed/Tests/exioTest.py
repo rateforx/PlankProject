@@ -1,5 +1,4 @@
-from MCP230XX import MCP230XX
-from Plank._EXIO import EXIO
+from Trashed.MCP230XX import MCP230XX
 import random
 import time
 

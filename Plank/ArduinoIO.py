@@ -12,16 +12,21 @@ INPUT_PULLUP = 2
 LOW = 0
 HIGH = 1
 
+FALLING = 0
+RISING = 1
+BOTH = 2
+
 
 class ArduinoIO:
 
     def __init__( self, serialNumber ):
         self.port = ArduinoSerialPortFinder.getArduinoPort( serialNumber )
         self.serial = Serial( self.port, baudrate, timeout = timeout )
-        self.read( 0 )
-        self.read( 0 )
-        time.sleep( 3 )
 
+        try: self.read( 13 )
+        except ValueError: pass
+
+        time.sleep( 3 )
 
     def setMode( self, pin, mode ):
         self.serial.write( 'm({},{})'.format( pin, mode ).encode( ) )
@@ -38,7 +43,6 @@ class ArduinoIO:
         self.write( pin, value )
         time.sleep( duration )
         self.write( pin, int( not value ) )
-
 
 if __name__ == '__main__':
     arduinoIO = ArduinoIO( ArduinoSerialPortFinder.ARDUINO_MEGA_SERIAL_NUMBER )

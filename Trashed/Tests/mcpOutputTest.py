@@ -1,4 +1,4 @@
-from MCP230XX import MCP23018 as MCP
+from Trashed.MCP230XX import MCP23018 as MCP
 import random
 import time
 

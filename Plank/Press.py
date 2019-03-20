@@ -1,17 +1,13 @@
-from threading import Thread
-import RPi.GPIO
-from MCP230XX import MCP23018 as MCP
-from Plank.IO import Input, Output
 from Plank.Engine import Engine
 from Plank.ArduinoIO import *
+from Plank.Input import Input
+from Plank.Output import Output
 from Plank.ArduinoSerialPortFinder import *
 from Plank.Encoder import Encoder
-from Plank.Button import Button
 import math
 
-INPUT_POLLING_FREQUENCY = 60
+INPUT_POLLING_FREQUENCY = 1000
 
-# ??? = 4860 # mm
 STACKER_LENGTH = 5260  # mm
 STACKER_WIDTH = 1900  # mm
 STACKER_GAP = 200  # mm
@@ -20,38 +16,93 @@ PRESS_LENGTH = 4500  # mm
 PRESS_WIDTH = 1900  # mm
 
 
-class Feeder:
-    # IN
-    conveyorSensorPin = 13 # yellow
-    glueCounterPin = 10 # yellow
-    slatAtStackerSensorPin = 8 # yellow
-    # glueSensorAPin = 10 # yellow
-    # glueSensorBPin = -1 # yellow
+class Press:
+    # INPUT Pins
+    conveyorSensorPin = 13  # yellow
+    counterSensorPin = 10  # yellow
+    stackerSensorPin = 8  # yellow
+    bigBoyDisabledSensorPin = 7  # yellow
+    halfTurnMotorSensorPin = 12  # yellow
+    # OUTPUT Pins
+    glueDisablePin = 49  # orange
+    slatPusherPin = 22  # orange
+    halfTurnMotorEnablePin = 50  # yellow
 
-    halfTurnSensorPin = 12 # yellow
-    # OUT
-    glueDisablePin = 49 # orange
-    slatPusherPin = 22 # orange
-    halfTurnMotorEnablePin = 50 # yellow
-
+    # PARAMS
     slatLength = 0
     slatWidth = 0
     slatHeight = 0
-
     slatsPerBoard = 0
     boardsPerSeries = 0
-    seriesPerCycle = 0
+    seriesPerSet = 0
+    slatsPerSet = 0
+
+    """ 
+    n1 boards in cycle
+    n2 cycles in a series
+    n3 series in a set
+    
+    set a set of n3 series takes n3 * n2 * n1 slats  
+    """
+
+    currentSlat = 0
+    currentBoard = 0
+    currentCycle = 0
+    currentSeries = 0
+    currentSlatInSet = 0
+
+    boardLength = 0
+    boardWidth = 0
+    boardHeight = 0
+
+    updateRate = 120
+    automatic = True
+
+    inputs = [ ]
 
     def __init__( self ):
-        yellow.setMode( self.conveyorSensorPin, INPUT )
-        yellow.setMode( self.glueCounterPin, INPUT )
-        yellow.setMode( self.slatAtStackerSensorPin, INPUT )
-        yellow.setMode( self.halfTurnSensorPin, INPUT )
+        self.conveyorSensor = Input( yellow, self.conveyorSensorPin )
+        self.counterSensor = Input( yellow, self.counterSensorPin )
+        self.stackerSensor = Input( yellow, self.stackerSensorPin )
+        self.halfTurnMotorSensor = Input( yellow, self.halfTurnMotorSensorPin )
+        self.bigBoyDisabledSensor = Input( yellow, self.bigBoyDisabledSensorPin )
 
-        orange.setMode( self.glueDisablePin, OUTPUT )
-        orange.setMode( self.slatPusherPin, OUTPUT )
-        yellow.setMode( self.halfTurnMotorEnablePin, OUTPUT )
+        self.inputs += [
+            self.conveyorSensor,
+            self.counterSensor,
+            self.stackerSensor,
+            self.halfTurnMotorSensor,
+        ]
 
+        self.glueDisable = Output( orange, self.glueDisablePin )
+        self.slatPusherEnable = Output( orange, self.slatPusherPin )
+        self.halfTurnMotorEnable = Output( yellow, self.halfTurnMotorEnablePin )
+
+        self.conveyorEngine = Engine( yellow, pwmPin = 23, runPin = 26, dirPin = 27, dutyCycle = 50 )
+
+        # callbacks
+
+        def conveyorSensorCallback():
+            self.slatPusherEnable.setState( LOW )
+            # self.current
+
+        self.conveyorSensor.setCallback(
+            lambda: self.slatPusherEnable.setState( LOW )
+            , RISING )
+
+        self.counterSensor.setCallback(
+            lambda: self.slatPusherEnable.setState( HIGH ), RISING
+        )
+
+        self.stackerSensor.setCallback(
+            lambda: self.halfTurnMotorEnable.setState( LOW ), RISING
+        )
+        self.halfTurnMotorSensor.setCallback(
+            lambda: self.halfTurnMotorEnable.setState( HIGH ), RISING
+        )
+
+    def nextSlat( self ):
+        
 
     def setParams( self, length, width, height, slatsPerBoard ):
         self.slatLength = length
@@ -59,59 +110,83 @@ class Feeder:
         self.slatHeight = height
         self.slatsPerBoard = slatsPerBoard
 
+        self.boardLength = length
+        self.boardWidth = width * slatsPerBoard
+        self.boardHeight = height
+
     def calculateParams( self ):
         if not self.slatLength or not self.slatWidth or not self.slatHeight or not self.slatsPerBoard:
             return
 
-        self.boardsPerSeries = math.floor( PRESS_WIDTH / ( self.slatWidth * self.slatsPerBoard ) )
-        self.seriesPerCycle = math.floor( PRESS_LENGTH / ( self.slatLength + STACKER_GAP ) )
+        self.boardsPerSeries = math.floor( PRESS_WIDTH / (self.slatWidth * self.slatsPerBoard) )
+        self.seriesPerSet = math.floor( PRESS_LENGTH / (self.slatLength + STACKER_GAP) )
+        self.slatsPerSet = self.slatsPerSet * self.boardsPerSeries * self.slatsPerBoard
 
-    """ 
-    A cycle will glue and stack the slats to create one board.
-    The number of iterations is the slatsPerBoard value.
-    The first slat will be pushed without glue. 
-    """
     def runCycle( self ):
-        orange.write( self.glueDisablePin, LOW ) # disable glue
-        orange.write( self.slatPusherPin, LOW ) # push the first slat
-
-        while True:
-            if yellow.read( self.slatAtStackerSensorPin ) == HIGH:
-                orange.write( self.glueDisablePin, HIGH ) # enable glue
-                break
-
-        yellow.write( self.halfTurnMotorEnablePin, LOW )
-        time.sleep( .5 ) # todo remove hotfix
-        while True:
-            if yellow.read( self.halfTurnSensorPin ) == HIGH:
-                yellow.write( self.halfTurnMotorEnablePin, HIGH )
-                break
-
+        """
+            A cycle will glue and stack the slats to create one board.
+            The number of iterations is the slatsPerBoard value.
+            The first slat will be pushed without glue.
+            """
+        self.currentSlat = 0
         for i in range( self.slatsPerBoard ):
-            if i == 1:
-                orange.write( self.glueDisablePin, LOW )
+            self.currentBoard = i
+
+            if i == 0:
+                self.glueDisable.setState( LOW )  # disable glue
             else:
-                orange.write( self.glueDisablePin, HIGH )
+                self.glueDisable.setState( HIGH )  # enable glue
 
-            while not yellow.read( self.conveyorSensorPin ) == HIGH:
+            while not self.conveyorSensor.getState( ) == HIGH:  # wait for slat
                 pass
-            orange.write( self.slatPusherPin, LOW )
-            while not yellow.read( self.glueCounterPin ) == HIGH:
+
+            self.slatPusherEnable.setState( LOW )  # push slat via glue
+
+            while not self.counterSensor.getState( ) == HIGH:  # wait for slat to pass
                 pass
-            orange.write( self.slatPusherPin, HIGH )
 
-            while not yellow.read( self.slatAtStackerSensorPin ) == HIGH:
+            orange.write( self.slatPusherPin, HIGH )  # reset slat pusher
+
+            while not yellow.read( self.stackerSensorPin ) == HIGH:  # wait for slat
                 pass
-            
 
+            yellow.write( self.halfTurnMotorEnablePin, LOW )  # push slat over belt
+            time.sleep( .5 )  # simulate passing time
 
+            while not yellow.read( self.halfTurnMotorSensorPin ) == HIGH:  # wait for half a turn
+                pass
 
+            yellow.write( self.halfTurnMotorEnablePin, HIGH )  # stop pushing
 
+            self.currentSlat += 1
+            self.currentSlatInSet += 1
 
+    def runSeries( self ):
+        self.currentBoard = 0
+        for i in range( self.boardsPerSeries ):
+            self.runCycle( )
+            self.currentBoard += 1
 
+    def runSet( self ):
+        self.currentSlatInSet = 0
+        for i in range( self.seriesPerSet ):
+            self.runSeries( )
+            pneumatics.runCycle( )
+            self.conveyorEngine.start( )
+            time.sleep( 3 )
+            self.conveyorEngine.stop( )
+
+    def update( self ):
+        for input in self.inputs:
+            input.update( )
 
     def run( self ):
-        pass
+        while True:
+            if self.automatic:
+                self.update( )
+            else:
+                pass  # todo manual mode
+            # time.sleep( 1 / self.updateRate )
 
 
 class Pneumatics:
@@ -119,7 +194,7 @@ class Pneumatics:
 
     # breaker
 
-    def start( self ):
+    def runCycle( self ):
         orange.write( 51, LOW )
         time.sleep( 2.5 )
 
@@ -155,16 +230,6 @@ class Pneumatics:
 
         orange.write( 53, HIGH )
         time.sleep( 2 )
-
-
-class Stacker:
-
-    def __init__( self ):
-        self.inputs = [ ]
-        self.outputs = [ ]
-
-        self.conveyorEngine = Engine( yellow, pwmPin = 23, runPin = 26, dirPin = 27, dutyCycle = 50 )
-        # self.encoder = Encoder( )
 
 
 class LengthSled:
@@ -225,22 +290,6 @@ class LengthSled:
                 return
 
 
-class Press:
-
-    def __init__( self ):
-        self.inputs = [ ]
-        self.outputs = [ ]
-
-
-class Controls:
-
-    def __init__( self ):
-        self.inputs = [ ]
-
-        # self.autoManualFeederStackerSwitch = Input( , 7 )
-        # self.inputs.append( self.autoManualFeederStackerSwitch )
-
-
 if __name__ == "__main__":
 
     yellow = ArduinoIO( MEGA_SN0 )
@@ -259,30 +308,7 @@ if __name__ == "__main__":
 
     lengthSled = LengthSled( yellow, 47, 46, 2, 4 )
     pneumatics = Pneumatics( )
-    stacker = Stacker( )
-    engine = stacker.conveyorEngine
-
-    # distance = 2000
-    # speed = 50
-    # engine = stacker.conveyorEngine
-    # engine.setSpeed( speed )
-    # engine.start( )
-    # while True:
-    #     pos = stacker.encoder.getCounter( )
-    #     print( pos )
-    #     if pos > 0.8 * distance and engine.getDirection( ) == engine.CLOCKWISE:
-    #         engine.setSpeed( speed / 4 )
-    #     if pos > distance and engine.getDirection( ) == engine.CLOCKWISE:
-    #         engine.stop( )
-    #         engine.reverse( )
-    #         engine.setSpeed( speed )
-    #         time.sleep( 1 )
-    #         engine.start( )
-    #     if pos < - 0.8 * distance and engine.getDirection( ) == engine.ANTICLOCKWISE:
-    #         engine.setSpeed( speed / 4 )
-    #     if pos < - distance and engine.getDirection( ) == engine.ANTICLOCKWISE:
-    #         engine.stop( )
-    #         engine.reverse( )
-    #         engine.setSpeed( speed )
-    #         time.sleep( 1 )
-    #         engine.start( )
+    press = Press( )
+    press.setParams( 1200, 300, 30, 3 )
+    press.calculateParams( )
+    press.run( )
