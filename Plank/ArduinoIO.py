@@ -36,7 +36,7 @@ class ArduinoIO:
 
     def read( self, pin ) -> int:
         self.serial.write( 'r({})'.format( pin ).encode( ) )
-        time.sleep( .05 )
+        time.sleep( 1 / 60 )
         return int( self.serial.readline( ).decode( ).strip( "\r\n" ) )
 
     def _blink( self, pin, value, duration = 1 ):

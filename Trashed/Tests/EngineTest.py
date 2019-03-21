@@ -9,7 +9,7 @@ engine.setSpeed( 100 )
 
 encoder = Encoder()
 
-engine.runCycle( )
+engine.runBoard( )
 try:
     pos = int( encoder.serial.readline( ) )
 except ValueError:

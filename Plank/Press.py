@@ -33,8 +33,8 @@ class Press:
     slatWidth = 0
     slatHeight = 0
     slatsPerBoard = 0
-    boardsPerSeries = 0
-    seriesPerSet = 0
+    boardsPerSet = 0
+    setsPerSeries = 0
     slatsPerSet = 0
 
     """ 
@@ -47,18 +47,21 @@ class Press:
 
     currentSlat = 0
     currentBoard = 0
-    currentCycle = 0
-    currentSeries = 0
+    # currentCycle = 0
+    currentSet = 0
     currentSlatInSet = 0
 
     boardLength = 0
     boardWidth = 0
     boardHeight = 0
 
-    updateRate = 120
+    updateRate = 60
     automatic = True
+    running = True
 
     inputs = [ ]
+
+    slatState = 0
 
     def __init__( self ):
         self.conveyorSensor = Input( yellow, self.conveyorSensorPin )
@@ -82,27 +85,93 @@ class Press:
 
         # callbacks
 
-        def conveyorSensorCallback():
-            self.slatPusherEnable.setState( LOW )
-            # self.current
+        def conveyorSensorCallback( ):
+            if self.slatState == 0:
+                self.slatPusherEnable.setState( LOW )
+                self.next( )
+                self.slatState = 1
 
-        self.conveyorSensor.setCallback(
-            lambda: self.slatPusherEnable.setState( LOW )
-            , RISING )
+        self.conveyorSensor.do( conveyorSensorCallback, HIGH )
 
-        self.counterSensor.setCallback(
-            lambda: self.slatPusherEnable.setState( HIGH ), RISING
-        )
+        def counterSensorCallback( ):
+            if self.slatState == 1:
+                self.slatPusherEnable.setState( HIGH )
+                self.slatState = 2
 
-        self.stackerSensor.setCallback(
-            lambda: self.halfTurnMotorEnable.setState( LOW ), RISING
-        )
-        self.halfTurnMotorSensor.setCallback(
-            lambda: self.halfTurnMotorEnable.setState( HIGH ), RISING
-        )
+        self.counterSensor.do( counterSensorCallback, HIGH )
 
-    def nextSlat( self ):
-        
+        def stackerSensorCallback( ):
+            if self.slatState == 2:
+                self.halfTurnMotorEnable.setState( LOW )
+                self.slatState = 3
+
+        self.stackerSensor.do( stackerSensorCallback, HIGH )
+
+        # def halfTurnMotorSensorCallbackLow( ):
+        #     if self.slatState == 3:
+        #         self.slatState = 4
+
+        # self.halfTurnMotorSensor.do( halfTurnMotorSensorCallbackLow, LOW )
+
+        def halfTurnMotorSensorCallbackHigh( ):
+            if self.slatState == 3:
+                self.halfTurnMotorEnable.setState( HIGH )
+                self.slatState = 2
+
+        self.halfTurnMotorSensor.do( halfTurnMotorSensorCallbackHigh, HIGH )
+        self.halfTurnMotorSensor.setCallback( halfTurnMotorSensorCallbackHigh, BOTH )
+
+    def next( self ):
+        self.currentSlat += 1
+
+        # if last slat in board
+        if self.currentSlat == self.slatsPerBoard:
+            self.currentBoard += 1
+            "OSTATNIA LAMELKA"
+            self.currentSlat = 0
+            self.glueDisable.setState( HIGH )
+
+            "KAŻDY BLAT"
+            # if last board in series
+            if self.currentBoard == self.boardsPerSet:
+                self.currentSet += 1
+                "OSTATNI BLAT"
+                self.currentBoard = 0
+
+                # todo każdy set -> opuścić set na taśmę, ścisnąć, podnieść, odjechać kawałek
+
+                "KAŻDY SET"
+                # if last series in set
+                if self.currentSet == self.setsPerSeries:
+                    "OSTATNI SET"
+                    self.currentSet = 0
+
+                    # todo ostatni set -> wjazd do prasy
+
+                else:
+                    "NIEOSTATNI SET"
+                    pass
+
+            elif self.currentBoard == self.boardsPerSet - 1:
+                "PRZEDOSTATNI BLAT"
+
+
+            else:
+                "NIEOSTATNI BLAT"
+                pass
+
+        elif self.currentSlat == 1:
+            "PIERWSZA LAMELKA"
+
+            self.glueDisable.setState( LOW )
+
+        else:
+            "NIEOSTATNIA I NIEPIERWSZA LAMELKA"
+            self.glueDisable.setState( HIGH )
+
+        print( 'Current slat: {}'.format( self.currentSlat ) )
+        print( 'Current board: {}'.format( self.currentBoard ) )
+        print( 'Current set: {}'.format( self.currentSet ) )
 
     def setParams( self, length, width, height, slatsPerBoard ):
         self.slatLength = length
@@ -118,11 +187,11 @@ class Press:
         if not self.slatLength or not self.slatWidth or not self.slatHeight or not self.slatsPerBoard:
             return
 
-        self.boardsPerSeries = math.floor( PRESS_WIDTH / (self.slatWidth * self.slatsPerBoard) )
-        self.seriesPerSet = math.floor( PRESS_LENGTH / (self.slatLength + STACKER_GAP) )
-        self.slatsPerSet = self.slatsPerSet * self.boardsPerSeries * self.slatsPerBoard
+        self.boardsPerSet = math.floor( PRESS_WIDTH / (self.slatWidth * self.slatsPerBoard) )
+        self.setsPerSeries = math.floor( PRESS_LENGTH / (self.slatLength + STACKER_GAP) )
+        self.slatsPerSet = self.slatsPerSet * self.boardsPerSet * self.slatsPerBoard
 
-    def runCycle( self ):
+    def runBoard( self ):
         """
             A cycle will glue and stack the slats to create one board.
             The number of iterations is the slatsPerBoard value.
@@ -145,32 +214,32 @@ class Press:
             while not self.counterSensor.getState( ) == HIGH:  # wait for slat to pass
                 pass
 
-            orange.write( self.slatPusherPin, HIGH )  # reset slat pusher
+            self.slatPusherEnable.setState( HIGH )
 
-            while not yellow.read( self.stackerSensorPin ) == HIGH:  # wait for slat
+            while not self.stackerSensor.getState( ) == HIGH:  # wait for slat
                 pass
 
-            yellow.write( self.halfTurnMotorEnablePin, LOW )  # push slat over belt
+            self.halfTurnMotorEnable.setState( LOW )  # push slat over belt
             time.sleep( .5 )  # simulate passing time
 
-            while not yellow.read( self.halfTurnMotorSensorPin ) == HIGH:  # wait for half a turn
+            while not self.halfTurnMotorSensor.getState( ) == HIGH:  # wait for half a turn
                 pass
 
-            yellow.write( self.halfTurnMotorEnablePin, HIGH )  # stop pushing
+            self.halfTurnMotorEnable.setState( HIGH )  # stop pushing
 
             self.currentSlat += 1
             self.currentSlatInSet += 1
 
-    def runSeries( self ):
+    def runSet( self ):
         self.currentBoard = 0
-        for i in range( self.boardsPerSeries ):
-            self.runCycle( )
+        for i in range( self.boardsPerSet ):
+            self.runBoard( )
             self.currentBoard += 1
 
-    def runSet( self ):
+    def runSeries( self ):
         self.currentSlatInSet = 0
-        for i in range( self.seriesPerSet ):
-            self.runSeries( )
+        for i in range( self.setsPerSeries ):
+            self.runSet( )
             pneumatics.runCycle( )
             self.conveyorEngine.start( )
             time.sleep( 3 )
@@ -181,12 +250,12 @@ class Press:
             input.update( )
 
     def run( self ):
-        while True:
+        while self.running:
             if self.automatic:
                 self.update( )
             else:
                 pass  # todo manual mode
-            # time.sleep( 1 / self.updateRate )
+            time.sleep( 1 / self.updateRate )
 
 
 class Pneumatics:
@@ -311,4 +380,5 @@ if __name__ == "__main__":
     press = Press( )
     press.setParams( 1200, 300, 30, 3 )
     press.calculateParams( )
+    print( 'Press running...' )
     press.run( )

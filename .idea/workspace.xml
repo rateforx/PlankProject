@@ -2,64 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="186d52f9-d3e7-4f7d-8db1-654290318de5" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Plank/Output.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Plank/Servo.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Trashed/Tests/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Trashed/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MCP230XX/LICENSE" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/MCP230XX/LICENSE" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MCP230XX/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/MCP230XX/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MCP230XX/_MCP230XX.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/MCP230XX/_MCP230XX.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MCP230XX/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/MCP230XX/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plank/ArduinoIO.py" beforeDir="false" afterPath="$PROJECT_DIR$/Plank/ArduinoIO.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plank/Button.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/Button.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plank/Engine.py" beforeDir="false" afterPath="$PROJECT_DIR$/Plank/Engine.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plank/IO.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/__mcp_IO.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plank/PWM.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/Tests/PWM.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plank/Input.py" beforeDir="false" afterPath="$PROJECT_DIR$/Plank/Input.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plank/Press.py" beforeDir="false" afterPath="$PROJECT_DIR$/Plank/Press.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plank/Sensor.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/Sensor.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plank/_EXIO.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/_EXIO.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plank/_OldEncoder.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/_OldEncoder.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plank/_PollingEncoder.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/_PollingEncoder.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Tests/ArduinoSendI2C.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/Tests/ArduinoSendI2C.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Tests/ArduinoSerialRead.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/Tests/ArduinoSerialRead.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Tests/ConveyorBelt.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/Tests/ConveyorBelt.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Tests/EncoderTest.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/Tests/EncoderTest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Tests/EngineTest.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/Tests/EngineTest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Tests/ExtenderWithSensorTest.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/Tests/ExtenderWithSensorTest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Tests/PollingEncoder.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/Tests/PollingEncoder.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Tests/SerialPrint.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/Tests/SerialPrint.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Tests/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/Plank/Input.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Tests/exioTest.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/Tests/exioTest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Tests/kill.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/Tests/kill.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Tests/mcpInputTest.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/Tests/mcpInputTest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Tests/mcpOutputTest.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/Tests/mcpOutputTest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VirtGPIO/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/VirtGPIO/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VirtGPIO/example-AVR.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/VirtGPIO/example-AVR.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VirtGPIO/example-COMports.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/VirtGPIO/example-COMports.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VirtGPIO/example-HWcounter.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/VirtGPIO/example-HWcounter.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VirtGPIO/example-I2C-SMBus.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/VirtGPIO/example-I2C-SMBus.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VirtGPIO/example-I2C.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/VirtGPIO/example-I2C.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VirtGPIO/example-INTcounter.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/VirtGPIO/example-INTcounter.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VirtGPIO/example-IO-extended.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/VirtGPIO/example-IO-extended.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VirtGPIO/example-IO.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/VirtGPIO/example-IO.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VirtGPIO/example-IRreceive.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/VirtGPIO/example-IRreceive.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VirtGPIO/example-PWMplus.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/VirtGPIO/example-PWMplus.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VirtGPIO/example-activityLed.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/VirtGPIO/example-activityLed.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VirtGPIO/example-ardreset.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/VirtGPIO/example-ardreset.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VirtGPIO/example-diagnostic.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/VirtGPIO/example-diagnostic.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VirtGPIO/example-quadencoder.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/VirtGPIO/example-quadencoder.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VirtGPIO/example-servo.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/VirtGPIO/example-servo.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VirtGPIO/example-sonar-improved.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/VirtGPIO/example-sonar-improved.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VirtGPIO/example-sonar.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/VirtGPIO/example-sonar.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VirtGPIO/example-spi.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/VirtGPIO/example-spi.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VirtGPIO/example-stepper200.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/VirtGPIO/example-stepper200.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VirtGPIO/example-stepper4096.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/VirtGPIO/example-stepper4096.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VirtGPIO/example-tone.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/VirtGPIO/example-tone.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VirtGPIO/serialConfig.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/VirtGPIO/serialConfig.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VirtGPIO/smartGPIO.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/VirtGPIO/smartGPIO.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VirtGPIO/virtGPIO.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/VirtGPIO/virtGPIO.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plank/Servo.py" beforeDir="false" afterPath="$PROJECT_DIR$/Plank/Servo.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Trashed/Tests/EngineTest.py" beforeDir="false" afterPath="$PROJECT_DIR$/Trashed/Tests/EngineTest.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -97,10 +45,13 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Plank/Press.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="225">
-              <caret line="84" column="12" selection-start-line="84" selection-start-column="12" selection-end-line="84" selection-end-column="12" />
+            <state relative-caret-position="282">
+              <caret line="57" column="19" selection-start-line="57" selection-start-column="19" selection-end-line="57" selection-end-column="19" />
               <folding>
                 <element signature="e#0#31#0" expanded="true" />
+                <element signature="e#4779#6149#0" />
+                <element signature="e#6186#6316#0" />
+                <element signature="e#6350#6595#0" />
               </folding>
             </state>
           </provider>
@@ -118,20 +69,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Plank/Input.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="667">
-              <caret line="30" column="20" selection-start-line="30" selection-start-column="20" selection-end-line="30" selection-end-column="20" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Plank/Engine.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="547">
-              <caret line="66" lean-forward="true" selection-start-line="66" selection-end-line="66" />
-              <folding>
-                <element signature="e#0#23#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="207">
+              <caret line="28" column="35" lean-forward="true" selection-start-line="28" selection-start-column="35" selection-end-line="28" selection-end-column="35" />
             </state>
           </provider>
         </entry>
@@ -139,8 +78,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Plank/Servo.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="690">
-              <caret line="30" selection-start-line="30" selection-end-line="30" />
+            <state relative-caret-position="391">
+              <caret line="28" column="38" selection-start-line="28" selection-start-column="38" selection-end-line="28" selection-end-column="38" />
               <folding>
                 <element signature="e#0#31#0" expanded="true" />
               </folding>
@@ -151,8 +90,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Plank/ArduinoIO.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="317">
-              <caret line="27" selection-start-line="27" selection-end-line="27" />
+            <state relative-caret-position="340">
+              <caret line="32" lean-forward="true" selection-start-line="32" selection-end-line="32" />
               <folding>
                 <element signature="e#0#65#0" expanded="true" />
               </folding>
@@ -178,6 +117,7 @@
       <find>set_mode</find>
       <find>.output</find>
       <find>'output'</find>
+      <find>verbo</find>
     </findStrings>
     <replaceStrings>
       <replace>setMode</replace>
@@ -224,11 +164,11 @@
         <option value="$PROJECT_DIR$/Plank/Button.py" />
         <option value="$PROJECT_DIR$/Plank/Encoder.py" />
         <option value="$PROJECT_DIR$/Plank/ArduinoSerialPortFinder.py" />
-        <option value="$PROJECT_DIR$/Plank/Engine.py" />
-        <option value="$PROJECT_DIR$/Plank/Servo.py" />
-        <option value="$PROJECT_DIR$/Plank/ArduinoIO.py" />
-        <option value="$PROJECT_DIR$/Plank/Input.py" />
         <option value="$PROJECT_DIR$/Plank/Output.py" />
+        <option value="$PROJECT_DIR$/Plank/Engine.py" />
+        <option value="$PROJECT_DIR$/Plank/ArduinoIO.py" />
+        <option value="$PROJECT_DIR$/Plank/Servo.py" />
+        <option value="$PROJECT_DIR$/Plank/Input.py" />
         <option value="$PROJECT_DIR$/Plank/Press.py" />
       </list>
     </option>
@@ -494,16 +434,15 @@
       <workItem from="1552032899471" duration="28477000" />
       <workItem from="1552375382436" duration="57631000" />
       <workItem from="1552657684572" duration="7792000" />
-      <workItem from="1552720447401" duration="71095000" />
+      <workItem from="1552720447401" duration="84563000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="354368000" />
+    <option name="totallyTimeSpent" value="367836000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1066" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4950386" visible="true" weight="0.14658849" />
       <window_info id="Structure" order="1" sideWeight="0.50496143" side_tool="true" weight="0.1433902" />
@@ -529,7 +468,7 @@
       <window_info anchor="right" id="Database" order="5" weight="0.32995737" />
       <window_info anchor="right" x="0" y="0" width="434" height="866" id="Documentation" order="6" side_tool="true" weight="0.32995737" />
       <window_info anchor="right" id="Terminal" order="7" weight="0.26439232" />
-      <window_info active="true" anchor="right" id="Python Console" order="8" sideWeight="0.4978678" visible="true" weight="0.47867805" />
+      <window_info active="true" anchor="right" id="Python Console" order="8" sideWeight="0.4978678" visible="true" weight="0.39498934" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -868,8 +807,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Plank/Engine.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="547">
-          <caret line="66" lean-forward="true" selection-start-line="66" selection-end-line="66" />
+        <state relative-caret-position="92">
+          <caret line="4" column="25" selection-start-line="4" selection-start-column="25" selection-end-line="4" selection-end-column="25" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
           </folding>
@@ -878,8 +817,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Plank/ArduinoIO.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="317">
-          <caret line="27" selection-start-line="27" selection-end-line="27" />
+        <state relative-caret-position="340">
+          <caret line="32" lean-forward="true" selection-start-line="32" selection-end-line="32" />
           <folding>
             <element signature="e#0#65#0" expanded="true" />
           </folding>
@@ -888,8 +827,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Plank/Servo.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="690">
-          <caret line="30" selection-start-line="30" selection-end-line="30" />
+        <state relative-caret-position="391">
+          <caret line="28" column="38" selection-start-line="28" selection-start-column="38" selection-end-line="28" selection-end-column="38" />
           <folding>
             <element signature="e#0#31#0" expanded="true" />
           </folding>
@@ -898,8 +837,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Plank/Input.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="667">
-          <caret line="30" column="20" selection-start-line="30" selection-start-column="20" selection-end-line="30" selection-end-column="20" />
+        <state relative-caret-position="207">
+          <caret line="28" column="35" lean-forward="true" selection-start-line="28" selection-start-column="35" selection-end-line="28" selection-end-column="35" />
         </state>
       </provider>
     </entry>
@@ -912,10 +851,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Plank/Press.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="84" column="12" selection-start-line="84" selection-start-column="12" selection-end-line="84" selection-end-column="12" />
+        <state relative-caret-position="282">
+          <caret line="57" column="19" selection-start-line="57" selection-start-column="19" selection-end-line="57" selection-end-column="19" />
           <folding>
             <element signature="e#0#31#0" expanded="true" />
+            <element signature="e#4779#6149#0" />
+            <element signature="e#6186#6316#0" />
+            <element signature="e#6350#6595#0" />
           </folding>
         </state>
       </provider>

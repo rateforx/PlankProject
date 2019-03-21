@@ -9,6 +9,10 @@ class Input:
     lastState = None
     callbackRising = __blank
     callbackFalling = __blank
+    callbackLow = __blank
+    callbackHigh = __blank
+
+    verbose = False
 
     def __init__( self, arduinoIO: ArduinoIO, pin ):
         self.arduinoIO = arduinoIO
@@ -18,6 +22,10 @@ class Input:
 
     def update( self ):
         state = self.arduinoIO.read( self.pin )
+
+        if self.verbose:
+            print( state )
+
         if state != self.lastState:
 
             self.lastState = state
@@ -26,6 +34,11 @@ class Input:
                 self.callbackFalling( )
             if state == RISING:
                 self.callbackRising( )
+
+        if state == LOW:
+            self.callbackLow()
+        if state == HIGH:
+            self.callbackHigh()
 
     def getState( self ):
         return self.arduinoIO.read( self.pin )
@@ -41,9 +54,17 @@ class Input:
             self.callbackFalling = function
             self.callbackRising = function
 
+    def do( self, function, state ):
+        if state == LOW:
+            self.callbackLow = function
+        if state == HIGH:
+            self.callbackHigh = function
+
     def on( self, edge, function ):
         self.setCallback( function, edge )
 
     def removeCallback( self ):
         self.callbackFalling = self.__blank
         self.callbackRising = self.__blank
+        self.callbackLow = self.__blank
+        self.callbackHigh = self.__blank

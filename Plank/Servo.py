@@ -18,15 +18,29 @@ class Servo:
         self.target = self.zero
 
     def update( self ):
-        self.lastState = self.encoder.getCounter()
+        state = self.encoder.getCounter()
+        if self.lastState != state:
+            self.lastState = state
+            if self.engine.getDirection() == CLOCKWISE:
+                if state >= self.target:
+                    self.engine.stop()
+            if self.engine.getDirection() == ANTICLOCKWISE:
+                if state <= self.target:
+                    self.engine.stop()
+
+
 
     def calibrate( self ):
         pass
+
+    def setSpeed( self, value ):
+        self.engine.setSpeed( value )
 
     def move( self, distance: int, direction ):
         self.zero = self.encoder.getCounter()
         self.target = self.zero + distance
         self.engine.setDirection( direction )
+        self.engine.start()
 
 
 
