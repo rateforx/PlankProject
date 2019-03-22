@@ -2,8 +2,8 @@ import time
 from serial import Serial
 from Plank.ArduinoSerialPortFinder import *
 
-baudrate = 9600
-timeout = 1
+baudrate = 115200
+timeout = 5
 
 
 class Encoder:
@@ -11,24 +11,30 @@ class Encoder:
     verbose = False
     readCounter = 0
 
-    def __init__( self, encoderID, port = ArduinoSerialPortFinder.getArduinoPort( UNO_SN0 ) ):
+    def __init__( self, arduinoSN ):
+        port = ArduinoSerialPortFinder.getArduinoPort( arduinoSN )
         print( 'Connecting to Arduino serial: {}'.format( port ) )
         self.serial = Serial( port, baudrate, timeout = timeout )
-        self.encoderID = encoderID
+        time.sleep( .25 )
+        # self.getCounter( )
 
-    def requestCounter( self ):
-        self.serial.write( self.encoderID.encode( ) )
-        time.sleep( .05 )
+    # def requestCounter( self ):
+    #     self.serial.write( 'r'.encode( ) )
 
     def getCounter( self ):
+        # self.serial.write( 'r'.encode( ) )
+        # value = int( self.serial.readline( ).decode( ).strip( "\r\n" ) )
+
         self.readCounter += 1
 
         try:
-            self.requestCounter()
+            self.serial.flush( )
+            self.serial.write( 'r'.encode( ) )
             value = int( self.serial.readline( ).decode( ).strip( "\r\n" ) )
 
         except ValueError:
-            self.requestCounter()
+            self.serial.flush( )
+            self.serial.write( 'r'.encode( ) )
             value = self.getCounter( )  # if nothing sent, retry
 
         if self.verbose:
@@ -48,7 +54,7 @@ if __name__ == "__main__":
 
     while True:
         counter = encoder.getCounter( )
-        if  counter != lastCount:
+        if counter != lastCount:
             print( counter )
             lastCount = counter
         # print( counter )

@@ -10,5 +10,5 @@ class Output:
         self.arduinoIO = arduinoIO
         self.pin = pin
 
-    def setState( self, value ):
+    def set( self, value ):
         self.arduinoIO.write( self.pin, value )

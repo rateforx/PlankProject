@@ -1,10 +1,12 @@
-from Plank.Engine import Engine
-from Plank.ArduinoIO import *
-from Plank.Input import Input
-from Plank.Output import Output
+import math
+from time import time as now
+
 from Plank.ArduinoSerialPortFinder import *
 from Plank.Encoder import Encoder
-import math
+from Plank.Engine import *
+from Plank.Input import Input
+from Plank.Output import Output
+from Plank.Servo import Servo
 
 INPUT_POLLING_FREQUENCY = 1000
 
@@ -24,9 +26,17 @@ class Press:
     bigBoyDisabledSensorPin = 7  # yellow
     halfTurnMotorSensorPin = 12  # yellow
     # OUTPUT Pins
-    glueDisablePin = 49  # orange
-    slatPusherPin = 22  # orange
     halfTurnMotorEnablePin = 50  # yellow
+
+    # VALVES
+    slatPusherPin = 22  # orange
+    glueDisablePin = 49  # orange
+    slatDamperPin = 51  # orange
+    boardLowererPin = 47  # orange
+    boardReleasePin = 50  # orange
+    bumperPin = 53  # orange
+    rearVicePin = 46  # orange
+    sideVicePin = 52  # orange
 
     # PARAMS
     slatLength = 0
@@ -36,14 +46,6 @@ class Press:
     boardsPerSet = 0
     setsPerSeries = 0
     slatsPerSet = 0
-
-    """ 
-    n1 boards in cycle
-    n2 cycles in a series
-    n3 series in a set
-    
-    set a set of n3 series takes n3 * n2 * n1 slats  
-    """
 
     currentSlat = 0
     currentBoard = 0
@@ -61,6 +63,7 @@ class Press:
 
     inputs = [ ]
 
+    conveyorSensorDetectTime = -1
     slatState = 0
 
     def __init__( self ):
@@ -78,48 +81,65 @@ class Press:
         ]
 
         self.glueDisable = Output( orange, self.glueDisablePin )
-        self.slatPusherEnable = Output( orange, self.slatPusherPin )
         self.halfTurnMotorEnable = Output( yellow, self.halfTurnMotorEnablePin )
+        self.slatPusherEnable = Output( orange, self.slatPusherPin )
+        self.slatDamperDisable = Output( orange, self.slatDamperPin )
+        self.boardLowererEnable = Output( orange, self.boardLowererPin )
+        self.boardReleaseEnable = Output( orange, self.boardReleasePin )
+        self.bumperEnable = Output( orange, self.bumperPin )
+        self.rearViceEnable = Output( orange, self.rearVicePin )
+        self.sideViceEnable = Output( orange, self.sideVicePin )
 
-        self.conveyorEngine = Engine( yellow, pwmPin = 23, runPin = 26, dirPin = 27, dutyCycle = 50 )
+        self.pressEngine = Engine( yellow, pwmPin = 24, runPin = 28, dirPin = 29, dutyCycle = 50 )
 
-        # callbacks
+        self.conveyorServo = Servo(
+            # engine = Engine( yellow, pwmPin = 23, runPin = 26, dirPin = 27, dutyCycle = 50 ),
+            engine = Engine( yellow, pwmPin = 23, runPin = 26, dirPin = 27, dutyCycle = 50 ),
+            encoder = Encoder( UNO_SN0 )
+        )
+
+        # CALLBACKS
 
         def conveyorSensorCallback( ):
+            delay = 1.5
             if self.slatState == 0:
-                self.slatPusherEnable.setState( LOW )
-                self.next( )
-                self.slatState = 1
+                if self.conveyorSensorDetectTime == -1:
+                    self.conveyorSensorDetectTime = now( )
+                elif now( ) - self.conveyorSensorDetectTime > delay:
+                    self.slatPusherEnable.set( LOW )
+                    self.next( )
+                    self.slatState = 1
+                    self.conveyorSensorDetectTime = -1
 
         self.conveyorSensor.do( conveyorSensorCallback, HIGH )
 
         def counterSensorCallback( ):
             if self.slatState == 1:
-                self.slatPusherEnable.setState( HIGH )
+                self.slatPusherEnable.set( HIGH )
                 self.slatState = 2
 
         self.counterSensor.do( counterSensorCallback, HIGH )
 
         def stackerSensorCallback( ):
             if self.slatState == 2:
-                self.halfTurnMotorEnable.setState( LOW )
+                self.halfTurnMotorEnable.set( LOW )
                 self.slatState = 3
 
         self.stackerSensor.do( stackerSensorCallback, HIGH )
 
-        # def halfTurnMotorSensorCallbackLow( ):
-        #     if self.slatState == 3:
-        #         self.slatState = 4
+        def halfTurnMotorSensorCallbackLow( ):
+            if self.slatState == 3:
+                self.slatState = 4
 
-        # self.halfTurnMotorSensor.do( halfTurnMotorSensorCallbackLow, LOW )
+        self.halfTurnMotorSensor.do( halfTurnMotorSensorCallbackLow, LOW )
 
         def halfTurnMotorSensorCallbackHigh( ):
-            if self.slatState == 3:
-                self.halfTurnMotorEnable.setState( HIGH )
-                self.slatState = 2
+            if self.slatState == 4:
+                self.halfTurnMotorEnable.set( HIGH )
+                self.slatState = 0
 
         self.halfTurnMotorSensor.do( halfTurnMotorSensorCallbackHigh, HIGH )
-        self.halfTurnMotorSensor.setCallback( halfTurnMotorSensorCallbackHigh, BOTH )
+        # self.halfTurnMotorSensor.setCallback( halfTurnMotorSensorCallbackHigh, BOTH )
 
     def next( self ):
         self.currentSlat += 1
@@ -129,7 +149,7 @@ class Press:
             self.currentBoard += 1
             "OSTATNIA LAMELKA"
             self.currentSlat = 0
-            self.glueDisable.setState( HIGH )
+            self.glueDisable.set( HIGH )
 
             "KAŻDY BLAT"
             # if last board in series
@@ -139,6 +159,7 @@ class Press:
                 self.currentBoard = 0
 
                 # todo każdy set -> opuścić set na taśmę, ścisnąć, podnieść, odjechać kawałek
+                pneumatics.runCycle( )
 
                 "KAŻDY SET"
                 # if last series in set
@@ -163,11 +184,11 @@ class Press:
         elif self.currentSlat == 1:
             "PIERWSZA LAMELKA"
 
-            self.glueDisable.setState( LOW )
+            self.glueDisable.set( LOW )
 
         else:
             "NIEOSTATNIA I NIEPIERWSZA LAMELKA"
-            self.glueDisable.setState( HIGH )
+            self.glueDisable.set( HIGH )
 
         print( 'Current slat: {}'.format( self.currentSlat ) )
         print( 'Current board: {}'.format( self.currentBoard ) )
@@ -202,30 +223,30 @@ class Press:
             self.currentBoard = i
 
             if i == 0:
-                self.glueDisable.setState( LOW )  # disable glue
+                self.glueDisable.set( LOW )  # disable glue
             else:
-                self.glueDisable.setState( HIGH )  # enable glue
+                self.glueDisable.set( HIGH )  # enable glue
 
             while not self.conveyorSensor.getState( ) == HIGH:  # wait for slat
                 pass
 
-            self.slatPusherEnable.setState( LOW )  # push slat via glue
+            self.slatPusherEnable.set( LOW )  # push slat via glue
 
             while not self.counterSensor.getState( ) == HIGH:  # wait for slat to pass
                 pass
 
-            self.slatPusherEnable.setState( HIGH )
+            self.slatPusherEnable.set( HIGH )
 
             while not self.stackerSensor.getState( ) == HIGH:  # wait for slat
                 pass
 
-            self.halfTurnMotorEnable.setState( LOW )  # push slat over belt
+            self.halfTurnMotorEnable.set( LOW )  # push slat over belt
             time.sleep( .5 )  # simulate passing time
 
             while not self.halfTurnMotorSensor.getState( ) == HIGH:  # wait for half a turn
                 pass
 
-            self.halfTurnMotorEnable.setState( HIGH )  # stop pushing
+            self.halfTurnMotorEnable.set( HIGH )  # stop pushing
 
             self.currentSlat += 1
             self.currentSlatInSet += 1
@@ -246,6 +267,7 @@ class Press:
             self.conveyorEngine.stop( )
 
     def update( self ):
+        self.conveyorServo.update( )
         for input in self.inputs:
             input.update( )
 
@@ -255,7 +277,7 @@ class Press:
                 self.update( )
             else:
                 pass  # todo manual mode
-            time.sleep( 1 / self.updateRate )
+            # time.sleep( 1 / self.updateRate )
 
 
 class Pneumatics:
@@ -302,7 +324,7 @@ class Pneumatics:
 
 
 class LengthSled:
-    encoder = Encoder( 'b' )
+    # encoder = Encoder( UNO_SN1 )
 
     def __init__( self, arduinoIO, forwardPin, backwardPin, maxLimitPin, minLimitPin ):
         self.arduinoIO = arduinoIO
@@ -360,25 +382,32 @@ class LengthSled:
 
 
 if __name__ == "__main__":
-
     yellow = ArduinoIO( MEGA_SN0 )
     orange = ArduinoIO( MEGA_SN1 )
-
-    for pin in range( 22, 30 ):
-        yellow.write( pin, HIGH )  # default to disabled
-        yellow.setMode( pin, OUTPUT )
-        orange.write( pin, HIGH )
-        orange.setMode( pin, OUTPUT )
-    for pin in range( 46, 54 ):
-        yellow.write( pin, HIGH )  # default to disabled
-        yellow.setMode( pin, OUTPUT )
-        orange.write( pin, HIGH )
-        orange.setMode( pin, OUTPUT )
 
     lengthSled = LengthSled( yellow, 47, 46, 2, 4 )
     pneumatics = Pneumatics( )
     press = Press( )
     press.setParams( 1200, 300, 30, 3 )
     press.calculateParams( )
+    servo = press.conveyorServo
+    servo.encoder.verbose = True
+    servo.engine.setSpeed( 50 )
     print( 'Press running...' )
+
+
+    def mf( ):
+        time.sleep( 3 )
+        servo.move( 1000 )
+        servo.then( mb )
+
+
+    def mb( ):
+        time.sleep( 3 )
+        servo.move( -1000 )
+        servo.then( mf )
+
+
+    mf( )
+
     press.run( )

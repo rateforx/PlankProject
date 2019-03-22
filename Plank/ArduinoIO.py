@@ -2,8 +2,8 @@ from Plank.ArduinoSerialPortFinder import ArduinoSerialPortFinder
 from serial import Serial
 import time
 
-baudrate = 9600
-timeout = 1
+baudrate = 115200
+timeout = 5
 
 OUTPUT = 0
 INPUT = 1
@@ -22,11 +22,10 @@ class ArduinoIO:
     def __init__( self, serialNumber ):
         self.port = ArduinoSerialPortFinder.getArduinoPort( serialNumber )
         self.serial = Serial( self.port, baudrate, timeout = timeout )
+        time.sleep( .25 )
 
         try: self.read( 13 )
         except ValueError: pass
-
-        time.sleep( 3 )
 
     def setMode( self, pin, mode ):
         self.serial.write( 'm({},{})'.format( pin, mode ).encode( ) )
@@ -36,7 +35,8 @@ class ArduinoIO:
 
     def read( self, pin ) -> int:
         self.serial.write( 'r({})'.format( pin ).encode( ) )
-        time.sleep( 1 / 60 )
+        # while not self.serial.inWaiting():
+        #     pass
         return int( self.serial.readline( ).decode( ).strip( "\r\n" ) )
 
     def _blink( self, pin, value, duration = 1 ):

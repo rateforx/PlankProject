@@ -10,7 +10,7 @@ ANTICLOCKWISE = 0
 
 class Engine:
 
-    def __init__( self, arduinoIO, pwmPin, runPin, dirPin, dutyCycle = 100, frequency = 1500 ):
+    def __init__( self, arduinoIO, pwmPin, runPin, dirPin, dutyCycle = 0, frequency = 1500 ):
 
         self.__arduinoIO = arduinoIO
         self.__pwmPin = pwmPin
@@ -32,10 +32,10 @@ class Engine:
         self.__arduinoIO.write( self.__runPin, LOW )
         self.__pwm.start( self.__speed )
 
-    def slowStart( self, duration = 3 ):
+    def slowStart( self, speed, duration = 3 ):
         self.setSpeed( 0 )
         self.start( )
-        for dutyCycle in range( 0, 101, 1 ):
+        for dutyCycle in range( 0, speed + 1, 1 ):
             self.setSpeed( dutyCycle )
             time.sleep( duration / 100 )
 
