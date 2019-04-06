@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Stolmat</title>
+    <link type="image/x-icon" rel="icon" href="{{ url_for( 'static', filename = 'styles/plank_desu.svg' ) }}">
+    <link type="text/css" rel="stylesheet" href="{{ url_for( 'static', filename = 'styles/keyboard.css' ) }}">
+    <link type="text/css" rel="stylesheet" href="{{ url_for( 'static', filename = 'styles/materialize.css' ) }}"
+          media="screen,projection">
+    <link type="text/css" rel="stylesheet" href="{{ url_for( 'static', filename = 'styles/style.css' ) }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        @font-face {
+            font-family: "Segoe UI Light";
+            src: url("{{ url_for( 'static', filename = 'fonts/segoeuil.ttf' ) }}") format('ttf');
+            font-weight: 300;
+        }
+
+        @font-face {
+            font-family: "Material Icons";
+            font-style: normal;
+            font-weight: 400;
+            src: url("{{ url_for( 'static', filename = 'fonts/material-icons.woff2' ) }}") format('woff2');
+        }
+
+        .material-icons {
+            font-family: 'Material Icons';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -moz-font-feature-settings: 'liga';
+            -moz-osx-font-smoothing: grayscale;
+        }
+    </style>
+</head>
+<body>
+<script type="text/javascript" src="{{ url_for( 'static', filename = 'scripts/jquery-3.3.1.js' ) }}"></script>
+<nav>
+    <div class="nav-wrapper">
+        <a href="/" class="brand-logo">
+            <span>Stolmat</span>
+        </a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <li id="inputs-link"><a href="/inputs">Wejścia</a></li>
+            <li id="params-link"><a href="/params">Parametry produkcji</a></li>
+            <li id="states-link"><a href="/states">Stan maszyny</a></li>
+            <li id="times-link"><a href="/times">Ustawienia prasowania</a></li>
+        </ul>
+    </div>
+</nav>
+{% if data.success %}
+    <script>
+        $( () => {
+            M.toast( {
+                html: '{{ data.success }}',
+                displayLength: 5000,
+                classes: 'green',
+            } );
+        } );
+    </script>
+{% endif %}
+{% if data.error %}
+    <script>
+        $( () => {
+            M.toast( {
+                html: '{{ data.error }}',
+                displayLength: 5000,
+                classes: 'red',
+            } );
+        } );
+    </script>
+{% endif %}
+{% block content %}
+{% endblock %}
+    <script type="text/javascript" src="{{ url_for( 'static', filename = 'scripts/materialize.js' ) }}"></script>
+    <script type="text/javascript" src="{{ url_for( 'static', filename = 'scripts/jquery.keyboard.js' ) }}"></script>
+{% block footer %}
+{% endblock %}
+</body>

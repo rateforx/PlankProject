@@ -1,413 +1,238 @@
-import math
 from time import time as now
 
-from Plank.ArduinoSerialPortFinder import *
-from Plank.Encoder import Encoder
-from Plank.Engine import *
+from Plank.LimitEngine import LimitEngine
+# from Plank.BigBoy import BigBoy
+from Plank.Engine import Engine
 from Plank.Input import Input
-from Plank.Output import Output
-from Plank.Servo import Servo
-
-INPUT_POLLING_FREQUENCY = 1000
-
-STACKER_LENGTH = 5260  # mm
-STACKER_WIDTH = 1900  # mm
-STACKER_GAP = 200  # mm
-
-PRESS_LENGTH = 4500  # mm
-PRESS_WIDTH = 1900  # mm
+from Plank.Output import *
+from Plank.TemperatureSensor import TemperatureSensor
 
 
 class Press:
-    # INPUT Pins
-    conveyorSensorPin = 13  # yellow
-    counterSensorPin = 10  # yellow
-    stackerSensorPin = 8  # yellow
-    bigBoyDisabledSensorPin = 7  # yellow
-    halfTurnMotorSensorPin = 12  # yellow
-    # OUTPUT Pins
-    halfTurnMotorEnablePin = 50  # yellow
+    PRESS_CONVEYOR_CORRECTION = 700  # mm
 
-    # VALVES
-    slatPusherPin = 22  # orange
-    glueDisablePin = 49  # orange
-    slatDamperPin = 51  # orange
-    boardLowererPin = 47  # orange
-    boardReleasePin = 50  # orange
-    bumperPin = 53  # orange
-    rearVicePin = 46  # orange
-    sideVicePin = 52  # orange
-
-    # PARAMS
-    slatLength = 0
-    slatWidth = 0
-    slatHeight = 0
-    slatsPerBoard = 0
-    boardsPerSet = 0
-    setsPerSeries = 0
-    slatsPerSet = 0
-
-    currentSlat = 0
-    currentBoard = 0
-    # currentCycle = 0
-    currentSet = 0
-    currentSlatInSet = 0
-
-    boardLength = 0
-    boardWidth = 0
-    boardHeight = 0
-
-    updateRate = 60
-    automatic = True
-    running = True
+    IDLE = 0
+    LOADING = 1
+    COMPRESSING = 2
+    COMPRESSED = 3
+    DECOMPRESSING = 4
+    UNLOADING = 5
 
     inputs = [ ]
 
-    conveyorSensorDetectTime = -1
-    slatState = 0
+    state = 0
+    loadingState = 0
+    compressingState = 0
+    # compressedState = 0
+    decompressingState = 0
+    unloadingState = 0
 
-    def __init__( self ):
-        self.conveyorSensor = Input( yellow, self.conveyorSensorPin )
-        self.counterSensor = Input( yellow, self.counterSensorPin )
-        self.stackerSensor = Input( yellow, self.stackerSensorPin )
-        self.halfTurnMotorSensor = Input( yellow, self.halfTurnMotorSensorPin )
-        self.bigBoyDisabledSensor = Input( yellow, self.bigBoyDisabledSensorPin )
+    timer = 0
+    compressedDuration = 120
+    loosenDuration = .5
+    depresurizzationDuration = 3
+    targetTopPressure = 100
+    targetSidePressure = 100
 
-        self.inputs += [
-            self.conveyorSensor,
-            self.counterSensor,
-            self.stackerSensor,
-            self.halfTurnMotorSensor,
-        ]
+    def __init__( self, bigBoy ):
+        self.bigBoy = bigBoy
+        # IN
+        self.pressTopHomeSensor = Input( bigBoy.yellow, 56, name = 'Prasa, góra - pozycja początkowa' )  # A2
+        self.pressSideHomeSensor = Input( bigBoy.yellow, 57, name = 'Prasa, bok - pozycja początkowa' )  # A3
+        self.pressTopPressureSensor = Input( bigBoy.yellow, 66, name = 'Ciśnienie prasy, góra' )  # A12
+        self.pressSidePressureSensor = Input( bigBoy.yellow, 68, name = 'Ciśnienie prasy, bok' )  # A14
 
-        self.glueDisable = Output( orange, self.glueDisablePin )
-        self.halfTurnMotorEnable = Output( yellow, self.halfTurnMotorEnablePin )
-        self.slatPusherEnable = Output( orange, self.slatPusherPin )
-        self.slatDamperDisable = Output( orange, self.slatDamperPin )
-        self.boardLowererEnable = Output( orange, self.boardLowererPin )
-        self.boardReleaseEnable = Output( orange, self.boardReleasePin )
-        self.bumperEnable = Output( orange, self.bumperPin )
-        self.rearViceEnable = Output( orange, self.rearVicePin )
-        self.sideViceEnable = Output( orange, self.sideVicePin )
+        # OUT
+        self.pressTopMoveUp = Output( bigBoy.yellow, 23 )
+        self.pressTopMoveDown = Output( bigBoy.yellow, 22 )
+        self.pressSideMoveIn = Output( bigBoy.yellow, 24 )
+        self.pressSideMoveOut = Output( bigBoy.yellow, 25 )
+        self.pressPumpEnable = Output( bigBoy.yellow, 53 )
+        self.pressPumpPrecisionEnable = Output( bigBoy.yellow, 52 )
+        self.pressPumpVentEnable = Output( bigBoy.yellow, 51 )
 
-        self.pressEngine = Engine( yellow, pwmPin = 24, runPin = 28, dirPin = 29, dutyCycle = 50 )
+        self.tempTop = TemperatureSensor( 0 )
+        self.tempDown = TemperatureSensor( 1 )
 
-        self.conveyorServo = Servo(
-            # engine = Engine( yellow, pwmPin = 23, runPin = 26, dirPin = 27, dutyCycle = 50 ),
-            engine = Engine( yellow, pwmPin = 23, runPin = 26, dirPin = 27, dutyCycle = 50 ),
-            encoder = Encoder( UNO_SN0 )
+        self.pressConveyorEngine = LimitEngine(
+            Engine( bigBoy.yellow, pwmPin = 24, runPin = 28, dirPin = 29, dutyCycle = 50 ),
+            minLimitSensor = Input( bigBoy.yellow, 55, name = 'Czujnik indukcyjny: prasa - początek' ),  # A1
+            maxLimitSensor = Input( bigBoy.yellow, 54, name = 'Czujnik indukcyjny: prasa - koniec' ),  # A0
         )
 
-        # CALLBACKS
-
-        def conveyorSensorCallback( ):
-            delay = 1.5
-            if self.slatState == 0:
-                if self.conveyorSensorDetectTime == -1:
-                    self.conveyorSensorDetectTime = now( )
-                elif now( ) - self.conveyorSensorDetectTime > delay:
-                    self.slatPusherEnable.set( LOW )
-                    self.next( )
-                    self.slatState = 1
-                    self.conveyorSensorDetectTime = -1
-
-        self.conveyorSensor.do( conveyorSensorCallback, HIGH )
-
-        def counterSensorCallback( ):
-            if self.slatState == 1:
-                self.slatPusherEnable.set( HIGH )
-                self.slatState = 2
-
-        self.counterSensor.do( counterSensorCallback, HIGH )
-
-        def stackerSensorCallback( ):
-            if self.slatState == 2:
-                self.halfTurnMotorEnable.set( LOW )
-                self.slatState = 3
-
-        self.stackerSensor.do( stackerSensorCallback, HIGH )
-
-        def halfTurnMotorSensorCallbackLow( ):
-            if self.slatState == 3:
-                self.slatState = 4
-
-        self.halfTurnMotorSensor.do( halfTurnMotorSensorCallbackLow, LOW )
-
-        def halfTurnMotorSensorCallbackHigh( ):
-            if self.slatState == 4:
-                self.halfTurnMotorEnable.set( HIGH )
-                self.slatState = 0
-
-        self.halfTurnMotorSensor.do( halfTurnMotorSensorCallbackHigh, HIGH )
-        # self.halfTurnMotorSensor.setCallback( halfTurnMotorSensorCallbackHigh, BOTH )
-
-    def next( self ):
-        self.currentSlat += 1
-
-        # if last slat in board
-        if self.currentSlat == self.slatsPerBoard:
-            self.currentBoard += 1
-            "OSTATNIA LAMELKA"
-            self.currentSlat = 0
-            self.glueDisable.set( HIGH )
-
-            "KAŻDY BLAT"
-            # if last board in series
-            if self.currentBoard == self.boardsPerSet:
-                self.currentSet += 1
-                "OSTATNI BLAT"
-                self.currentBoard = 0
-
-                # todo każdy set -> opuścić set na taśmę, ścisnąć, podnieść, odjechać kawałek
-                pneumatics.runCycle( )
-
-                "KAŻDY SET"
-                # if last series in set
-                if self.currentSet == self.setsPerSeries:
-                    "OSTATNI SET"
-                    self.currentSet = 0
-
-                    # todo ostatni set -> wjazd do prasy
-
-                else:
-                    "NIEOSTATNI SET"
-                    pass
-
-            elif self.currentBoard == self.boardsPerSet - 1:
-                "PRZEDOSTATNI BLAT"
-
-
-            else:
-                "NIEOSTATNI BLAT"
-                pass
-
-        elif self.currentSlat == 1:
-            "PIERWSZA LAMELKA"
-
-            self.glueDisable.set( LOW )
-
-        else:
-            "NIEOSTATNIA I NIEPIERWSZA LAMELKA"
-            self.glueDisable.set( HIGH )
-
-        print( 'Current slat: {}'.format( self.currentSlat ) )
-        print( 'Current board: {}'.format( self.currentBoard ) )
-        print( 'Current set: {}'.format( self.currentSet ) )
-
-    def setParams( self, length, width, height, slatsPerBoard ):
-        self.slatLength = length
-        self.slatWidth = width
-        self.slatHeight = height
-        self.slatsPerBoard = slatsPerBoard
-
-        self.boardLength = length
-        self.boardWidth = width * slatsPerBoard
-        self.boardHeight = height
-
-    def calculateParams( self ):
-        if not self.slatLength or not self.slatWidth or not self.slatHeight or not self.slatsPerBoard:
-            return
-
-        self.boardsPerSet = math.floor( PRESS_WIDTH / (self.slatWidth * self.slatsPerBoard) )
-        self.setsPerSeries = math.floor( PRESS_LENGTH / (self.slatLength + STACKER_GAP) )
-        self.slatsPerSet = self.slatsPerSet * self.boardsPerSet * self.slatsPerBoard
-
-    def runBoard( self ):
-        """
-            A cycle will glue and stack the slats to create one board.
-            The number of iterations is the slatsPerBoard value.
-            The first slat will be pushed without glue.
-            """
-        self.currentSlat = 0
-        for i in range( self.slatsPerBoard ):
-            self.currentBoard = i
-
-            if i == 0:
-                self.glueDisable.set( LOW )  # disable glue
-            else:
-                self.glueDisable.set( HIGH )  # enable glue
-
-            while not self.conveyorSensor.getState( ) == HIGH:  # wait for slat
-                pass
-
-            self.slatPusherEnable.set( LOW )  # push slat via glue
-
-            while not self.counterSensor.getState( ) == HIGH:  # wait for slat to pass
-                pass
-
-            self.slatPusherEnable.set( HIGH )
-
-            while not self.stackerSensor.getState( ) == HIGH:  # wait for slat
-                pass
-
-            self.halfTurnMotorEnable.set( LOW )  # push slat over belt
-            time.sleep( .5 )  # simulate passing time
-
-            while not self.halfTurnMotorSensor.getState( ) == HIGH:  # wait for half a turn
-                pass
-
-            self.halfTurnMotorEnable.set( HIGH )  # stop pushing
-
-            self.currentSlat += 1
-            self.currentSlatInSet += 1
-
-    def runSet( self ):
-        self.currentBoard = 0
-        for i in range( self.boardsPerSet ):
-            self.runBoard( )
-            self.currentBoard += 1
-
-    def runSeries( self ):
-        self.currentSlatInSet = 0
-        for i in range( self.setsPerSeries ):
-            self.runSet( )
-            pneumatics.runCycle( )
-            self.conveyorEngine.start( )
-            time.sleep( 3 )
-            self.conveyorEngine.stop( )
+        self.inputs += [
+            self.pressTopHomeSensor,
+            self.pressSideHomeSensor,
+            self.pressTopPressureSensor,
+            self.pressSidePressureSensor,
+            self.pressConveyorEngine.minLimitSensor,
+            self.pressConveyorEngine.maxLimitSensor,
+        ]
 
     def update( self ):
-        self.conveyorServo.update( )
-        for input in self.inputs:
-            input.update( )
+        self.pressTopHomeSensor.update( )
+        self.pressSideHomeSensor.update( )
+        self.pressTopPressureSensor.update( )
+        self.pressSidePressureSensor.update( )
+        self.tempTop.update( )
+        self.tempDown.update( )
+        self.pressConveyorEngine.update( )
 
-    def run( self ):
-        while self.running:
-            if self.automatic:
-                self.update( )
+        if self.state == Press.IDLE:
+            pass
+
+        elif self.state == Press.LOADING:
+            self.handleLoading( )
+
+        elif self.state == Press.COMPRESSING:
+            self.handleCompressing( )
+
+        elif self.state == Press.COMPRESSED:
+            self.handleCompressed( )
+
+        elif self.state == Press.DECOMPRESSING:
+            self.handleDecompressing( )
+
+        elif self.state == Press.UNLOADING:
+            self.handleUnloading( )
+
+    def handleLoading( self ):
+        if self.bigBoy.vice.readyToUnload and self.bigBoy.vice.unloadingState == 2:
+            if self.pressConveyorEngine.minLimitSensor.lastState == HIGH:
+                if self.pressTopHomeSensor.lastState == HIGH and self.pressSideHomeSensor.lastState == HIGH:
+                    self.bigBoy.vice.unloadingState = 3
+                    self.pressConveyorEngine.run(
+                        LimitEngine.FORWARD,
+                        self.pressConveyorEngine.maxLimitSensor
+                    )
+                    self.loadingState = 1
+                else:
+                    pass  # todo błąd: zaciski prasy nie są w pozycji początkowej
+
+        elif self.loadingState == 1:
+            if self.pressConveyorEngine.state == LimitEngine.IDLE:
+                self.bigBoy.vice.unloadingState = 4
+                self.loadingState = 0
+                self.state = Press.COMPRESSING
+                self.timer = now( )
+
+    def handleCompressing( self ):
+        if self.compressingState == 0:
+            if self.pressTopHomeSensor.lastState == HIGH:
+                if self.pressTopPressureSensor.lastState > self.targetTopPressure:
+                    pass  # todo błąd: za wysokie ciśnienie na blacie
+                self.pressPumpEnable.set( LOW )
+                self.pressTopMoveDown.set( LOW )
+                self.compressingState = 1
+
+        elif self.compressingState == 1:
+            if self.pressTopPressureSensor.lastState > self.targetTopPressure / 2:
+                self.pressTopMoveDown.set( HIGH )
+                self.pressTopMoveUp.set( LOW )
+                self.timer = now( )
+                self.compressingState = 2
+
+        elif self.compressingState == 2:
+            if now( ) - self.timer >= self.loosenDuration:
+                if self.pressSidePressureSensor.lastState > self.targetSidePressure:
+                    pass  # todo błąd: za wysokie ciśnienie na bocznym ścisku
+                self.pressTopMoveUp.set( HIGH )
+                self.pressSideMoveIn.set( LOW )
+                self.compressingState = 3
+
+        elif self.compressingState == 3:
+            if self.pressSidePressureSensor.lastState > self.targetSidePressure / 2:
+                self.pressPumpPrecisionEnable.set( LOW )
+                self.compressingState = 4
+
+        elif self.compressingState == 4:
+            if self.pressSidePressureSensor.lastState > self.targetSidePressure:
+                self.pressSideMoveIn.set( HIGH )
+                self.pressTopMoveDown.set( LOW )
+                self.compressingState = 5
+
+        elif self.compressingState == 5:
+            if self.pressTopPressureSensor.lastState > self.targetTopPressure:
+                self.pressTopMoveDown.set( HIGH )
+                self.pressPumpEnable.set( HIGH )
+                self.compressingState = 0
+                self.state = Press.COMPRESSED
+                self.timer = now( )
+
+    def handleCompressed( self ):
+        if now( ) - self.timer > self.compressedDuration:
+            self.pressTopMoveDown.set( HIGH )
+            self.pressSideMoveIn.set( HIGH )
+            self.pressPumpEnable.set( HIGH )
+            self.pressPumpPrecisionEnable.set( HIGH )
+            self.timer = now( )
+            self.state = Press.DECOMPRESSING
+            return
+
+        if self.pressTopPressureSensor.lastState == LOW:
+            self.pressPumpEnable.set( LOW )
+            self.pressTopMoveDown.set( LOW )
+        elif self.pressTopPressureSensor.lastState == HIGH:
+            self.pressPumpEnable.set( HIGH )
+            self.pressTopMoveDown.set( HIGH )
+
+        if self.pressSidePressureSensor.lastState == LOW:
+            self.pressPumpEnable.set( LOW )
+            self.pressSideMoveIn.set( LOW )
+        elif self.pressSidePressureSensor.lastState == HIGH:
+            self.pressPumpEnable.set( HIGH )
+            self.pressSideMoveIn.set( HIGH )
+
+    def handleDecompressing( self ):
+        if self.decompressingState == 0:
+            self.pressPumpVentEnable.set( LOW )
+            self.timer = now( )
+            self.decompressingState = 1
+
+        elif self.decompressingState == 1:
+            if now( ) - self.timer > self.depresurizzationDuration:
+                self.pressPumpVentEnable.set( HIGH )
+                self.pressPumpPrecisionEnable.set( HIGH )
+                self.pressPumpEnable.set( LOW )
+                if self.pressSideHomeSensor.lastState == LOW:
+                    self.pressSideMoveOut.set( LOW )
+                    self.decompressingState = 2
+                else:
+                    pass  # todo błąd: możliwa awaria bocznego ścisku
+
+        elif self.decompressingState == 2:
+            if self.pressSideHomeSensor.lastState == HIGH:
+                self.pressSideMoveOut.set( HIGH )
+                if self.pressTopHomeSensor.lastState == LOW:
+                    self.pressTopMoveUp.set( LOW )
+                    self.decompressingState = 3
+                else:
+                    pass  # todo błąd: możliwa awaria górnego ścisku
+
+        elif self.decompressingState == 3:
+            if self.pressTopHomeSensor.lastState == HIGH:
+                self.pressTopMoveUp.set( HIGH )
+                self.pressPumpEnable.set( HIGH )
+                self.decompressingState = 0
+                self.state = Press.UNLOADING
+
+    def handleUnloading( self ):
+        if self.unloadingState == 0:
+            if self.pressConveyorEngine.state == LimitEngine.IDLE:
+                self.pressConveyorEngine.run(
+                    LimitEngine.FORWARD,
+                    self.pressConveyorEngine.minLimitSensor
+                )
+                self.unloadingState = 1
             else:
-                pass  # todo manual mode
-            # time.sleep( 1 / self.updateRate )
+                pass  # todo błąd: błąd taśmy prasy
+
+        elif self.unloadingState == 1:
+            if self.pressConveyorEngine.state == LimitEngine.IDLE:
+                self.pressConveyorEngine.stop( )  # just in case :V
+                self.unloadingState = 0
+                self.state = Press.IDLE
 
 
-class Pneumatics:
-    breakerUpDown = 53
-
-    # breaker
-
-    def runCycle( self ):
-        orange.write( 51, LOW )
-        time.sleep( 2.5 )
-
-        orange.write( 47, LOW )
-        time.sleep( 3 )
-
-        orange.write( 50, LOW )
-        time.sleep( 2 )
-
-        orange.write( 50, HIGH )
-        time.sleep( 2 )
-
-        orange.write( 47, HIGH )
-        time.sleep( 3 )
-
-        orange.write( 51, HIGH )
-        time.sleep( 2.5 )
-
-        orange.write( 53, LOW )
-        time.sleep( 2 )
-
-        orange.write( 46, LOW )
-        time.sleep( 3 )
-
-        orange.write( 52, LOW )
-        time.sleep( 10 )
-
-        orange.write( 52, HIGH )
-        time.sleep( 5 )
-
-        orange.write( 46, HIGH )
-        time.sleep( 3 )
-
-        orange.write( 53, HIGH )
-        time.sleep( 2 )
-
-
-class LengthSled:
-    # encoder = Encoder( UNO_SN1 )
-
-    def __init__( self, arduinoIO, forwardPin, backwardPin, maxLimitPin, minLimitPin ):
-        self.arduinoIO = arduinoIO
-        self.forwardPin = forwardPin
-        self.backwardPin = backwardPin
-        self.maxLimitPin = maxLimitPin
-        self.minLimitPin = minLimitPin
-
-        arduinoIO.write( forwardPin, HIGH )
-        arduinoIO.write( backwardPin, HIGH )
-        arduinoIO.setMode( forwardPin, OUTPUT )
-        arduinoIO.setMode( backwardPin, OUTPUT )
-        arduinoIO.setMode( maxLimitPin, INPUT )
-        arduinoIO.setMode( minLimitPin, INPUT )
-
-    def reset( self ):
-        if self.arduinoIO.read( self.minLimitPin ) == HIGH:  # if sled at minimum position
-            return
-        else:
-            self.arduinoIO.write( self.backwardPin, LOW )  # start engine
-            while True:
-                if self.arduinoIO.read( self.minLimitPin ) == HIGH:
-                    self.arduinoIO.write( self.backwardPin, HIGH )  # stop engine
-                    return
-
-    def stretch( self ):
-        if self.arduinoIO.read( self.maxLimitPin ) == HIGH:  # if sled at minimum position
-            return
-        else:
-            self.arduinoIO.write( self.forwardPin, LOW )  # start engine
-            while True:
-                if self.arduinoIO.read( self.maxLimitPin ) == HIGH:
-                    self.arduinoIO.write( self.forwardPin, HIGH )  # stop engine
-                    return
-
-    def stop( self ):
-        self.arduinoIO.write( self.forwardPin, HIGH )
-        self.arduinoIO.write( self.backwardPin, HIGH )
-
-    def halt( self ):
-        self.stop( )
-
-    def set( self, distance ):
-        if distance < 43:
-            return
-
-        self.reset( )
-        zeroPosition = self.encoder.getCounter( )
-        self.arduinoIO.write( self.forwardPin, LOW )
-        while True:
-            if distance >= self.encoder.getCounter( ) + zeroPosition \
-                    or self.arduinoIO.read( self.maxLimitPin ) == HIGH:
-                self.stop( )
-                return
-
-
-if __name__ == "__main__":
-    yellow = ArduinoIO( MEGA_SN0 )
-    orange = ArduinoIO( MEGA_SN1 )
-
-    lengthSled = LengthSled( yellow, 47, 46, 2, 4 )
-    pneumatics = Pneumatics( )
-    press = Press( )
-    press.setParams( 1200, 300, 30, 3 )
-    press.calculateParams( )
-    servo = press.conveyorServo
-    servo.encoder.verbose = True
-    servo.engine.setSpeed( 50 )
-    print( 'Press running...' )
-
-
-    def mf( ):
-        time.sleep( 3 )
-        servo.move( 1000 )
-        servo.then( mb )
-
-
-    def mb( ):
-        time.sleep( 3 )
-        servo.move( -1000 )
-        servo.then( mf )
-
-
-    mf( )
-
-    press.run( )
+if __name__ == '__main__':
+    pass

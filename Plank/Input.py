@@ -13,31 +13,37 @@ class Input:
     callbackHigh = __blank
 
     verbose = False
+    analog = False
 
-    def __init__( self, arduinoIO: ArduinoIO, pin ):
+    def __init__( self, arduinoIO: ArduinoIO, pin, analog = False, name = '' ):
         self.arduinoIO = arduinoIO
         self.pin = pin
+        self.analog = analog
+        self.name = name
         arduinoIO.setMode( pin, INPUT )
-        self.lastState = arduinoIO.read( pin )
+        self.lastState = arduinoIO.read( pin ) if not analog else arduinoIO.analogRead( pin )
 
-    def update( self ):
-        state = self.arduinoIO.read( self.pin )
+    def update( self, active = False ):
+        state = self.arduinoIO.read( self.pin ) if not self.analog else self.arduinoIO.analogRead( self.pin )
 
         if self.verbose:
-            print( state )
+            if self.name != '':
+                print( '{}: {}'.format( self.name, state ) )
+            else:
+                print( '_: {}'.format( state ) )
 
         if state != self.lastState:
 
             self.lastState = state
 
-            if state == FALLING:
+            if state == FALLING and active:
                 self.callbackFalling( )
-            if state == RISING:
+            if state == RISING and active:
                 self.callbackRising( )
 
-        if state == LOW:
+        if state == LOW and active:
             self.callbackLow()
-        if state == HIGH:
+        if state == HIGH and active:
             self.callbackHigh()
 
     def getState( self ):

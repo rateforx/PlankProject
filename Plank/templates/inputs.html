@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% block content %}
+    <script>
+        $( '#inputs-link' ).addClass( 'active' );
+    </script>
+    <div class="container" id="inputs" >
+        <h3 class="header">Wejścia</h3>
+        <ul class="collection">
+            {% for input in data.inputs %}
+                <li class="collection-item">
+                    <div>
+                        <span class="input-name">{{ input.name }}</span>
+                        <span
+                                class="input-state secondary-content new badge {{ 'green' if input.lastState else 'red' }}"
+                                data-badge-caption="{{ 'HIGH' if input.lastState else 'LOW' }}"
+                        ></span>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <script type="text/javascript" src="{{ url_for( 'static', filename = 'scripts/updater.js' ) }}"></script>
+    <script>
+        $( () => {
+            getInputsData();
+        } )
+    </script>
+{% endblock %}

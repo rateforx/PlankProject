@@ -39,10 +39,15 @@ class ArduinoIO:
         #     pass
         return int( self.serial.readline( ).decode( ).strip( "\r\n" ) )
 
+    def analogRead( self, pin ):
+        self.serial.write( 'a({})'.format( pin ).encode( ) )
+        return int( self.serial.readline( ).decode( ).strip( "\r\n" ) )
+
     def _blink( self, pin, value, duration = 1 ):
         self.write( pin, value )
         time.sleep( duration )
         self.write( pin, int( not value ) )
+
 
 if __name__ == '__main__':
     arduinoIO = ArduinoIO( ArduinoSerialPortFinder.ARDUINO_MEGA_SERIAL_NUMBER )

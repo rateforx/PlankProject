@@ -1,0 +1,79 @@
+{% extends "layout.html" %}
+{% block content %}
+    <style>
+        body {
+            background-color: black;
+        }
+
+        .game {
+            display: inline-block;
+        }
+
+        .arrows {
+            display: inline-grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            grid-template-areas: ". up ." "left down right";
+            position: fixed;
+            bottom: 40px;
+            right: 70px;
+            width: 240px;
+            height: 160px;
+        }
+
+        .arrows button {
+            background-color: #c2ffae;
+            width: 100%;
+            height: 100%;
+        }
+
+        .up { grid-area: up; }
+        .left { grid-area: left; }
+        .down { grid-area: down; }
+        .right { grid-area: right; }
+    </style>
+    <div class="container">
+        <div class="game" style="width: 400px; height: 534px;"></div>
+        <link rel="stylesheet" href="{{ url_for( 'static', filename = 'styles/blockrain.css' ) }}">
+        <script src="{{ url_for( 'static', filename = 'scripts/blockrain.jquery.js' ) }}"></script>
+        <script>
+            let $game;
+            $( () => {
+                $game = $('.game');
+                $game.blockrain( {
+                    theme: 'vim',
+                    speed: 10,
+                    playText: 'Fajrancik?',
+                    playButtonText: 'Start',
+                    gameOverText: 'Koniec gry',
+                    restartButtonText: 'Restart',
+                    scoreText: 'Lamelki',
+                } );
+            } );
+            function triggerKeypress( target, keyCode ) {
+                let keydown = $.Event( 'keydown' );
+                keydown.which = keyCode;
+                keydown.keyCode = keyCode;
+                $( target ).trigger( keydown );
+                let keyup = $.Event( 'keyup' );
+                keyup.which = keyCode;
+                keyup.keyCode = keyCode;
+                $( target ).trigger( keyup );
+            }
+        </script>
+        <div class="arrows">
+            <div class="up"><button class="btn-large red waves-effect waves-light" onclick="triggerKeypress( $game, 38 )">
+                <i class="material-icons">keyboard_arrow_up</i>
+            </button></div>
+            <div class="down"><button class="btn-large green waves-effect waves-light" onclick="triggerKeypress( $game, 40 )">
+                <i class="material-icons">keyboard_arrow_down</i>
+            </button></div>
+            <div class="left"><button class="btn-large blue waves-effect waves-light" onclick="triggerKeypress( $game, 37 )">
+                <i class="material-icons">keyboard_arrow_left</i>
+            </button></div>
+            <div class="right"><button class="btn-large yellow waves-effect waves-light" onclick="triggerKeypress( $game, 39 )">
+                <i class="material-icons">keyboard_arrow_right</i>
+            </button></div>
+        </div>
+    </div>
+{% endblock %}

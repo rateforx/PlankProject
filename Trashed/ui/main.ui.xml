@@ -1,0 +1,924 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+    <class>Dialog</class>
+    <widget class="QDialog" name="Dialog">
+        <property name="windowModality">
+            <enum>Qt::NonModal</enum>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>1024</width>
+                <height>600</height>
+            </rect>
+        </property>
+        <property name="minimumSize">
+            <size>
+                <width>1024</width>
+                <height>600</height>
+            </size>
+        </property>
+        <property name="maximumSize">
+            <size>
+                <width>1280</width>
+                <height>600</height>
+            </size>
+        </property>
+        <property name="font">
+            <font>
+                <pointsize>16</pointsize>
+            </font>
+        </property>
+        <property name="windowTitle">
+            <string>BigBoy</string>
+        </property>
+        <property name="modal">
+            <bool>false</bool>
+        </property>
+        <widget class="QTabWidget" name="tabWidget">
+            <property name="enabled">
+                <bool>true</bool>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>0</y>
+                    <width>1011</width>
+                    <height>591</height>
+                </rect>
+            </property>
+            <property name="font">
+                <font>
+                    <pointsize>16</pointsize>
+                </font>
+            </property>
+            <property name="styleSheet">
+                <string/>
+            </property>
+            <property name="tabShape">
+                <enum>QTabWidget::Triangular</enum>
+            </property>
+            <property name="currentIndex">
+                <number>1</number>
+            </property>
+            <property name="iconSize">
+                <size>
+                    <width>24</width>
+                    <height>24</height>
+                </size>
+            </property>
+            <property name="documentMode">
+                <bool>false</bool>
+            </property>
+            <widget class="QWidget" name="tab_3">
+                <attribute name="title">
+                    <string>Stan</string>
+                </attribute>
+            </widget>
+            <widget class="QWidget" name="tab">
+                <attribute name="title">
+                    <string>Wejścia</string>
+                </attribute>
+                <widget class="QGroupBox" name="groupBox_4">
+                    <property name="enabled">
+                        <bool>true</bool>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>9</x>
+                            <y>9</y>
+                            <width>361</width>
+                            <height>541</height>
+                        </rect>
+                    </property>
+                    <property name="styleSheet">
+                        <string/>
+                    </property>
+                    <property name="title">
+                        <string>Czujniki</string>
+                    </property>
+                    <widget class="QWidget" name="verticalLayoutWidget">
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                        <property name="geometry">
+                            <rect>
+                                <x>9</x>
+                                <y>29</y>
+                                <width>341</width>
+                                <height>501</height>
+                            </rect>
+                        </property>
+                        <layout class="QVBoxLayout" name="verticalLayout">
+                            <item>
+                                <widget class="QCheckBox" name="conveyorSensor">
+                                    <property name="enabled">
+                                        <bool>false</bool>
+                                    </property>
+                                    <property name="layoutDirection">
+                                        <enum>Qt::LeftToRight</enum>
+                                    </property>
+                                    <property name="text">
+                                        <string>Czujnik wjazdowy</string>
+                                    </property>
+                                    <property name="checkable">
+                                        <bool>false</bool>
+                                    </property>
+                                </widget>
+                            </item>
+                            <item>
+                                <widget class="QCheckBox" name="counterSensor">
+                                    <property name="enabled">
+                                        <bool>false</bool>
+                                    </property>
+                                    <property name="text">
+                                        <string>Czujnik liczący</string>
+                                    </property>
+                                </widget>
+                            </item>
+                            <item>
+                                <widget class="QCheckBox" name="stackerSensor">
+                                    <property name="enabled">
+                                        <bool>false</bool>
+                                    </property>
+                                    <property name="text">
+                                        <string>Czujnik układarki</string>
+                                    </property>
+                                </widget>
+                            </item>
+                            <item>
+                                <widget class="QCheckBox" name="halfTurnMotorSensor">
+                                    <property name="enabled">
+                                        <bool>false</bool>
+                                    </property>
+                                    <property name="text">
+                                        <string>Czujnik półobrotu</string>
+                                    </property>
+                                </widget>
+                            </item>
+                            <item>
+                                <widget class="QCheckBox" name="checkBox_9">
+                                    <property name="enabled">
+                                        <bool>false</bool>
+                                    </property>
+                                    <property name="text">
+                                        <string>Krańcówka rozjazdu min</string>
+                                    </property>
+                                </widget>
+                            </item>
+                            <item>
+                                <widget class="QCheckBox" name="checkBox_12">
+                                    <property name="enabled">
+                                        <bool>false</bool>
+                                    </property>
+                                    <property name="text">
+                                        <string>Krańcówka rozjazdu max</string>
+                                    </property>
+                                </widget>
+                            </item>
+                            <item>
+                                <widget class="QCheckBox" name="pressConveyorStartSensor">
+                                    <property name="enabled">
+                                        <bool>false</bool>
+                                    </property>
+                                    <property name="text">
+                                        <string>Prasa taśma start</string>
+                                    </property>
+                                </widget>
+                            </item>
+                            <item>
+                                <widget class="QCheckBox" name="pressConveyorStopSensor">
+                                    <property name="enabled">
+                                        <bool>false</bool>
+                                    </property>
+                                    <property name="text">
+                                        <string>Prasa taśma stop</string>
+                                    </property>
+                                </widget>
+                            </item>
+                            <item>
+                                <widget class="QCheckBox" name="pressTopHomeSensor">
+                                    <property name="enabled">
+                                        <bool>false</bool>
+                                    </property>
+                                    <property name="text">
+                                        <string>Prasa ścisk górny początek</string>
+                                    </property>
+                                </widget>
+                            </item>
+                            <item>
+                                <widget class="QCheckBox" name="pressSideHomeSensor">
+                                    <property name="enabled">
+                                        <bool>false</bool>
+                                    </property>
+                                    <property name="text">
+                                        <string>Prasa ścisk boczny początek</string>
+                                    </property>
+                                </widget>
+                            </item>
+                            <item>
+                                <widget class="QCheckBox" name="checkBox_4">
+                                    <property name="enabled">
+                                        <bool>false</bool>
+                                    </property>
+                                    <property name="text">
+                                        <string>Taśma oscylacja lewo</string>
+                                    </property>
+                                </widget>
+                            </item>
+                            <item>
+                                <widget class="QCheckBox" name="checkBox_6">
+                                    <property name="enabled">
+                                        <bool>false</bool>
+                                    </property>
+                                    <property name="text">
+                                        <string>Taśma oscylacja prawo</string>
+                                    </property>
+                                </widget>
+                            </item>
+                        </layout>
+                    </widget>
+                </widget>
+                <widget class="QGroupBox" name="groupBox_5">
+                    <property name="geometry">
+                        <rect>
+                            <x>379</x>
+                            <y>19</y>
+                            <width>281</width>
+                            <height>251</height>
+                        </rect>
+                    </property>
+                    <property name="styleSheet">
+                        <string/>
+                    </property>
+                    <property name="title">
+                        <string>Temperatura prasy</string>
+                    </property>
+                    <widget class="QWidget" name="formLayoutWidget_4">
+                        <property name="enabled">
+                            <bool>true</bool>
+                        </property>
+                        <property name="geometry">
+                            <rect>
+                                <x>9</x>
+                                <y>29</y>
+                                <width>261</width>
+                                <height>211</height>
+                            </rect>
+                        </property>
+                        <property name="styleSheet">
+                            <string/>
+                        </property>
+                        <layout class="QFormLayout" name="formLayout_4">
+                            <item row="0" column="0">
+                                <widget class="QLabel" name="label_8">
+                                    <property name="enabled">
+                                        <bool>true</bool>
+                                    </property>
+                                    <property name="minimumSize">
+                                        <size>
+                                            <width>0</width>
+                                            <height>100</height>
+                                        </size>
+                                    </property>
+                                    <property name="styleSheet">
+                                        <string/>
+                                    </property>
+                                    <property name="text">
+                                        <string>Góra</string>
+                                    </property>
+                                </widget>
+                            </item>
+                            <item row="1" column="0">
+                                <widget class="QLabel" name="label_9">
+                                    <property name="enabled">
+                                        <bool>true</bool>
+                                    </property>
+                                    <property name="minimumSize">
+                                        <size>
+                                            <width>0</width>
+                                            <height>100</height>
+                                        </size>
+                                    </property>
+                                    <property name="styleSheet">
+                                        <string/>
+                                    </property>
+                                    <property name="text">
+                                        <string>Dół</string>
+                                    </property>
+                                </widget>
+                            </item>
+                            <item row="0" column="1">
+                                <widget class="QLCDNumber" name="temp0">
+                                    <property name="enabled">
+                                        <bool>true</bool>
+                                    </property>
+                                    <property name="minimumSize">
+                                        <size>
+                                            <width>0</width>
+                                            <height>100</height>
+                                        </size>
+                                    </property>
+                                    <property name="styleSheet">
+                                        <string/>
+                                    </property>
+                                    <property name="smallDecimalPoint">
+                                        <bool>false</bool>
+                                    </property>
+                                    <property name="segmentStyle">
+                                        <enum>QLCDNumber::Flat</enum>
+                                    </property>
+                                </widget>
+                            </item>
+                            <item row="1" column="1">
+                                <widget class="QLCDNumber" name="temp1">
+                                    <property name="enabled">
+                                        <bool>true</bool>
+                                    </property>
+                                    <property name="minimumSize">
+                                        <size>
+                                            <width>0</width>
+                                            <height>100</height>
+                                        </size>
+                                    </property>
+                                    <property name="styleSheet">
+                                        <string/>
+                                    </property>
+                                    <property name="smallDecimalPoint">
+                                        <bool>false</bool>
+                                    </property>
+                                    <property name="segmentStyle">
+                                        <enum>QLCDNumber::Flat</enum>
+                                    </property>
+                                    <property name="value" stdset="0">
+                                        <double>0.000000000000000</double>
+                                    </property>
+                                    <property name="intValue" stdset="0">
+                                        <number>0</number>
+                                    </property>
+                                </widget>
+                            </item>
+                        </layout>
+                    </widget>
+                </widget>
+            </widget>
+            <widget class="QWidget" name="tab_2">
+                <attribute name="title">
+                    <string>Parametry produkcji</string>
+                </attribute>
+                <widget class="QGroupBox" name="groupBox">
+                    <property name="geometry">
+                        <rect>
+                            <x>10</x>
+                            <y>0</y>
+                            <width>373</width>
+                            <height>395</height>
+                        </rect>
+                    </property>
+                    <property name="title">
+                        <string>Wymiary lamelki</string>
+                    </property>
+                    <layout class="QGridLayout" name="gridLayout_2">
+                        <item row="0" column="0">
+                            <layout class="QFormLayout" name="formLayout">
+                                <property name="fieldGrowthPolicy">
+                                    <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+                                </property>
+                                <property name="labelAlignment">
+                                    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                                </property>
+                                <property name="horizontalSpacing">
+                                    <number>24</number>
+                                </property>
+                                <property name="verticalSpacing">
+                                    <number>24</number>
+                                </property>
+                                <item row="0" column="0">
+                                    <widget class="QLabel" name="label">
+                                        <property name="minimumSize">
+                                            <size>
+                                                <width>0</width>
+                                                <height>100</height>
+                                            </size>
+                                        </property>
+                                        <property name="text">
+                                            <string>Długość</string>
+                                        </property>
+                                    </widget>
+                                </item>
+                                <item row="0" column="1">
+                                    <widget class="QSpinBox" name="slatLengthSpinBox">
+                                        <property name="sizePolicy">
+                                            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                                                <horstretch>0</horstretch>
+                                                <verstretch>0</verstretch>
+                                            </sizepolicy>
+                                        </property>
+                                        <property name="minimumSize">
+                                            <size>
+                                                <width>0</width>
+                                                <height>100</height>
+                                            </size>
+                                        </property>
+                                        <property name="font">
+                                            <font>
+                                                <pointsize>36</pointsize>
+                                            </font>
+                                        </property>
+                                        <property name="inputMethodHints">
+                                            <set>Qt::ImhDigitsOnly</set>
+                                        </property>
+                                        <property name="buttonSymbols">
+                                            <enum>QAbstractSpinBox::PlusMinus</enum>
+                                        </property>
+                                        <property name="accelerated">
+                                            <bool>true</bool>
+                                        </property>
+                                        <property name="suffix">
+                                            <string>mm</string>
+                                        </property>
+                                        <property name="minimum">
+                                            <number>370</number>
+                                        </property>
+                                        <property name="maximum">
+                                            <number>2000</number>
+                                        </property>
+                                        <property name="value">
+                                            <number>2000</number>
+                                        </property>
+                                    </widget>
+                                </item>
+                                <item row="1" column="0">
+                                    <widget class="QLabel" name="label_2">
+                                        <property name="minimumSize">
+                                            <size>
+                                                <width>0</width>
+                                                <height>100</height>
+                                            </size>
+                                        </property>
+                                        <property name="text">
+                                            <string>Szerokość</string>
+                                        </property>
+                                    </widget>
+                                </item>
+                                <item row="1" column="1">
+                                    <widget class="QSpinBox" name="slatWidthSpinBox">
+                                        <property name="sizePolicy">
+                                            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                                                <horstretch>0</horstretch>
+                                                <verstretch>0</verstretch>
+                                            </sizepolicy>
+                                        </property>
+                                        <property name="minimumSize">
+                                            <size>
+                                                <width>0</width>
+                                                <height>100</height>
+                                            </size>
+                                        </property>
+                                        <property name="font">
+                                            <font>
+                                                <pointsize>36</pointsize>
+                                            </font>
+                                        </property>
+                                        <property name="buttonSymbols">
+                                            <enum>QAbstractSpinBox::PlusMinus</enum>
+                                        </property>
+                                        <property name="accelerated">
+                                            <bool>true</bool>
+                                        </property>
+                                        <property name="suffix">
+                                            <string>mm</string>
+                                        </property>
+                                        <property name="minimum">
+                                            <number>10</number>
+                                        </property>
+                                        <property name="maximum">
+                                            <number>120</number>
+                                        </property>
+                                    </widget>
+                                </item>
+                                <item row="2" column="0">
+                                    <widget class="QLabel" name="label_3">
+                                        <property name="minimumSize">
+                                            <size>
+                                                <width>0</width>
+                                                <height>100</height>
+                                            </size>
+                                        </property>
+                                        <property name="text">
+                                            <string>Wysokość</string>
+                                        </property>
+                                    </widget>
+                                </item>
+                                <item row="2" column="1">
+                                    <widget class="QSpinBox" name="slatHeightSpinBox">
+                                        <property name="sizePolicy">
+                                            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                                                <horstretch>0</horstretch>
+                                                <verstretch>0</verstretch>
+                                            </sizepolicy>
+                                        </property>
+                                        <property name="minimumSize">
+                                            <size>
+                                                <width>0</width>
+                                                <height>100</height>
+                                            </size>
+                                        </property>
+                                        <property name="font">
+                                            <font>
+                                                <pointsize>36</pointsize>
+                                            </font>
+                                        </property>
+                                        <property name="readOnly">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="buttonSymbols">
+                                            <enum>QAbstractSpinBox::PlusMinus</enum>
+                                        </property>
+                                        <property name="accelerated">
+                                            <bool>true</bool>
+                                        </property>
+                                        <property name="showGroupSeparator" stdset="0">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="suffix">
+                                            <string>mm</string>
+                                        </property>
+                                        <property name="minimum">
+                                            <number>10</number>
+                                        </property>
+                                        <property name="maximum">
+                                            <number>80</number>
+                                        </property>
+                                    </widget>
+                                </item>
+                            </layout>
+                        </item>
+                    </layout>
+                </widget>
+                <widget class="QGroupBox" name="groupBox_2">
+                    <property name="geometry">
+                        <rect>
+                            <x>429</x>
+                            <y>-1</y>
+                            <width>280</width>
+                            <height>395</height>
+                        </rect>
+                    </property>
+                    <property name="title">
+                        <string>Zliczanie</string>
+                    </property>
+                    <property name="flat">
+                        <bool>false</bool>
+                    </property>
+                    <property name="checkable">
+                        <bool>false</bool>
+                    </property>
+                    <layout class="QGridLayout" name="gridLayout_3">
+                        <item row="0" column="0">
+                            <layout class="QFormLayout" name="formLayout_2">
+                                <property name="horizontalSpacing">
+                                    <number>24</number>
+                                </property>
+                                <property name="verticalSpacing">
+                                    <number>24</number>
+                                </property>
+                                <item row="0" column="0">
+                                    <widget class="QLabel" name="label_4">
+                                        <property name="minimumSize">
+                                            <size>
+                                                <width>0</width>
+                                                <height>100</height>
+                                            </size>
+                                        </property>
+                                        <property name="text">
+                                            <string>Lamelki / Płyta</string>
+                                        </property>
+                                    </widget>
+                                </item>
+                                <item row="0" column="1">
+                                    <widget class="QSpinBox" name="slatsPerBoardSpinBox">
+                                        <property name="sizePolicy">
+                                            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                                                <horstretch>0</horstretch>
+                                                <verstretch>0</verstretch>
+                                            </sizepolicy>
+                                        </property>
+                                        <property name="minimumSize">
+                                            <size>
+                                                <width>0</width>
+                                                <height>100</height>
+                                            </size>
+                                        </property>
+                                        <property name="font">
+                                            <font>
+                                                <pointsize>36</pointsize>
+                                            </font>
+                                        </property>
+                                        <property name="inputMethodHints">
+                                            <set>Qt::ImhDigitsOnly</set>
+                                        </property>
+                                        <property name="wrapping">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="frame">
+                                            <bool>true</bool>
+                                        </property>
+                                        <property name="buttonSymbols">
+                                            <enum>QAbstractSpinBox::PlusMinus</enum>
+                                        </property>
+                                        <property name="accelerated">
+                                            <bool>true</bool>
+                                        </property>
+                                        <property name="showGroupSeparator" stdset="0">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="suffix">
+                                            <string/>
+                                        </property>
+                                        <property name="prefix">
+                                            <string/>
+                                        </property>
+                                        <property name="minimum">
+                                            <number>1</number>
+                                        </property>
+                                        <property name="value">
+                                            <number>3</number>
+                                        </property>
+                                    </widget>
+                                </item>
+                                <item row="1" column="0">
+                                    <widget class="QLabel" name="label_5">
+                                        <property name="minimumSize">
+                                            <size>
+                                                <width>0</width>
+                                                <height>100</height>
+                                            </size>
+                                        </property>
+                                        <property name="text">
+                                            <string>Płyty / Szereg</string>
+                                        </property>
+                                    </widget>
+                                </item>
+                                <item row="1" column="1">
+                                    <widget class="QSpinBox" name="slatLengthSpinBox_3">
+                                        <property name="sizePolicy">
+                                            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                                                <horstretch>0</horstretch>
+                                                <verstretch>0</verstretch>
+                                            </sizepolicy>
+                                        </property>
+                                        <property name="minimumSize">
+                                            <size>
+                                                <width>0</width>
+                                                <height>100</height>
+                                            </size>
+                                        </property>
+                                        <property name="font">
+                                            <font>
+                                                <pointsize>36</pointsize>
+                                            </font>
+                                        </property>
+                                        <property name="inputMethodHints">
+                                            <set>Qt::ImhDigitsOnly</set>
+                                        </property>
+                                        <property name="wrapping">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="frame">
+                                            <bool>true</bool>
+                                        </property>
+                                        <property name="readOnly">
+                                            <bool>true</bool>
+                                        </property>
+                                        <property name="buttonSymbols">
+                                            <enum>QAbstractSpinBox::NoButtons</enum>
+                                        </property>
+                                        <property name="accelerated">
+                                            <bool>true</bool>
+                                        </property>
+                                        <property name="showGroupSeparator" stdset="0">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="suffix">
+                                            <string/>
+                                        </property>
+                                        <property name="prefix">
+                                            <string/>
+                                        </property>
+                                        <property name="value">
+                                            <number>3</number>
+                                        </property>
+                                    </widget>
+                                </item>
+                                <item row="2" column="0">
+                                    <widget class="QLabel" name="label_6">
+                                        <property name="minimumSize">
+                                            <size>
+                                                <width>0</width>
+                                                <height>100</height>
+                                            </size>
+                                        </property>
+                                        <property name="text">
+                                            <string>Szeregi / Seria</string>
+                                        </property>
+                                    </widget>
+                                </item>
+                                <item row="2" column="1">
+                                    <widget class="QSpinBox" name="slatLengthSpinBox_4">
+                                        <property name="sizePolicy">
+                                            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                                                <horstretch>0</horstretch>
+                                                <verstretch>0</verstretch>
+                                            </sizepolicy>
+                                        </property>
+                                        <property name="minimumSize">
+                                            <size>
+                                                <width>0</width>
+                                                <height>100</height>
+                                            </size>
+                                        </property>
+                                        <property name="font">
+                                            <font>
+                                                <pointsize>36</pointsize>
+                                            </font>
+                                        </property>
+                                        <property name="inputMethodHints">
+                                            <set>Qt::ImhDigitsOnly</set>
+                                        </property>
+                                        <property name="wrapping">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="frame">
+                                            <bool>true</bool>
+                                        </property>
+                                        <property name="readOnly">
+                                            <bool>true</bool>
+                                        </property>
+                                        <property name="buttonSymbols">
+                                            <enum>QAbstractSpinBox::NoButtons</enum>
+                                        </property>
+                                        <property name="accelerated">
+                                            <bool>true</bool>
+                                        </property>
+                                        <property name="showGroupSeparator" stdset="0">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="suffix">
+                                            <string/>
+                                        </property>
+                                        <property name="prefix">
+                                            <string/>
+                                        </property>
+                                        <property name="value">
+                                            <number>3</number>
+                                        </property>
+                                    </widget>
+                                </item>
+                            </layout>
+                        </item>
+                    </layout>
+                </widget>
+                <widget class="QDialogButtonBox" name="buttonBox">
+                    <property name="geometry">
+                        <rect>
+                            <x>1070</x>
+                            <y>500</y>
+                            <width>181</width>
+                            <height>41</height>
+                        </rect>
+                    </property>
+                    <property name="orientation">
+                        <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="standardButtons">
+                        <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel</set>
+                    </property>
+                    <property name="centerButtons">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QGroupBox" name="groupBox_3">
+                    <property name="geometry">
+                        <rect>
+                            <x>740</x>
+                            <y>0</y>
+                            <width>258</width>
+                            <height>147</height>
+                        </rect>
+                    </property>
+                    <property name="title">
+                        <string>Ilość docelowa</string>
+                    </property>
+                    <layout class="QGridLayout" name="gridLayout">
+                        <item row="0" column="0">
+                            <layout class="QFormLayout" name="formLayout_3">
+                                <property name="horizontalSpacing">
+                                    <number>24</number>
+                                </property>
+                                <property name="verticalSpacing">
+                                    <number>24</number>
+                                </property>
+                                <item row="0" column="0">
+                                    <widget class="QLabel" name="label_7">
+                                        <property name="minimumSize">
+                                            <size>
+                                                <width>0</width>
+                                                <height>100</height>
+                                            </size>
+                                        </property>
+                                        <property name="text">
+                                            <string>Płyty</string>
+                                        </property>
+                                    </widget>
+                                </item>
+                                <item row="0" column="1">
+                                    <widget class="QSpinBox" name="slatsPerBoardSpinBox_2">
+                                        <property name="sizePolicy">
+                                            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                                                <horstretch>0</horstretch>
+                                                <verstretch>0</verstretch>
+                                            </sizepolicy>
+                                        </property>
+                                        <property name="minimumSize">
+                                            <size>
+                                                <width>0</width>
+                                                <height>100</height>
+                                            </size>
+                                        </property>
+                                        <property name="font">
+                                            <font>
+                                                <pointsize>36</pointsize>
+                                            </font>
+                                        </property>
+                                        <property name="inputMethodHints">
+                                            <set>Qt::ImhDigitsOnly</set>
+                                        </property>
+                                        <property name="wrapping">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="frame">
+                                            <bool>true</bool>
+                                        </property>
+                                        <property name="buttonSymbols">
+                                            <enum>QAbstractSpinBox::PlusMinus</enum>
+                                        </property>
+                                        <property name="accelerated">
+                                            <bool>true</bool>
+                                        </property>
+                                        <property name="showGroupSeparator" stdset="0">
+                                            <bool>false</bool>
+                                        </property>
+                                        <property name="suffix">
+                                            <string/>
+                                        </property>
+                                        <property name="prefix">
+                                            <string/>
+                                        </property>
+                                        <property name="minimum">
+                                            <number>1</number>
+                                        </property>
+                                        <property name="maximum">
+                                            <number>10000</number>
+                                        </property>
+                                        <property name="value">
+                                            <number>18</number>
+                                        </property>
+                                    </widget>
+                                </item>
+                            </layout>
+                        </item>
+                    </layout>
+                </widget>
+                <widget class="QProgressBar" name="progressBar">
+                    <property name="geometry">
+                        <rect>
+                            <x>10</x>
+                            <y>410</y>
+                            <width>701</width>
+                            <height>23</height>
+                        </rect>
+                    </property>
+                    <property name="maximum">
+                        <number>100</number>
+                    </property>
+                    <property name="value">
+                        <number>50</number>
+                    </property>
+                    <property name="orientation">
+                        <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="invertedAppearance">
+                        <bool>false</bool>
+                    </property>
+                    <property name="textDirection">
+                        <enum>QProgressBar::TopToBottom</enum>
+                    </property>
+                </widget>
+            </widget>
+        </widget>
+    </widget>
+    <resources/>
+    <connections/>
+</ui>

@@ -2,8 +2,32 @@
 <project version="4">
   <component name="WebServers">
     <option name="servers">
-      <webServer id="b459e416-17a2-44a9-a1cd-6c369cd50994" name="raspberrypi" url="http://192.168.1.111">
-        <fileTransfer host="192.168.1.111" port="22" rootFolder="/home/pi/PyCharmProjects/PlankProject" accessType="SFTP">
+      <webServer id="b459e416-17a2-44a9-a1cd-6c369cd50994" name="RPi XLan" url="http://192.168.1.111">
+        <fileTransfer host="192.168.1.111" port="22" rootFolder="/home/pi/Desktop/BigBoy" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+      <webServer id="860bfd28-2cd4-4699-a216-a1949a43b143" name="RPi WLan" url="http://192.168.1.112">
+        <fileTransfer host="192.168.1.112" port="22" rootFolder="/home/pi/Desktop/BigBoy" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+      <webServer id="1a592423-917d-4655-ae9d-8a63d153ff09" name="RPi Wan" url="http://bigboy.myvpn.com">
+        <fileTransfer host="bigboy.myvpn.com" port="22" rootFolder="/home/pi/PyCharmProjects/PlankProject" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+      <webServer id="d62d598c-d30b-4db6-b8a8-e9d45c2b72ea" name="RPi DNS" url="http://raspberrypi">
+        <fileTransfer host="raspberrypi" port="22" accessType="SFTP">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
           </advancedOptions>
