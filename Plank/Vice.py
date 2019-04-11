@@ -1,10 +1,15 @@
 from time import time as now
 
 # from Plank.BigBoy import BigBoy
+from Plank.ArduinoSerialPortFinder import UNO_SN1
+from Plank.Encoder import Encoder
 from Plank.Input import Input
 from Plank.Output import *
 import Plank.Press
-from Plank.Servo import Servo
+from Plank.Servo import Servo, Engine, SimpleServo
+
+A0 = 54
+A1 = 55
 
 
 class Vice:
@@ -16,6 +21,7 @@ class Vice:
     COMPRESSED = 3
     DECOMPRESSING = 4
     UNLOADING = 5
+    RESETTING = 6
 
     inputs = [ ]
 
@@ -25,11 +31,14 @@ class Vice:
     # compressedState = 0
     decompressingState = 0
     unloadingState = 0
+    resettingState = 0
 
     readyToRelease = False
     readyToUnload = False
 
     timer = 0
+
+    conveyorSpeed = 50
 
     releaseStepsDuration = [
         1.5,  # odchylenie amortyzatora
@@ -63,16 +72,38 @@ class Vice:
         self.bumperEnable = Output( bigBoy.orange, 53 )
         self.rearViceEnable = Output( bigBoy.orange, 46 )
         self.sideViceEnable = Output( bigBoy.orange, 52 )
+        self.bumperEngineForwardEnable = Output( bigBoy.yellow, 47 )
+        self.bumperEngineBackwardEnable = Output( bigBoy.yellow, 46 )
+
+        self.bumperServo = SimpleServo(
+            self.bumperEngineForwardEnable, self.bumperEngineBackwardEnable, Encoder( UNO_SN1 )
+        )
         # IN
         self.rearViceDisabledSensor = Input( bigBoy.yellow, 7, name = 'Układarka, tylni ścisk - pozycja początkowa' )
+        self.bumperFrontLimit = Input( bigBoy.yellow, 2, name = 'Układarka, rozjazd - krańcówka przednia' )
+        self.bumperBackLimit = Input( bigBoy.yellow, 4, name = 'Układarka, rozjazd - krańcówka tylnia' )
 
         self.inputs += [
             # self.rearViceDisabledSensor,
+            self.bumperFrontLimit,
+            self.bumperBackLimit,
         ]
+
+        def viceBumperFrontLimitRising( ):
+            self.bumperEngineForwardEnable.set( HIGH )
+
+        self.bumperFrontLimit.setCallback( viceBumperFrontLimitRising, RISING )
+
+        def viceBumperBackLimitRising( ):
+            self.bumperEngineBackwardEnable.set( HIGH )
+
+        self.bumperBackLimit.setCallback( viceBumperBackLimitRising, RISING )
 
     def update( self ):
         for input in self.inputs:
             input.update( )
+
+        self.bumperServo.update()
 
         if self.state == Vice.IDLE:
             self.handleIdle( )
@@ -91,6 +122,9 @@ class Vice:
 
         elif self.state == Vice.UNLOADING:
             self.handleUnloading( )
+
+        elif self.state == Vice.RESETTING:
+            self.handleResetting()
 
     def handleIdle( self ):
         if self.readyToRelease:
@@ -224,3 +258,26 @@ class Vice:
             self.unloadingState = 0
             self.state = Vice.IDLE
             self.readyToUnload = False
+
+    def handleResetting( self ):
+        if self.resettingState == 0:
+            if self.bumperBackLimit.lastState == LOW:
+                self.bumperEngineBackwardEnable.set( LOW )
+                self.resettingState = 1
+            else:
+                self.resettingState = 2
+
+        # move to starting point
+        elif self.resettingState == 1:
+            if self.bumperBackLimit.lastState == HIGH:
+                self.bumperEngineBackwardEnable.set( HIGH )
+                self.resettingState = 2
+
+        elif self.resettingState == 2:
+            self.bumperServo.move( self.bigBoy.slatLength )
+            self.resettingState = 3
+
+        elif self.resettingState == 3:
+            if self.bumperServo.state == SimpleServo.IDLE:
+                self.resettingState = 0
+                self.state = Vice.IDLE

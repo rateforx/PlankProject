@@ -29,32 +29,67 @@
                 </select>
             </div>
         </div>
-        <ul class="collection">
-            <li class="collection-item">
-                <span>Lamelki</span>
-                <span id="slatsPerBoard" class="badge secondary-content new purple" data-badge-caption=""></span>
-                <span class="secondary-content">/</span>
-                <span id='currentSlat' class="badge secondary-content new green" data-badge-caption=""></span>
-            </li>
-            <li class="collection-item">
-                <span>Płyty</span>
-                <span id="boardsPerRow" class="badge secondary-content new orange" data-badge-caption=""></span>
-                <span class="secondary-content">/</span>
-                <span id='currentBoard' class="badge secondary-content new purple" data-badge-caption=""></span>
-            </li>
-            <li class="collection-item">
-                <span>Rzędy</span>
-                <span id="rowsPerSet" class="badge secondary-content new pink" data-badge-caption=""></span>
-                <span class="secondary-content">/</span>
-                <span id='currentRow' class="badge secondary-content new orange" data-badge-caption=""></span>
-            </li>
-        </ul>
+        <div class="row">
+            <ul class="collection">
+                <li class="collection-item">
+                    <span class="mdi mdi-power-on"></span>
+                    <span>Lamelki</span>
+                    <span id="slatsPerBoard" class="badge secondary-content new purple darken-2" data-badge-caption="">0</span>
+                    <span class="secondary-content">/</span>
+                    <span id='currentSlat' class="badge secondary-content new green" data-badge-caption="">0</span>
+                </li>
+                <li class="collection-item">
+                    <span class="mdi mdi-view-column"></span>
+                    <span>Płyty</span>
+                    <span id="boardsPerRow" class="badge secondary-content new orange darken-2" data-badge-caption="">0</span>
+                    <span class="secondary-content">/</span>
+                    <span id='currentBoard' class="badge secondary-content new purple" data-badge-caption="">0</span>
+                </li>
+                <li class="collection-item">
+                    <span class="mdi mdi-view-module"></span>
+                    <span>Rzędy</span>
+                    <span id="rowsPerSet" class="badge secondary-content new pink darken-1" data-badge-caption="">0</span>
+                    <span class="secondary-content">/</span>
+                    <span id='currentRow' class="badge secondary-content new orange" data-badge-caption="">0</span>
+                </li>
+            </ul>
+        </div>
+        <div class="row">
+            <ul class="collection">
+                <li class="collection-item">
+                    <span class="mdi mdi-arrow-collapse-up"></span>
+                    <span class="mdi mdi-gauge"></span>
+                    <span>Ciśnienie docisku górnego</span>
+                    <span id="pressPressureTop" class="badge lime darken-1 new" data-badge-caption="bar">0</span>
+                </li>
+                <li class="collection-item">
+                    <span class="mdi mdi-arrow-collapse-left"></span>
+                    <span class="mdi mdi-gauge"></span>
+                    <span>Ciśnienie docisku bocznego</span>
+                    <span id="pressPressureSide" class="badge teal new" data-badge-caption="bar">0</span>
+                </li>
+                <li class="collection-item">
+                    <span class="mdi mdi-arrow-collapse-up"></span>
+                    <span class="mdi mdi-thermometer-lines"></span>
+                    <span>Temperatura prasy góra</span>
+                    <span id="pressTempTop" class="badge red darken-3 new" data-badge-caption="°C">0</span>
+                </li>
+                <li class="collection-item">
+                    <span class="mdi mdi-arrow-collapse-down"></span>
+                    <span class="mdi mdi-thermometer-lines"></span>
+                    <span>Temperatura prasy dół</span>
+                    <span id="pressTempDown" class="badge red new" data-badge-caption="°C">0</span>
+                </li>
+            </ul>
+        </div>
     </div>
+
+
     <script type="text/javascript" src="{{ url_for( 'static', filename = 'scripts/updater.js' ) }}"></script>
     <script>
-        $( () => {
+        $(() => {
             $('select').formSelect();
             getStatesData();
-        } );
+        });
     </script>
 {% endblock %}

@@ -3,7 +3,7 @@ from serial import Serial
 import time
 
 baudrate = 115200
-timeout = 5
+timeout = .25
 
 OUTPUT = 0
 INPUT = 1
@@ -22,10 +22,7 @@ class ArduinoIO:
     def __init__( self, serialNumber ):
         self.port = ArduinoSerialPortFinder.getArduinoPort( serialNumber )
         self.serial = Serial( self.port, baudrate, timeout = timeout )
-        time.sleep( .25 )
-
-        try: self.read( 13 )
-        except ValueError: pass
+        time.sleep( 1 )
 
     def setMode( self, pin, mode ):
         self.serial.write( 'm({},{})'.format( pin, mode ).encode( ) )
@@ -35,13 +32,18 @@ class ArduinoIO:
 
     def read( self, pin ) -> int:
         self.serial.write( 'r({})'.format( pin ).encode( ) )
-        # while not self.serial.inWaiting():
-        #     pass
-        return int( self.serial.readline( ).decode( ).strip( "\r\n" ) )
+        data = self.serial.readline( ).decode().strip( '\r\n' )
+        value = None
+        try:
+            value = int( float( data ) )
+        except ValueError:
+            value = None
+        finally:
+            return value
 
     def analogRead( self, pin ):
         self.serial.write( 'a({})'.format( pin ).encode( ) )
-        return int( self.serial.readline( ).decode( ).strip( "\r\n" ) )
+        return float( self.serial.readline( ).decode( ).strip( "\r\n" ) )
 
     def _blink( self, pin, value, duration = 1 ):
         self.write( pin, value )
@@ -50,4 +52,5 @@ class ArduinoIO:
 
 
 if __name__ == '__main__':
-    arduinoIO = ArduinoIO( ArduinoSerialPortFinder.ARDUINO_MEGA_SERIAL_NUMBER )
+    pass
+    # arduinoIO = ArduinoIO( ArduinoSerialPortFinder.ARDUINO_MEGA_SERIAL_NUMBER )

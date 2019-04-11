@@ -1,11 +1,23 @@
 /* VIRTUAL KEYBOARD DEMO - https://github.com/Mottie/Keyboard */
-$(function () {
+$( () => {
     // create a new language (love, awww) by copying the english language
     // file. we're doing this just for this demo, so we can add "<3" to the
     // combo regex
     $.keyboard.language.love = $.extend($.keyboard.language.en);
 
-    $('#slatLength, #slatWidth, #slatHeight, #slatsPerBoard').keyboard({
+    $(
+        `
+        #slatLength, 
+        #slatWidth, 
+        #slatHeight, 
+        #slatsPerBoard,
+        #pumpTogglePressureThreshold,
+        #pressTopTargetPressure,
+        #pressSideTargetPressure,
+        #viceCompressedDuration,
+        #pressCompressedDuration
+        `
+    ).keyboard({
         // set this to ISO 639-1 language code to override language set by
         // the layout: http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
         // language defaults to ["en"] if not found
@@ -178,6 +190,7 @@ $(function () {
         beforeVisible: function (e, keyboard, el) {
         },
         visible: function (e, keyboard, el) {
+
         },
         beforeInsert: function (e, keyboard, el, textToAdd) {
             return textToAdd;

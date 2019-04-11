@@ -11,6 +11,10 @@ class Input:
     callbackFalling = __blank
     callbackLow = __blank
     callbackHigh = __blank
+    thresholdRising = None
+    thresholdFalling = None
+    callbackRisingActivated = False
+    callbackFallingActivated = False
 
     verbose = False
     analog = False
@@ -21,10 +25,10 @@ class Input:
         self.analog = analog
         self.name = name
         arduinoIO.setMode( pin, INPUT )
-        self.lastState = arduinoIO.read( pin ) if not analog else arduinoIO.analogRead( pin )
+        self.lastState = self.getState()
 
-    def update( self, active = False ):
-        state = self.arduinoIO.read( self.pin ) if not self.analog else self.arduinoIO.analogRead( self.pin )
+    def update( self ):
+        state = self.getState()
 
         if self.verbose:
             if self.name != '':
@@ -34,31 +38,63 @@ class Input:
 
         if state != self.lastState:
 
+            change = RISING if state > self.lastState else FALLING
             self.lastState = state
 
-            if state == FALLING and active:
-                self.callbackFalling( )
-            if state == RISING and active:
-                self.callbackRising( )
+            if not self.analog:
+                if state == FALLING:
+                    self.callbackFalling( )
+                if state == RISING:
+                    self.callbackRising( )
 
-        if state == LOW and active:
+            else:
+                if change == RISING and self.thresholdRising is not None and state > self.thresholdRising:
+                    if not self.callbackRisingActivated:
+                        self.callbackRising( )
+
+                    self.callbackRisingActivated = True
+                    self.callbackFallingActivated = False
+
+                elif change == FALLING and self.thresholdFalling is not None and state < self.thresholdFalling:
+                    if not self.callbackFallingActivated:
+                        self.callbackFalling( )
+
+                    self.callbackFallingActivated = True
+                    self.callbackRisingActivated = False
+
+        if state == LOW:
             self.callbackLow()
-        if state == HIGH and active:
+        if state == HIGH:
             self.callbackHigh()
 
     def getState( self ):
-        return self.arduinoIO.read( self.pin )
+        if not self.analog:
+            return self.arduinoIO.read( self.pin )
+        else:
+            return self.arduinoIO.analogRead( self.pin )
 
     def setCallback( self, function, edge ):
         if edge == FALLING:
             self.callbackFalling = function
-            self.callbackRising = self.__blank
         if edge == RISING:
-            self.callbackFalling = self.__blank
             self.callbackRising = function
         if edge == BOTH:
             self.callbackFalling = function
             self.callbackRising = function
+
+    def setThreshold( self, value, edge, callback ):
+        if edge == RISING:
+            self.callbackRising = callback
+            self.thresholdRising = value
+        elif edge == FALLING:
+            self.callbackFalling = callback
+            self.thresholdFalling = value
+
+    def setThresholdValue( self, value, edge ):
+        if edge == RISING:
+            self.thresholdRising = value
+        elif edge == FALLING:
+            self.thresholdFalling = value
 
     def do( self, function, state ):
         if state == LOW:
@@ -69,7 +105,7 @@ class Input:
     def on( self, edge, function ):
         self.setCallback( function, edge )
 
-    def removeCallback( self ):
+    def removeCallbacks( self ):
         self.callbackFalling = self.__blank
         self.callbackRising = self.__blank
         self.callbackLow = self.__blank

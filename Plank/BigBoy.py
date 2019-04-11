@@ -1,10 +1,6 @@
 import os
 import sys
 
-from PyQt5.QtWidgets import QCheckBox, QLCDNumber
-
-# import Plank.Server
-
 sys.path.extend( [ '/home/pi/Desktop/BigBoy', '/home/pi/Desktop/BigBoy' ] )
 
 import math
@@ -70,7 +66,7 @@ class BigBoy:
     pressRunning = False
     viceRunning = False
 
-    speed = 50
+    conveyorSpeed = 50
 
     inputs = [ ]
     controls = [ ]
@@ -111,16 +107,19 @@ class BigBoy:
         self.viceStopButton = Input( self.yellow, A6, name = 'Układarka przycisk - stop' )
         self.viceConveyorForwardSwitch = Input( self.yellow, A10, name = 'Układarka przełącznik - taśma przód' )
         self.viceConveyorBackwardSwitch = Input( self.yellow, A8, name = 'Układarka przełącznik - taśma tył' )
+        self.viceBumperForwardSwitch = Input( self.orange, A0, name = 'Układarka przełącznik - rozjazd przód' )
+        self.viceBumperBackwardSwitch = Input( self.orange, A1, name = 'Układarka przełącznik - rozjazd tył' )
 
         self.pressAMSwitch = Input( self.yellow, A7, name = 'Prasa przełącznik - automat / manual' )
         self.pressStartButton = Input( self.yellow, A5, name = 'Prasa przycisk - start' )
         self.pressStopButton = Input( self.yellow, A4, name = 'Prasa przycisk - stop' )
-        self.pressConveyorForwardSwitch = Input( self.yellow, 20, name = 'Prasa przełącznik - taśma przód' )
-        self.pressConveyorBackwardSwitch = Input( self.yellow, 21, name = 'Prasa przełącznik - taśma tył' )
-        self.pressTopMoveUpSwitch = Input( self.orange, 15, name = 'Prasa przełącznik - górny docisk w górę' )
-        self.pressTopMoveDownSwitch = Input( self.orange, 2, name = 'Prasa przełącznik - górny docisk w dół' )
-        self.pressSideMoveInSwitch = Input( self.orange, 14, name = 'Prasa przełącznik - boczny docisk do wewnątrz' )
-        self.pressSideMoveOutSwitch = Input( self.orange, 16, name = 'Prasa przełącznik - boczny docisk do zewnątrz' )
+        self.pressConveyorForwardSwitch = Input( self.yellow, 16, name = 'Prasa przełącznik - taśma przód' )
+        self.pressConveyorBackwardSwitch = Input( self.yellow, 18, name = 'Prasa przełącznik - taśma tył' )
+        self.pressTopMoveUpSwitch = Input( self.orange, A5, name = 'Prasa przełącznik - górny docisk w górę' )
+        self.pressTopMoveDownSwitch = Input( self.orange, A3, name = 'Prasa przełącznik - górny docisk w dół' )
+        self.pressSideMoveInSwitch = Input( self.orange, A7, name = 'Prasa przełącznik - boczny docisk do wewnątrz' )
+        self.pressSideMoveOutSwitch = Input( self.orange, A8, name = 'Prasa przełącznik - boczny docisk do zewnątrz' )
+        self.pressDepressurizeButton = Input( self.orange, 6, name = 'Prasa przycisk - rozprężenie' )
 
         self.controls += [
             self.viceAMSwitch,
@@ -128,6 +127,8 @@ class BigBoy:
             self.viceStopButton,
             self.viceConveyorForwardSwitch,
             self.viceConveyorBackwardSwitch,
+            self.viceBumperForwardSwitch,
+            self.viceBumperBackwardSwitch,
             self.pressAMSwitch,
             self.pressStartButton,
             self.pressStopButton,
@@ -137,6 +138,7 @@ class BigBoy:
             self.pressTopMoveDownSwitch,
             self.pressSideMoveInSwitch,
             self.pressSideMoveOutSwitch,
+            self.pressDepressurizeButton,
         ]
 
         self.glueDisable = Output( self.orange, 49, LOW )
@@ -148,6 +150,7 @@ class BigBoy:
             engine = Engine( self.yellow, pwmPin = 23, runPin = 26, dirPin = 27, dutyCycle = 50 ),
             encoder = Encoder( UNO_SN0 )
         )
+        self.conveyorServo.engine.setSpeed( 50 )
 
         self.vice = Vice( self )
         self.press = Press( self )
@@ -195,6 +198,8 @@ class BigBoy:
         # VICE Controls
 
         def viceAMSwitchFalling( ):
+            self.conveyorServo.engine.stop()
+            # todo stop rozjazdu
             self.viceControls = BigBoy.AUTOMATIC
             self.viceRunning = False
 
@@ -206,7 +211,7 @@ class BigBoy:
         self.viceAMSwitch.setCallback( viceAMSwitchRising, RISING )
 
         def viceStartButtonRising( ):
-            if self.viceControls == bigBoy.AUTOMATIC:
+            if self.viceControls == BigBoy.AUTOMATIC:
                 self.viceRunning = True
 
         def viceStopButtonRising( ):
@@ -218,6 +223,7 @@ class BigBoy:
         def viceConveyorForwardSwitchRising( ):
             if self.viceControls == BigBoy.MANUAL:
                 self.conveyorServo.engine.setForward( )
+                self.conveyorServo.engine.setSpeed( self.conveyorSpeed )
                 self.conveyorServo.engine.start( )
 
         def viceConveyorForwardSwitchFalling( ):
@@ -230,6 +236,7 @@ class BigBoy:
         def viceConveyorBackwardSwitchRising( ):
             if self.viceControls == BigBoy.MANUAL:
                 self.conveyorServo.engine.setBackward( )
+                self.conveyorServo.engine.setSpeed( self.conveyorSpeed )
                 self.conveyorServo.engine.start( )
 
         def viceConveyorBackwardSwitchFalling( ):
@@ -239,9 +246,38 @@ class BigBoy:
         self.viceConveyorBackwardSwitch.setCallback( viceConveyorBackwardSwitchRising, RISING )
         self.viceConveyorBackwardSwitch.setCallback( viceConveyorBackwardSwitchFalling, FALLING )
 
+        def viceBumperForwardSwitchRising( ):
+            if self.viceControls == BigBoy.MANUAL:
+                if self.vice.bumperFrontLimit.lastState == LOW:
+                    self.vice.bumperEngineForwardEnable.set( LOW )
+
+        def viceBumperForwardSwitchFalling( ):
+            if self.viceControls == BigBoy.MANUAL:
+                self.vice.bumperEngineForwardEnable.set( HIGH )
+
+        def viceBumperBackwardSwitchRising( ):
+            if self.viceControls == BigBoy.MANUAL:
+                if self.vice.bumperBackLimit.lastState == LOW:
+                    self.vice.bumperEngineBackwardEnable.set( LOW )
+
+        def viceBumperBackwardSwitchFalling( ):
+            if self.viceControls == BigBoy.MANUAL:
+                self.vice.bumperEngineBackwardEnable.set( HIGH )
+
+        self.viceBumperForwardSwitch.setCallback( viceBumperForwardSwitchRising, RISING )
+        self.viceBumperForwardSwitch.setCallback( viceBumperForwardSwitchFalling, FALLING )
+        self.viceBumperBackwardSwitch.setCallback( viceBumperBackwardSwitchRising, RISING )
+        self.viceBumperBackwardSwitch.setCallback( viceBumperBackwardSwitchFalling, FALLING )
+
         # PRESS Controls
 
         def pressAMSwitchFalling( ):
+            self.press.pressConveyorEngine.engine.stop()
+            self.press.pressPumpEnable.set( HIGH )
+            self.press.pressSideMoveIn.set( HIGH )
+            self.press.pressSideMoveOut.set( HIGH )
+            self.press.pressTopMoveDown.set( HIGH )
+            self.press.pressTopMoveUp.set( HIGH )
             self.pressControls = BigBoy.AUTOMATIC
             self.pressRunning = False
 
@@ -253,7 +289,7 @@ class BigBoy:
         self.pressAMSwitch.setCallback( pressAMSwitchRising, RISING )
 
         def pressStartButtonRising( ):
-            if self.pressControls == bigBoy.AUTOMATIC:
+            if self.pressControls ==  BigBoy.AUTOMATIC:
                 self.pressRunning = True
 
         def pressStopButtonRising( ):
@@ -264,6 +300,7 @@ class BigBoy:
 
         def pressConveyorForwardSwitchRising( ):
             if self.pressControls == BigBoy.MANUAL:
+                self.press.pressConveyorEngine.engine.setSpeed( self.conveyorSpeed )
                 self.press.pressConveyorEngine.engine.setForward( )
                 self.press.pressConveyorEngine.engine.start( )
 
@@ -276,6 +313,7 @@ class BigBoy:
 
         def pressConveyorBackwardSwitchRising( ):
             if self.pressControls == BigBoy.MANUAL:
+                self.press.pressConveyorEngine.engine.setSpeed( self.conveyorSpeed )
                 self.press.pressConveyorEngine.engine.setBackward( )
                 self.press.pressConveyorEngine.engine.start( )
 
@@ -289,18 +327,33 @@ class BigBoy:
         def pressTopMoveDownSwitchRising( ):
             if self.pressControls == BigBoy.MANUAL:
                 self.press.pressTopMoveDown.set( LOW )
+                self.press.pressPumpEnable.set( LOW )
 
         def pressTopMoveDownSwitchFalling( ):
             if self.pressControls == BigBoy.MANUAL:
                 self.press.pressTopMoveDown.set( HIGH )
+                if HIGH not in [
+                    self.pressTopMoveUpSwitch.lastState,
+                    self.pressSideMoveInSwitch.lastState,
+                    self.pressSideMoveOutSwitch.lastState,
+                ]:
+                    self.press.pressPumpEnable.set( HIGH )
 
         def pressTopMoveUpSwitchRising( ):
             if self.pressControls == BigBoy.MANUAL:
-                self.press.pressTopMoveUp.set( LOW )
+                if self.press.pressTopHomeSensor.lastState == LOW:
+                    self.press.pressTopMoveUp.set( LOW )
+                    self.press.pressPumpEnable.set( LOW )
 
         def pressTopMoveUpSwitchFalling( ):
             if self.pressControls == BigBoy.MANUAL:
                 self.press.pressTopMoveUp.set( HIGH )
+                if HIGH not in [
+                    self.pressTopMoveDownSwitch.lastState,
+                    self.pressSideMoveInSwitch.lastState,
+                    self.pressSideMoveOutSwitch.lastState,
+                ]:
+                    self.press.pressPumpEnable.set( HIGH )
 
         self.pressTopMoveDownSwitch.setCallback( pressTopMoveDownSwitchRising, RISING )
         self.pressTopMoveDownSwitch.setCallback( pressTopMoveDownSwitchFalling, FALLING )
@@ -310,23 +363,53 @@ class BigBoy:
         def pressSideMoveInSwitchRising( ):
             if self.pressControls == BigBoy.MANUAL:
                 self.press.pressSideMoveIn.set( LOW )
+                self.press.pressPumpEnable.set( LOW )
 
         def pressSideMoveInSwitchFalling( ):
             if self.pressControls == BigBoy.MANUAL:
                 self.press.pressSideMoveIn.set( HIGH )
+                if HIGH not in [
+                    self.pressTopMoveUpSwitch.lastState,
+                    self.pressTopMoveDownSwitch.lastState,
+                    self.pressSideMoveOutSwitch.lastState,
+                ]:
+                    self.press.pressPumpEnable.set( HIGH )
 
         def pressSideMoveOutSwitchRising( ):
             if self.pressControls == BigBoy.MANUAL:
                 self.press.pressSideMoveOut.set( LOW )
+                self.press.pressPumpEnable.set( LOW )
 
         def pressSideMoveOutSwitchFalling( ):
             if self.pressControls == BigBoy.MANUAL:
                 self.press.pressSideMoveOut.set( HIGH )
+                if HIGH not in [
+                    self.pressTopMoveUpSwitch.lastState,
+                    self.pressTopMoveDownSwitch.lastState,
+                    self.pressSideMoveInSwitch.lastState,
+                ]:
+                    self.press.pressPumpEnable.set( HIGH )
 
         self.pressSideMoveInSwitch.setCallback( pressSideMoveInSwitchRising, RISING )
         self.pressSideMoveInSwitch.setCallback( pressSideMoveInSwitchFalling, FALLING )
         self.pressSideMoveOutSwitch.setCallback( pressSideMoveOutSwitchRising, RISING )
         self.pressSideMoveOutSwitch.setCallback( pressSideMoveOutSwitchFalling, FALLING )
+
+        def pressDepressurizeButtonRising():
+            if self.pressControls == BigBoy.MANUAL:
+                if HIGH not in [ self.pressSideMoveInSwitch.lastState, self.pressTopMoveDownSwitch.lastState ]:
+                    self.press.pressTopMoveUp.set( LOW )
+                    self.press.pressSideMoveOut.set( LOW )
+
+        def pressDepressurizeButtonFalling():
+            if self.pressControls == BigBoy.MANUAL:
+                if self.pressTopMoveUpSwitch.lastState == LOW:
+                    self.press.pressTopMoveUp.set( HIGH )
+                if self.pressSideMoveInSwitch.lastState == LOW:
+                    self.press.pressSideMoveOut.set( HIGH )
+
+        self.pressDepressurizeButton.setCallback( pressDepressurizeButtonRising, RISING )
+        self.pressDepressurizeButton.setCallback( pressDepressurizeButtonFalling, FALLING )
 
     def next( self ):
         self.slatCheck( )
@@ -396,6 +479,8 @@ class BigBoy:
         self.rowsPerSet = math.floor( BigBoy.PRESS_LENGTH / (self.slatLength + BigBoy.STACKER_GAP) )
         self.slatsPerSet = self.slatsPerSet * self.boardsPerRow * self.slatsPerBoard
 
+        self.vice.state = Vice.RESETTING
+
     def update( self ):
         self.step += 1
         self.conveyorServo.update( )
@@ -406,46 +491,9 @@ class BigBoy:
         for input in self.controls:
             input.update( )
 
-    def updateGUI( self ):
-        self.gui.ui.conveyorSensor.setChecked( self.conveyorSensor.lastState == 1 )
-        self.gui.ui.counterSensor.setChecked( self.retractSensor.lastState == 1 )
-        self.gui.ui.stackerSensor.setChecked( self.stackerSensor.lastState == 1 )
-        self.gui.ui.halfTurnMotorSensor.setChecked( self.halfTurnMotorSensor.lastState == 1 )
-
-        conveyorSensorCheckbox = self.gui.window.findChild( QCheckBox, 'conveyorSensor' )  # type: QCheckBox
-        conveyorSensorCheckbox.setChecked( self.conveyorSensor.lastState == 1 )
-
-        self.gui.ui.temp1.display( self.press.tempTop.lastState )
-        self.gui.ui.temp0.display( self.press.tempDown.lastState )
-
-        tempTop = self.gui.window.findChild( QLCDNumber, 'temp0' )  # type: QLCDNumber
-        tempTop.display( self.press.tempTop.lastState )
-        tempDown = self.gui.window.findChild( QLCDNumber, 'temp1' )  # type: QLCDNumber
-        tempDown.display( self.press.tempDown.lastState )
-
-        self.gui.window.update( )
-        self.gui.app.processEvents( )
-
     def run( self ):
-        self.update( )
-
-    def printStates( self ):
-        _ = os.system( 'clear' )
-        print( '======================================' )
-        print( 'iteration: {}'.format( self.step ) )
-        print( 'slateState: {}'.format( self.slatState ) )
-        print( 'currentSlat: {} of {}'.format( self.currentSlat, self.slatsPerBoard ) )
-        print( 'currentBoard: {} of {}'.format( self.currentBoard, self.boardsPerRow ) )
-        print( 'currentRow: {} of {}'.format( self.currentRow, self.rowsPerSet ) )
-        print( 'viceState: {}'.format( self.vice.state ) )
-        print( 'viceCompressionState: {}'.format( self.vice.compressingState ) )
-        print( 'viceDecompressionState: {}'.format( self.vice.decompressingState ) )
-        print( 'pressState: {}'.format( self.press.state ) )
-        print( 'pressCompressionState: {}'.format( self.press.compressingState ) )
-        print( 'pressDecompressionState: {}'.format( self.press.decompressingState ) )
-        print( 'pressLoadingState: {}'.format( self.press.loadingState ) )
-        print( 'tempTop: {}'.format( self.press.tempTop.lastState ) )
-        print( 'tempDown: {}'.format( self.press.tempDown.lastState ) )
+        while True:
+            self.update( )
 
 
 if __name__ == "__main__":

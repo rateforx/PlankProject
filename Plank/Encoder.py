@@ -3,7 +3,7 @@ from serial import Serial
 from Plank.ArduinoSerialPortFinder import *
 
 baudrate = 115200
-timeout = 5
+timeout = 1
 
 
 class Encoder:
@@ -13,7 +13,7 @@ class Encoder:
 
     def __init__( self, arduinoSN ):
         port = ArduinoSerialPortFinder.getArduinoPort( arduinoSN )
-        print( 'Connecting to Arduino serial: {}'.format( port ) )
+        # print( 'Connecting to Arduino serial: {}'.format( port ) )
         self.serial = Serial( port, baudrate, timeout = timeout )
         time.sleep( .25 )
         # self.getCounter( )

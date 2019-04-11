@@ -10,6 +10,7 @@ function getInputsData( ) {
         error: () => {
             M.toast( {
                 html: 'Nie udało się pobrać stanu wejść',
+                displayLength: 1000,
             } );
             getInputsData( );
         },
@@ -63,6 +64,10 @@ function updateStates( states ) {
     $('#boardsPerRow').text( states.boardsPerRow );
     $('#currentRow').text( states.currentRow );
     $('#rowsPerSet').text( states.rowsPerSet );
+    $('#pressTempTop').text( states.pressTempTop.toPrecision( 3 ) );
+    $('#pressTempDown').text( states.pressTempDown.toPrecision( 3 ) );
+    $('#pressPressureTop').text( states.pressPressureTop );
+    $('#pressPressureSide').text( states.pressPressureSide );
 
     if ( Date.now( ) - timer > freq )
         getStatesData( );

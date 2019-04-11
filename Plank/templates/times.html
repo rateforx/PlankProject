@@ -1,5 +1,10 @@
 {% extends "layout.html" %}
 {% block content %}
+    <style>
+        .container {
+            margin-left: 255px;
+        }
+    </style>
     <script>
         $('#times-link').addClass('active');
     </script>
@@ -18,7 +23,7 @@
                            autocomplete="off"
                            required
                     >
-                    <label for="slatLength">Czas prasowania - Układarka</label>
+                    <label for="viceCompressedDuration">Czas prasowania - Układarka</label>
                     <span class="helper-text" >5s - 300s</span>
                 </div>
                 <div class="input-field col s6">
@@ -32,10 +37,73 @@
                            autocomplete="off"
                            required
                     >
-                    <label for="slatWidth">Czas prasowania - Prasa</label>
+                    <label for="pressCompressedDuration">Czas prasowania - Prasa</label>
                     <span class="helper-text" >30s - 600s</span>
                 </div>
             </div>
+
+            <div class="row">
+                <div class="input-field col s6">
+                    <input id="pressTopTargetPressure"
+                           name="pressTopTragetPressure"
+                           class="validate"
+                           type="number"
+                           min="0"
+                           max="250"
+                           value="{{ data.pressTopTargetPressure }}"
+                           autocomplete="off"
+                           required
+                    >
+                    <label for="pressTopTargetPressure">Prasa góra - docelowe ciśnienie</label>
+                    <span class="helper-text">0bar - 250bar</span>
+                </div>
+                <div class="input-field col s6">
+                    <input id="pressSideTargetPressure"
+                           name="pressSideTragetPressure"
+                           class="validate"
+                           type="number"
+                           min="0"
+                           max="250"
+                           value="{{ data.pressSideTargetPressure }}"
+                           autocomplete="off"
+                           required
+                    >
+                    <label for="pressSideTargetPressure">Prasa bok - docelowe ciśnienie</label>
+                    <span class="helper-text">0bar - 250bar</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="input-field col s6">
+                    <input id="pumpTogglePressureThreshold"
+                           name="pumpTogglePressureThreshold"
+                           class="validate"
+                           type="number"
+                           min="0"
+                           max="250"
+                           value="{{ data.pumpTogglePressureThreshold }}"
+                           autocomplete="off"
+                           required
+                    >
+                    <label for="pumpTogglePressureThreshold">Ciśnienie przełączenia pompy</label>
+                    <span class="helper-text">0bar - 250bar</span>
+                </div>
+                <div class="input-field col s6">
+                    <input id="pressLoosenDuration"
+                           name="pressLoosenDuration"
+                           class="validate"
+                           type="number"
+                           min="0"
+                           max="3000"
+                           value="{{ data.pressLoosenDuration }}"
+                           autocomplete="off"
+                           required
+                    >
+                    <label for="pressLoosenDuration">Czas poluzowania</label>
+                    <span class="helper-text">0ms - 3000ms</span>
+                </div>
+            </div>
+
             <div class="row right-align">
                 <button class="btn-large red waves-effect waves-light" type="button" name="action" onclick="location.reload()">
                     <span>Anuluj</span>

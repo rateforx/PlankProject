@@ -6,6 +6,7 @@ body {
     user-select: none;
     font-family: "Segoe UI Light", "Segoe UI", Roboto, serif;
     font-weight: 300;
+    font-variant-numeric: slashed-zero tabular-nums;
 }
 
 .header {
@@ -29,8 +30,12 @@ nav a.brand-logo {
 }
 
 nav ul li a {
-    padding: 0 40px;
+    padding: 0 20px;
     font-size: 1.5rem;
+}
+
+.active a {
+    border-top: solid thin white;
 }
 
 label {
@@ -69,5 +74,66 @@ span.badge.new {
     margin: 0 14px;
     font-size: 1.2rem;
     height: 25px;
-    min-width: 55px;
+    min-width: 75px;
+}
+
+.container::-webkit-scrollbar-track
+{
+	background-color: transparent;
+}
+
+.container::-webkit-scrollbar
+{
+	width: 40px;
+	background-color: transparent;
+    opacity: .5;
+    position: absolute;
+    right: 0;
+}
+
+.container::-webkit-scrollbar-thumb
+{
+	border-radius: 3px;
+	background-color: lightgrey;
+    padding: 1em;
+    margin: 1em;
+}
+
+.container {
+    max-height: 534px;
+    overflow-scrolling: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overflow-style: auto;
+}
+
+body {
+    overflow: hidden;
+}
+
+.overlay {
+    position: absolute;
+    bottom: 0;
+    overflow: hidden;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    align-items: center;
+    align-content: center;
+    -webkit-transform: scaleX(-1);
+    -moz-transform: scaleX(-1);
+    -ms-transform: scaleX(-1);
+    -o-transform: scaleX(-1);
+    transform: scaleX(-1);
+}
+
+#saw {
+    display: block;
+    margin: auto;
+    align-self: center;
+}
+
+input:disabled {
+    color: black !important;
 }

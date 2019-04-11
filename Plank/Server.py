@@ -16,7 +16,8 @@ class Server:
 
         @self.app.route( '/' )
         def index( ):
-            return render_template( 'index.html' )
+            data = { }
+            return render_template( 'index.html', data = data )
 
         @self.app.route( '/inputs' )
         def inputs( ):
@@ -25,6 +26,7 @@ class Server:
             inputs += self.bigBoy.inputs
             inputs += self.bigBoy.vice.inputs
             inputs += self.bigBoy.press.inputs
+            inputs += self.bigBoy.controls
             data[ 'inputs' ] = inputs
 
             return render_template( 'inputs.html', data = data )
@@ -35,6 +37,7 @@ class Server:
             inputs += self.bigBoy.inputs
             inputs += self.bigBoy.vice.inputs
             inputs += self.bigBoy.press.inputs
+            inputs += self.bigBoy.controls
 
             data = [ ]
             for input in inputs:
@@ -53,7 +56,7 @@ class Server:
         def params( ):
             data = { }
             if request.method == 'GET':
-                data += self.getProductionParams( )
+                data.update( self.getProductionParams( ))
                 return render_template( 'params.html', data = data )
 
             elif request.method == 'POST':
@@ -77,14 +80,14 @@ class Server:
                                           'Szerokość płyty: {}\n' \
                                           'Maksymalna szerokość płyty to: {}' \
                             .format( slatWidth, slatsPerBoard, slatWidth * slatsPerBoard, self.bigBoy.PRESS_WIDTH )
-                        data += self.getProductionParams( )
+                        data.update( self.getProductionParams( ) )
                         return render_template( 'params.html', data = data )
 
                     else:
                         self.bigBoy.setParams( slatLength, slatWidth, slatHeight, slatsPerBoard )
                         self.bigBoy.recalculateParams( )
                         data[ 'success' ] = 'Ustawiono parametry.'
-                        data += self.getProductionParams( )
+                        data.update( self.getProductionParams( ) )
                         return render_template( 'params.html', data = data )
 
         @self.app.route( '/states' )
@@ -95,20 +98,33 @@ class Server:
         def times( ):
             data = { }
             if request.method == 'GET':
-                data += self.getTimes( )
+                data.update( self.getTimes( ) )
                 return render_template( 'times.html', data = data )
             elif request.method == 'POST':
                 viceCompressedDuration = 0
                 pressCompressedDuration = 0
+                pressTopTargetPressure = 0
+                pressSideTargetPressure = 0
+                pumpTogglePressureThreshold = 0
+                pressLoosenDuration = 0
+
                 try:
                     viceCompressedDuration = int( request.form[ 'viceCompressedDuration' ] )
                     pressCompressedDuration = int( request.form[ 'pressCompressedDuration' ] )
+                    pressTopTargetPressure = int( request.form[ 'pressTopTargetPressure' ] )
+                    pressSideTargetPressure = int( request.form[ 'pressSideTargetPressure' ] )
+                    pumpTogglePressureThreshold = int( request.form[ 'pumpTogglePressureThreshold' ] )
+                    pressLoosenDuration = int( request.form[ 'pressLoosenDuration' ] )
                 except ValueError:
                     data[ 'error' ] = 'Podano niewłaświwą wartość!'
                 finally:
                     self.bigBoy.vice.compressedDuration = viceCompressedDuration
                     self.bigBoy.press.compressedDuration = pressCompressedDuration
-                    data += self.getTimes( )
+                    self.bigBoy.press.topTargetPressure = pressTopTargetPressure
+                    self.bigBoy.press.sideTargetPressure = pressSideTargetPressure
+                    self.bigBoy.press.pumpTogglePressureThreshold = pumpTogglePressureThreshold
+                    self.bigBoy.press.loosenDuration = pressLoosenDuration
+                    data.update( self.getTimes( ) )
                     return render_template( 'times.html', data = data )
 
     def getStates( self ):
@@ -121,6 +137,10 @@ class Server:
             'boardsPerRow': self.bigBoy.boardsPerRow,
             'currentRow': self.bigBoy.currentRow,
             'rowsPerSet': self.bigBoy.rowsPerSet,
+            'pressTempTop': self.bigBoy.press.tempTop.lastState,
+            'pressTempDown': self.bigBoy.press.tempDown.lastState,
+            'pressPressureTop': self.bigBoy.press.pressTopPressureSensor.lastState,
+            'pressPressureSide': self.bigBoy.press.pressSidePressureSensor.lastState,
         }
 
     def getProductionParams( self ):
@@ -141,13 +161,17 @@ class Server:
         return {
             'viceCompressedDuration': self.bigBoy.vice.compressedDuration,
             'pressCompressedDuration': self.bigBoy.press.compressedDuration,
+            'pressTopTargetPressure': self.bigBoy.press.topTargetPressure,
+            'pressSideTargetPressure': self.bigBoy.press.sideTargetPressure,
+            'pumpTogglePressureThreshold': self.bigBoy.press.pumpTogglePressureThreshold,
+            'pressLoosenDuration': self.bigBoy.press.loosenDuration,
         }
 
     def start( self ):
         _thread.start_new_thread( self.bigBoy.run, [ ] )
         self.app.run(
             host = '0.0.0.0',
-            port = 5000
+            port = 5000,
         )
 
 
