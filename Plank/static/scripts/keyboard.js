@@ -34,7 +34,7 @@ $( () => {
                 '7 8 9',
                 '4 5 6',
                 '1 2 3',
-                '0 {bksp} {accept}'
+                '{bksp} 0 {accept}'
             ]
         },
         // Used by jQuery UI position utility

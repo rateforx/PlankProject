@@ -1,8 +1,3 @@
-import os
-import sys
-
-sys.path.extend( [ '/home/pi/Desktop/BigBoy', '/home/pi/Desktop/BigBoy' ] )
-
 import math
 
 from Plank.Encoder import *
@@ -199,7 +194,8 @@ class BigBoy:
 
         def viceAMSwitchFalling( ):
             self.conveyorServo.engine.stop()
-            # todo stop rozjazdu
+            self.vice.bumperEngineBackwardEnable.set( HIGH )
+            self.vice.bumperEngineForwardEnable.set( HIGH )
             self.viceControls = BigBoy.AUTOMATIC
             self.viceRunning = False
 
@@ -344,6 +340,7 @@ class BigBoy:
                 if self.press.pressTopHomeSensor.lastState == LOW:
                     self.press.pressTopMoveUp.set( LOW )
                     self.press.pressPumpEnable.set( LOW )
+                    self.press.pressPumpPrecisionEnable.set( HIGH )
 
         def pressTopMoveUpSwitchFalling( ):
             if self.pressControls == BigBoy.MANUAL:
@@ -379,6 +376,7 @@ class BigBoy:
             if self.pressControls == BigBoy.MANUAL:
                 self.press.pressSideMoveOut.set( LOW )
                 self.press.pressPumpEnable.set( LOW )
+                self.press.pressPumpPrecisionEnable.set( HIGH )
 
         def pressSideMoveOutSwitchFalling( ):
             if self.pressControls == BigBoy.MANUAL:
@@ -486,8 +484,10 @@ class BigBoy:
         self.conveyorServo.update( )
         self.vice.update( )
         self.press.update( )
-        for input in self.inputs:
-            input.update( )
+        if self.viceRunning:
+            for input in self.inputs:
+                input.update( )
+        self.halfTurnMotorSensor.update()  # ugly workaround
         for input in self.controls:
             input.update( )
 

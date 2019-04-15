@@ -37,7 +37,7 @@ class Press:
     timer = 0
     compressedDuration = 120
     loosenDuration = 500  # ms
-    depresurizationDuration = 3
+    depressurizationDuration = 3
     pumpTogglePressureThreshold = 35
     topTargetPressure = 100
     sideTargetPressure = 100
@@ -45,10 +45,10 @@ class Press:
     def __init__( self, bigBoy ):
         self.bigBoy = bigBoy
         # IN
-        self.pressTopHomeSensor = Input( bigBoy.yellow, A2, name = 'Prasa, góra - pozycja początkowa' )  # A2
-        self.pressSideHomeSensor = Input( bigBoy.yellow, A3, name = 'Prasa, bok - pozycja początkowa' )  # A3
-        self.pressTopPressureSensor = Input( bigBoy.yellow, A12, analog = True, name = 'Ciśnienie prasy, góra' )  # A12
-        self.pressSidePressureSensor = Input( bigBoy.yellow, A14, analog = True, name = 'Ciśnienie prasy, bok' )  # A14
+        self.pressTopHomeSensor = Input( bigBoy.yellow, A2, name = 'Prasa, góra - pozycja początkowa' )
+        self.pressSideHomeSensor = Input( bigBoy.yellow, A3, name = 'Prasa, bok - pozycja początkowa' )
+        self.pressTopPressureSensor = Input( bigBoy.yellow, A14, analog = True, name = 'Ciśnienie prasy, góra' )
+        self.pressSidePressureSensor = Input( bigBoy.yellow, A12, analog = True, name = 'Ciśnienie prasy, bok' )
 
         # OUT
         self.pressTopMoveUp = Output( bigBoy.yellow, 23 )
@@ -64,26 +64,22 @@ class Press:
 
         self.pressConveyorEngine = LimitEngine(
             Engine( bigBoy.yellow, pwmPin = 24, runPin = 28, dirPin = 29, dutyCycle = 50 ),
-            minLimitSensor = Input( bigBoy.yellow, 55, name = 'Czujnik indukcyjny: prasa - początek' ),  # A1
-            maxLimitSensor = Input( bigBoy.yellow, 54, name = 'Czujnik indukcyjny: prasa - koniec' ),  # A0
+            minLimitSensor = Input( bigBoy.yellow, A1, name = 'Czujnik indukcyjny: prasa - początek' ),
+            maxLimitSensor = Input( bigBoy.yellow, A0, name = 'Czujnik indukcyjny: prasa - koniec' ),
         )
 
-        self.conveyorOscillationSensorLeft = None
-        self.conveyorOscillationSensorRight = None
-        self.conveyorOscillationLeftEnable = None
-        self.conveyorOscillationRightEnable = None
+        self.conveyorOscillationSensorLeft = Input( bigBoy.orange, 4, name = 'Prasa - Oscylacja czujnik lewo' )
+        self.conveyorOscillationSensorRight = Input( bigBoy.orange, 2, name = 'Prasa - Oscylacja czujnik prawo' )
+        self.conveyorOscillationEnable = Output( bigBoy.orange, 15, initialValue = LOW )
 
         self.inputs += [
             self.pressTopHomeSensor,
             self.pressSideHomeSensor,
-            self.pressTopPressureSensor,
-            self.pressSidePressureSensor,
             self.pressConveyorEngine.minLimitSensor,
             self.pressConveyorEngine.maxLimitSensor,
-            # self.conveyorOscillationSensorLeft,
-            # self.conveyorOscillationSensorRight,
-            # self.conveyorOscillationLeftEnable,
-            # self.conveyorOscillationRightEnable,
+            self.conveyorOscillationSensorLeft,
+            self.conveyorOscillationSensorRight,
+            self.conveyorOscillationEnable,
         ]
 
         def pressTopHomeSensorRising( ):
@@ -99,19 +95,18 @@ class Press:
         self.tempTop.start( )
         self.tempDown.start( )
 
-        # def conveyorOscillationSensorLeftRising():
-        #     self.conveyorOscillationLeftEnable.set( LOW )
-        #     self.conveyorOscillationRightEnable.set( HIGH )
+        def conveyorOscillationSensorLeftRising():
+            self.conveyorOscillationEnable.set( HIGH )
 
-        # def conveyorOscillationSensorRightRising():
-        #     self.conveyorOscillationRightEnable.set( LOW )
-        #     self.conveyorOscillationLeftEnable.set( HIGH )
+        def conveyorOscillationSensorRightRising():
+            self.conveyorOscillationEnable.set( LOW )
 
-        # self.conveyorOscillationSensorLeft.setCallback( conveyorOscillationSensorLeftRising, RISING )
-        # self.conveyorOscillationSensorRight.setCallback( conveyorOscillationSensorRightRising, RISING )
+        self.conveyorOscillationSensorLeft.setCallback( conveyorOscillationSensorLeftRising, RISING )
+        self.conveyorOscillationSensorRight.setCallback( conveyorOscillationSensorRightRising, RISING )
 
         def pressureSensorThresholdRising( ):
-            self.pressPumpPrecisionEnable.set( LOW )
+            if HIGH in [ self.pressTopMoveDown.lastState, self.pressSideMoveIn.lastState ]:
+                self.pressPumpPrecisionEnable.set( LOW )
 
         def pressureSensorThresholdFalling( ):
             self.pressPumpPrecisionEnable.set( HIGH )
@@ -136,23 +131,28 @@ class Press:
         self.pressSidePressureSensor.update( )
         self.pressConveyorEngine.update( )
 
-        if self.state == Press.IDLE:
-            pass
+        running = self.bigBoy.pressRunning
 
-        elif self.state == Press.LOADING:
+        if self.state == Press.IDLE and running:
+            self.handleIdle( )
+
+        elif self.state == Press.LOADING and running:
             self.handleLoading( )
 
-        elif self.state == Press.COMPRESSING:
+        elif self.state == Press.COMPRESSING and running:
             self.handleCompressing( )
 
-        elif self.state == Press.COMPRESSED:
+        elif self.state == Press.COMPRESSED and running:
             self.handleCompressed( )
 
-        elif self.state == Press.DECOMPRESSING:
+        elif self.state == Press.DECOMPRESSING and running:
             self.handleDecompressing( )
 
-        elif self.state == Press.UNLOADING:
+        elif self.state == Press.UNLOADING and running:
             self.handleUnloading( )
+
+    def handleIdle( self ):
+        pass
 
     def handleLoading( self ):
         if self.bigBoy.vice.readyToUnload and self.bigBoy.vice.unloadingState == 2:
@@ -182,7 +182,7 @@ class Press:
                 self.compressingState = 1
 
         elif self.compressingState == 1:
-            if self.pressTopPressureSensor.lastState > self.targetTopPressure / 2:
+            if self.pressTopPressureSensor.lastState > self.topTargetPressure / 2:
                 self.pressTopMoveDown.set( HIGH )
                 self.pressTopMoveUp.set( LOW )
                 self.timer = now( )
@@ -200,13 +200,13 @@ class Press:
                 self.compressingState = 4
 
         elif self.compressingState == 4:
-            if self.pressSidePressureSensor.lastState > self.targetSidePressure:
+            if self.pressSidePressureSensor.lastState > self.sideTargetPressure:
                 self.pressSideMoveIn.set( HIGH )
                 self.pressTopMoveDown.set( LOW )
                 self.compressingState = 5
 
         elif self.compressingState == 5:
-            if self.pressTopPressureSensor.lastState > self.targetTopPressure:
+            if self.pressTopPressureSensor.lastState > self.topTargetPressure:
                 self.pressTopMoveDown.set( HIGH )
                 self.pressPumpEnable.set( HIGH )
                 self.compressingState = 0
@@ -244,7 +244,7 @@ class Press:
             self.decompressingState = 1
 
         elif self.decompressingState == 1:
-            if now( ) - self.timer > self.depresurizationDuration:
+            if now( ) - self.timer > self.depressurizationDuration:
                 self.pressDepressurizeVentEnable.set( HIGH )
                 self.pressPumpPrecisionEnable.set( HIGH )
                 self.pressPumpEnable.set( LOW )

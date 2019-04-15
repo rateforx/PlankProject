@@ -1,3 +1,5 @@
+import sys
+import subprocess
 import _thread
 
 from flask import Flask, render_template, request
@@ -11,7 +13,11 @@ class Server:
 
     def __init__( self ):
         self.bigBoy = BigBoy( )
-        self.app = Flask( 'Stolmat' )
+        self.app = Flask(
+            import_name = 'Stolmat',
+            template_folder = 'Plank/templates',
+            static_folder = 'Plank/static',
+        )
         self.app.config[ 'TEMPLATES_AUTO_RELOAD' ] = True
 
         @self.app.route( '/' )
@@ -168,7 +174,8 @@ class Server:
         }
 
     def start( self ):
-        _thread.start_new_thread( self.bigBoy.run, [ ] )
+        _thread.start_new_thread( self.bigBoy.run, ( ) )
+        subprocess.Popen( [ 'chromium-browser', '--start-fullscreen', '--name=Stolmat', '--app=http://localhost:5000/' ] )
         self.app.run(
             host = '0.0.0.0',
             port = 5000,
@@ -176,5 +183,6 @@ class Server:
 
 
 if __name__ == '__main__':
+    sys.path.extend( [ '/home/pi/Desktop/BigBoy', '/home/pi/Desktop/BigBoy' ] )
     server = Server( )
     server.start( )

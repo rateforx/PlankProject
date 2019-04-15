@@ -1,7 +1,5 @@
-from Plank.Encoder import Encoder
 from Plank.Engine import Engine
 from Plank.Input import Input, HIGH
-from Plank.Output import Output, LOW
 
 class LimitEngine:
     IDLE = 0

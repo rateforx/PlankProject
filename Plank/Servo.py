@@ -1,7 +1,6 @@
 from Plank.Engine import *
 from Plank.Encoder import Encoder
 from Plank.Output import Output
-from math import pi as PI
 
 
 class Servo:

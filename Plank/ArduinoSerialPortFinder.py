@@ -17,5 +17,5 @@ class ArduinoSerialPortFinder:
 
 
 if __name__ == '__main__':
-    print( 'Uno port: {}'.format( ArduinoSerialPortFinder.getArduinoPort( UNO_SN0 ) ) )
-    print( 'Mega port: {}'.format( ArduinoSerialPortFinder.getArduinoPort( MEGA_SN0 ) ) )
+    print( 'Uno port: {}'.format( ArduinoSerialPortFinder.getArduinoPort ) )
+    print( 'Mega port: {}'.format( ArduinoSerialPortFinder.getArduinoPort ) )

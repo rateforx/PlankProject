@@ -6,7 +6,7 @@ from Plank.Encoder import Encoder
 from Plank.Input import Input
 from Plank.Output import *
 import Plank.Press
-from Plank.Servo import Servo, Engine, SimpleServo
+from Plank.Servo import Servo, SimpleServo
 
 A0 = 54
 A1 = 55
@@ -105,22 +105,24 @@ class Vice:
 
         self.bumperServo.update()
 
-        if self.state == Vice.IDLE:
+        running = self.bigBoy.viceRunning
+ 
+        if self.state == Vice.IDLE and running:
             self.handleIdle( )
 
-        elif self.state == Vice.RELEASING:
+        elif self.state == Vice.RELEASING and running:
             self.handleReleasing( )
 
-        elif self.state == Vice.COMPRESSING:
+        elif self.state == Vice.COMPRESSING and running:
             self.handleCompressing( )
 
-        elif self.state == Vice.COMPRESSED:
+        elif self.state == Vice.COMPRESSED and running:
             self.handleCompressed( )
 
-        elif self.state == Vice.DECOMPRESSING:
+        elif self.state == Vice.DECOMPRESSING and running:
             self.handleDecompressing( )
 
-        elif self.state == Vice.UNLOADING:
+        elif self.state == Vice.UNLOADING and running:
             self.handleUnloading( )
 
         elif self.state == Vice.RESETTING:

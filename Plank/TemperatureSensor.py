@@ -16,6 +16,10 @@ class TemperatureSensor:
     threadExists = False
 
     def __init__( self, id ):
+        """
+
+        :rtype:
+        """
         self.id = sensorIds[ id ]
         self.sensor = W1ThermSensor( sensor_id = sensorIds[ id ] )
         self.lastState = self.sensor.get_temperature( )
@@ -32,7 +36,7 @@ class TemperatureSensor:
 
     def start( self ):
         if not self.threadExists:
-            _thread.start_new_thread( self.getTemperature, [ ] )
+            _thread.start_new_thread( self.getTemperature, ( ) )
             self.threadExists = True
             self.running = True
 

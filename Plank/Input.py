@@ -19,7 +19,7 @@ class Input:
     verbose = False
     analog = False
 
-    def __init__( self, arduinoIO: ArduinoIO, pin, analog = False, name = '' ):
+    def __init__( self, arduinoIO: ArduinoIO, pin, analog = False, name = '', pausable = False ):
         self.arduinoIO = arduinoIO
         self.pin = pin
         self.analog = analog
