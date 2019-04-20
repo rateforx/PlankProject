@@ -79,8 +79,8 @@ class BigBoy:
     orange = None
 
     def __init__( self ):
-        self.yellow = ArduinoIO( MEGA_SN0 )
-        self.orange = ArduinoIO( MEGA_SN1 )
+        self.yellow = ArduinoIO( MEGA_SN0, 'yellow' )
+        self.orange = ArduinoIO( MEGA_SN1, 'orange' )
 
         # self.gui = GUI( )
 
@@ -112,9 +112,13 @@ class BigBoy:
         self.pressConveyorBackwardSwitch = Input( self.yellow, 18, name = 'Prasa przełącznik - taśma tył' )
         self.pressTopMoveUpSwitch = Input( self.orange, A5, name = 'Prasa przełącznik - górny docisk w górę' )
         self.pressTopMoveDownSwitch = Input( self.orange, A3, name = 'Prasa przełącznik - górny docisk w dół' )
-        self.pressSideMoveInSwitch = Input( self.orange, A7, name = 'Prasa przełącznik - boczny docisk do wewnątrz' )
-        self.pressSideMoveOutSwitch = Input( self.orange, A8, name = 'Prasa przełącznik - boczny docisk do zewnątrz' )
+        self.pressSideMoveInSwitch = Input( self.orange, A8, name = 'Prasa przełącznik - boczny docisk do wewnątrz' )
+        self.pressSideMoveOutSwitch = Input( self.orange, A7, name = 'Prasa przełącznik - boczny docisk do zewnątrz' )
         self.pressDepressurizeButton = Input( self.orange, 6, name = 'Prasa przycisk - rozprężenie' )
+        self.forcePusherButton = Input( self.orange, A14, name = 'Przycisk - ręczne załączenie popychacza' )
+        self.forceHalfTurnButton = Input( self.orange, A12, name = 'Przycisk - ręczne ułożenie lamelki' )
+        self.forceViceReleaseButton = Input( self.orange, A10, name = 'Przycisk - ręczne opuszczenie układarki' )
+        self.forcePressLoadButton = Input( self.orange, 15, name = 'Przycisk - ręczny wjazd do prasy' )
 
         self.controls += [
             self.viceAMSwitch,
@@ -134,14 +138,20 @@ class BigBoy:
             self.pressSideMoveInSwitch,
             self.pressSideMoveOutSwitch,
             self.pressDepressurizeButton,
+            self.forcePusherButton,
+            self.forceHalfTurnButton,
+            self.forceViceReleaseButton,
+            self.forcePressLoadButton,
         ]
 
         self.glueDisable = Output( self.orange, 49, LOW )
         self.halfTurnMotorEnable = Output( self.yellow, 50 )
         self.slatPusherEnable = Output( self.orange, 22 )
 
+        self.pressAMIndicatorEnable = Output( self.orange, 24 )
+        self.viceAMIndicatorEnable = Output( self.orange, 23 )
+
         self.conveyorServo = Servo(
-            # engine = Engine( self.yellow, pwmPin = 23, runPin = 26, dirPin = 27, dutyCycle = 50 ),
             engine = Engine( self.yellow, pwmPin = 23, runPin = 26, dirPin = 27, dutyCycle = 50 ),
             encoder = Encoder( UNO_SN0 )
         )
@@ -187,13 +197,16 @@ class BigBoy:
                 self.currentSlat += 1
                 self.next( )
 
+            if self.viceControls == BigBoy.MANUAL:
+                self.halfTurnMotorEnable.set( HIGH )
+
         self.halfTurnMotorSensor.do( halfTurnMotorSensorCallbackHigh, HIGH )
 
         # controls CALLBACKS
         # VICE Controls
 
         def viceAMSwitchFalling( ):
-            self.conveyorServo.engine.stop()
+            self.conveyorServo.engine.stop( )
             self.vice.bumperEngineBackwardEnable.set( HIGH )
             self.vice.bumperEngineForwardEnable.set( HIGH )
             self.viceControls = BigBoy.AUTOMATIC
@@ -201,6 +214,7 @@ class BigBoy:
 
         def viceAMSwitchRising( ):
             self.viceControls = BigBoy.MANUAL
+            self.viceAMIndicatorEnable.set( HIGH )
             self.viceRunning = False
 
         self.viceAMSwitch.setCallback( viceAMSwitchFalling, FALLING )
@@ -208,10 +222,12 @@ class BigBoy:
 
         def viceStartButtonRising( ):
             if self.viceControls == BigBoy.AUTOMATIC:
+                self.viceAMIndicatorEnable.set( LOW )
                 self.viceRunning = True
 
         def viceStopButtonRising( ):
             self.viceRunning = False
+            self.viceAMIndicatorEnable.set( HIGH )
 
         self.viceStartButton.setCallback( viceStartButtonRising, RISING )
         self.viceStopButton.setCallback( viceStopButtonRising, RISING )
@@ -268,7 +284,7 @@ class BigBoy:
         # PRESS Controls
 
         def pressAMSwitchFalling( ):
-            self.press.pressConveyorEngine.engine.stop()
+            self.press.pressConveyorEngine.engine.stop( )
             self.press.pressPumpEnable.set( HIGH )
             self.press.pressSideMoveIn.set( HIGH )
             self.press.pressSideMoveOut.set( HIGH )
@@ -279,16 +295,19 @@ class BigBoy:
 
         def pressAMSwitchRising( ):
             self.pressControls = BigBoy.MANUAL
+            self.pressAMIndicatorEnable.set( HIGH )
             self.pressRunning = False
 
         self.pressAMSwitch.setCallback( pressAMSwitchFalling, FALLING )
         self.pressAMSwitch.setCallback( pressAMSwitchRising, RISING )
 
         def pressStartButtonRising( ):
-            if self.pressControls ==  BigBoy.AUTOMATIC:
+            if self.pressControls == BigBoy.AUTOMATIC:
+                self.pressAMIndicatorEnable.set( LOW )
                 self.pressRunning = True
 
         def pressStopButtonRising( ):
+            self.pressAMIndicatorEnable.set( HIGH )
             self.pressRunning = False
 
         self.pressStartButton.setCallback( pressStartButtonRising, RISING )
@@ -393,13 +412,13 @@ class BigBoy:
         self.pressSideMoveOutSwitch.setCallback( pressSideMoveOutSwitchRising, RISING )
         self.pressSideMoveOutSwitch.setCallback( pressSideMoveOutSwitchFalling, FALLING )
 
-        def pressDepressurizeButtonRising():
+        def pressDepressurizeButtonRising( ):
             if self.pressControls == BigBoy.MANUAL:
                 if HIGH not in [ self.pressSideMoveInSwitch.lastState, self.pressTopMoveDownSwitch.lastState ]:
                     self.press.pressTopMoveUp.set( LOW )
                     self.press.pressSideMoveOut.set( LOW )
 
-        def pressDepressurizeButtonFalling():
+        def pressDepressurizeButtonFalling( ):
             if self.pressControls == BigBoy.MANUAL:
                 if self.pressTopMoveUpSwitch.lastState == LOW:
                     self.press.pressTopMoveUp.set( HIGH )
@@ -408,6 +427,43 @@ class BigBoy:
 
         self.pressDepressurizeButton.setCallback( pressDepressurizeButtonRising, RISING )
         self.pressDepressurizeButton.setCallback( pressDepressurizeButtonFalling, FALLING )
+
+        def forcePusherButtonRising( ):
+            if self.viceControls == BigBoy.MANUAL:
+                self.slatPusherEnable.set( LOW )
+
+        def forcePusherButtonFalling( ):
+            if self.viceControls == BigBoy.MANUAL:
+                self.slatPusherEnable.set( HIGH )
+
+        self.forcePusherButton.setCallback( forcePusherButtonRising, RISING )
+        self.forcePusherButton.setCallback( forcePusherButtonFalling, FALLING )
+
+        def forceHalfTurnButtonRising( ):
+            if self.viceControls == BigBoy.MANUAL:
+                self.halfTurnMotorEnable.set( LOW )
+
+        self.forceHalfTurnButton.setCallback( forceHalfTurnButtonRising, RISING )
+
+        def forceViceReleaseButtonRising( ):
+            if self.viceControls == BigBoy.MANUAL:
+                self.vice.state = Vice.RELEASING
+                self.vice.resettingState = 0
+
+        self.forceViceReleaseButton.setCallback( forceViceReleaseButtonRising, RISING )
+
+        def forcePressLoadButtonRising( ):
+            if BigBoy.AUTOMATIC not in [
+                self.viceControls,
+                self.pressControls,
+            ]:
+                if self.vice.state == Vice.IDLE and self.press.state == Press.IDLE:
+                    self.vice.state = Vice.UNLOADING
+                    self.vice.forceUnloading = True
+                    self.press.state = Press.LOADING
+                    self.press.forceLoading = True
+
+        self.forcePressLoadButton.setCallback( forcePressLoadButtonRising, RISING )
 
     def next( self ):
         self.slatCheck( )
@@ -480,6 +536,10 @@ class BigBoy:
         self.vice.state = Vice.RESETTING
 
     def update( self ):
+        self.yellow.update( )
+        self.orange.update( )
+        time.sleep( 1 / 60 )
+
         self.step += 1
         self.conveyorServo.update( )
         self.vice.update( )
@@ -487,11 +547,14 @@ class BigBoy:
         if self.viceRunning:
             for input in self.inputs:
                 input.update( )
-        self.halfTurnMotorSensor.update()  # ugly workaround
+        self.halfTurnMotorSensor.update( )  # ugly workaround
         for input in self.controls:
             input.update( )
 
     def run( self ):
+        self.yellow.start( )
+        self.orange.start( )
+
         while True:
             self.update( )
 

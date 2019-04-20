@@ -35,6 +35,7 @@ class Vice:
 
     readyToRelease = False
     readyToUnload = False
+    forceUnloading = False
 
     timer = 0
 
@@ -103,17 +104,17 @@ class Vice:
         for input in self.inputs:
             input.update( )
 
-        self.bumperServo.update()
+        self.bumperServo.update( )
 
         running = self.bigBoy.viceRunning
- 
+
         if self.state == Vice.IDLE and running:
             self.handleIdle( )
 
-        elif self.state == Vice.RELEASING and running:
+        elif self.state == Vice.RELEASING:  # and running:
             self.handleReleasing( )
 
-        elif self.state == Vice.COMPRESSING and running:
+        elif self.state == Vice.COMPRESSING:  # and running:
             self.handleCompressing( )
 
         elif self.state == Vice.COMPRESSED and running:
@@ -122,11 +123,11 @@ class Vice:
         elif self.state == Vice.DECOMPRESSING and running:
             self.handleDecompressing( )
 
-        elif self.state == Vice.UNLOADING and running:
+        elif self.state == Vice.UNLOADING and running or self.forceUnloading:
             self.handleUnloading( )
 
         elif self.state == Vice.RESETTING:
-            self.handleResetting()
+            self.handleResetting( )
 
     def handleIdle( self ):
         if self.readyToRelease:
@@ -258,6 +259,7 @@ class Vice:
         elif self.unloadingState == 4:
             self.bigBoy.conveyorServo.engine.stop( )
             self.unloadingState = 0
+            self.forceUnloading = False
             self.state = Vice.IDLE
             self.readyToUnload = False
 

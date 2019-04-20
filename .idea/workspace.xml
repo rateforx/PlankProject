@@ -2,25 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="186d52f9-d3e7-4f7d-8db1-654290318de5" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/dictionaries/Snippy.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/webResources.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Plank/static/images/saw.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Stolmat.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/BigBoyProject.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/BigBoyProject.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Plank/__ArduinoIO.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plank/ArduinoSerialPortFinder.py" beforeDir="false" afterPath="$PROJECT_DIR$/Plank/ArduinoSerialPortFinder.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plank/ArduinoIO.py" beforeDir="false" afterPath="$PROJECT_DIR$/Plank/ArduinoIO.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plank/BigBoy.py" beforeDir="false" afterPath="$PROJECT_DIR$/Plank/BigBoy.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plank/Input.py" beforeDir="false" afterPath="$PROJECT_DIR$/Plank/Input.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plank/LimitEngine.py" beforeDir="false" afterPath="$PROJECT_DIR$/Plank/LimitEngine.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plank/Output.py" beforeDir="false" afterPath="$PROJECT_DIR$/Plank/Output.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plank/Press.py" beforeDir="false" afterPath="$PROJECT_DIR$/Plank/Press.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plank/Server.py" beforeDir="false" afterPath="$PROJECT_DIR$/Plank/Server.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plank/Servo.py" beforeDir="false" afterPath="$PROJECT_DIR$/Plank/Servo.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plank/TemperatureSensor.py" beforeDir="false" afterPath="$PROJECT_DIR$/Plank/TemperatureSensor.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plank/Vice.py" beforeDir="false" afterPath="$PROJECT_DIR$/Plank/Vice.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plank/static/scripts/keyboard.js" beforeDir="false" afterPath="$PROJECT_DIR$/Plank/static/scripts/keyboard.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plank/templates/times.html" beforeDir="false" afterPath="$PROJECT_DIR$/Plank/templates/times.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -33,7 +22,7 @@
     <SUITE FILE_PATH="coverage/Plank$Wonsz3.coverage" NAME="Wonsz3 Coverage Results" MODIFIED="1550671066852" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Plank" />
     <SUITE FILE_PATH="coverage/BigBoyProject$TemperatureSensor.coverage" NAME="TemperatureSensor Coverage Results" MODIFIED="1554189620503" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Plank" />
     <SUITE FILE_PATH="coverage/BigBoyProject$scratch_1.coverage" NAME="scratch_1 Coverage Results" MODIFIED="1553869276362" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$APPLICATION_CONFIG_DIR$/scratches" />
-    <SUITE FILE_PATH="coverage/BigBoyProject$Server.coverage" NAME="Server Coverage Results" MODIFIED="1555159148998" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/" />
+    <SUITE FILE_PATH="coverage/BigBoyProject$Server.coverage" NAME="Server Coverage Results" MODIFIED="1555674314028" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/" />
     <SUITE FILE_PATH="coverage/Plank$PWM.coverage" NAME="PWM Coverage Results" MODIFIED="1550515770826" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Plank" />
     <SUITE FILE_PATH="coverage/BigBoyProject$BigBoy.coverage" NAME="BigBoy Coverage Results" MODIFIED="1554705375769" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Plank" />
     <SUITE FILE_PATH="coverage/Plank$ArduinoSendI2C.coverage" NAME="ArduinoSendI2C Coverage Results" MODIFIED="1551446798180" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Tests" />
@@ -58,12 +47,12 @@
     <favorites_list name="Plank" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="true" current-in-tab="true">
+    <leaf>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Plank/Press.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2133">
-              <caret line="33" column="26" lean-forward="true" selection-start-line="33" selection-start-column="26" selection-end-line="33" selection-end-column="26" />
+            <state relative-caret-position="-3915">
+              <caret line="107" selection-start-line="107" selection-end-line="107" />
               <folding>
                 <element signature="e#0#28#0" expanded="true" />
               </folding>
@@ -71,22 +60,43 @@
           </provider>
         </entry>
       </file>
-      <file pinned="true" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Plank/BigBoy.py">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Plank/Output.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="302">
-              <caret line="116" column="60" selection-start-line="116" selection-start-column="60" selection-end-line="116" selection-end-column="60" />
+            <state relative-caret-position="368">
+              <caret line="16" selection-start-line="16" selection-end-line="16" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="true" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Plank/Vice.py">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Plank/BigBoy.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="414">
-              <caret line="18" column="17" lean-forward="true" selection-start-line="18" selection-start-column="17" selection-end-line="18" selection-end-column="17" />
+            <state relative-caret-position="-1086">
+              <caret line="154" column="43" selection-start-line="154" selection-start-column="43" selection-end-line="154" selection-end-column="43" />
               <folding>
-                <element signature="e#0#28#0" expanded="true" />
+                <element signature="e#0#11#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Plank/ArduinoIO.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="486">
+              <caret line="61" column="8" selection-start-line="61" selection-start-column="8" selection-end-line="61" selection-end-column="8" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Plank/Input.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="302">
+              <caret line="88" column="29" lean-forward="true" selection-start-line="88" selection-start-column="29" selection-end-line="88" selection-end-column="29" />
+              <folding>
+                <element signature="e#985#2339#0" />
               </folding>
             </state>
           </provider>
@@ -97,21 +107,16 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Python Script" />
         <option value="CSS File" />
         <option value="JavaScript File" />
         <option value="HTML File" />
         <option value="HTTP Request" />
+        <option value="Python Script" />
       </list>
     </option>
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>self.compressingState</find>
-      <find>self.releaseStepsDuration</find>
-      <find>ł</find>
-      <find>dłu</find>
-      <find>QAbstractSpinBox::PlusMinus</find>
       <find>s3</find>
       <find>s2</find>
       <find>= '.*.js'</find>
@@ -137,6 +142,11 @@
       <find>targetSidePressure</find>
       <find>orange, 6</find>
       <find>A0</find>
+      <find>pressuresens</find>
+      <find>press.pressam</find>
+      <find>state</find>
+      <find>A1,</find>
+      <find>input</find>
     </findStrings>
     <replaceStrings>
       <replace>setMode</replace>
@@ -167,6 +177,7 @@
       <replace>500</replace>
       <replace>250ms ease-in-out</replace>
       <replace>sideTargetPressure</replace>
+      <replace>value</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -175,14 +186,10 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/Plank/START" />
-        <option value="$PROJECT_DIR$/Plank/ui/main.py" />
-        <option value="$PROJECT_DIR$/Plank/ui/__init__.py" />
         <option value="$PROJECT_DIR$/Plank/GUI.py" />
         <option value="$PROJECT_DIR$/Plank/Thermometer.py" />
         <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch.py" />
         <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch_1.py" />
-        <option value="$PROJECT_DIR$/Plank/AnalogInput.py" />
         <option value="$PROJECT_DIR$/Tests/Thermometer.py" />
         <option value="$PROJECT_DIR$/Plank/views/style.css" />
         <option value="$PROJECT_DIR$/Plank/views/layout.html" />
@@ -203,29 +210,33 @@
         <option value="$PROJECT_DIR$/Plank/static/styles/materialdesignicons.css" />
         <option value="$PROJECT_DIR$/Plank/templates/states.html" />
         <option value="$PROJECT_DIR$/Plank/static/scripts/updater.js" />
-        <option value="$PROJECT_DIR$/Plank/templates/index.html" />
-        <option value="$PROJECT_DIR$/Plank/templates/layout.html" />
         <option value="$PROJECT_DIR$/Plank/templates/params.html" />
         <option value="$PROJECT_DIR$/Plank/static/styles/style.css" />
         <option value="$PROJECT_DIR$/Plank/templates/times.html" />
         <option value="$PROJECT_DIR$/Plank/Encoder.py" />
         <option value="$PROJECT_DIR$/Plank/ArduinoSerialPortFinder.py" />
-        <option value="$PROJECT_DIR$/Plank/LimitEngine.py" />
         <option value="$PROJECT_DIR$/Plank/Servo.py" />
-        <option value="$PROJECT_DIR$/Plank/ArduinoIO.py" />
         <option value="$PROJECT_DIR$/wut.http" />
         <option value="$PROJECT_DIR$/Plank/start.sh" />
         <option value="$PROJECT_DIR$/start.sh" />
         <option value="$PROJECT_DIR$/Stolmat" />
         <option value="$PROJECT_DIR$/Stolmat.sh" />
         <option value="$PROJECT_DIR$/Plank/Output.py" />
-        <option value="$PROJECT_DIR$/Plank/Input.py" />
-        <option value="$PROJECT_DIR$/Plank/BigBoy.py" />
         <option value="$PROJECT_DIR$/Plank/static/scripts/keyboard.js" />
         <option value="$PROJECT_DIR$/Plank/Server.py" />
-        <option value="$PROJECT_DIR$/Plank/Vice.py" />
         <option value="$PROJECT_DIR$/Plank/TemperatureSensor.py" />
+        <option value="$PROJECT_DIR$/Plank/templates/layout.html" />
+        <option value="$PROJECT_DIR$/Plank/templates/index.html" />
+        <option value="$PROJECT_DIR$/Plank/Vice.py" />
+        <option value="$PROJECT_DIR$/Plank/MegainoIO.py" />
+        <option value="$PROJECT_DIR$/Plank/Engine.py" />
+        <option value="$PROJECT_DIR$/Plank/__ArduinoIO.py" />
+        <option value="$PROJECT_DIR$/Plank/LimitEngine.py" />
         <option value="$PROJECT_DIR$/Plank/Press.py" />
+        <option value="$PROJECT_DIR$/Plank/AnalogInput.py" />
+        <option value="$PROJECT_DIR$/Plank/ArduinoIO.py" />
+        <option value="$PROJECT_DIR$/Plank/Input.py" />
+        <option value="$PROJECT_DIR$/Plank/BigBoy.py" />
       </list>
     </option>
   </component>
@@ -236,10 +247,10 @@
     <auto-save>true</auto-save>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="779" />
-    <option name="y" value="-23" />
-    <option name="width" value="974" />
-    <option name="height" value="1057" />
+    <option name="x" value="-484" />
+    <option name="y" value="213" />
+    <option name="width" value="1936" />
+    <option name="height" value="1066" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -308,7 +319,7 @@
     <property name="nodejs.protractor.protractor_package" value="" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="restartRequiresConfirmation" value="false" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PythonContentEntriesConfigurable" />
+    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -537,12 +548,12 @@
       <workItem from="1554197189221" duration="100393000" />
       <workItem from="1554727126279" duration="64992000" />
       <workItem from="1555052709442" duration="16048000" />
-      <workItem from="1555312902924" duration="3895000" />
+      <workItem from="1555312902924" duration="72928000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="744742000" />
+    <option name="totallyTimeSpent" value="813775000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -557,8 +568,8 @@
     <frame x="-8" y="-8" width="1936" height="1066" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49062845" visible="true" weight="0.1369936" />
-      <window_info id="Structure" order="1" sideWeight="0.5093716" side_tool="true" weight="0.15458423" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.48870057" visible="true" weight="0.1369936" />
+      <window_info id="Structure" order="1" sideWeight="0.51129943" side_tool="true" visible="true" weight="0.1369936" />
       <window_info id="Favorites" order="2" sideWeight="0.50385886" side_tool="true" weight="0.1433902" />
       <window_info active="true" anchor="bottom" id="Concurrent Activities Diagram" order="0" weight="0.3296582" />
       <window_info anchor="bottom" id="Message" order="1" />
@@ -569,20 +580,20 @@
       <window_info anchor="bottom" id="TODO" order="6" weight="0.3296582" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" />
-      <window_info anchor="bottom" id="File Transfer" order="9" sideWeight="0.4978678" weight="0.21940464" />
+      <window_info anchor="bottom" id="File Transfer" order="9" sideWeight="0.4978678" visible="true" weight="0.21940464" />
       <window_info anchor="bottom" id="Database Changes" order="10" />
       <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.5021322" side_tool="true" weight="0.21609703" />
-      <window_info anchor="right" id="Coding Counter" order="0" />
+      <window_info anchor="right" id="Coding Counter" order="0" weight="0.1609808" />
       <window_info anchor="right" id="Commander" order="1" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="2" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="3" weight="0.25" />
       <window_info anchor="right" id="Remote Host" order="4" weight="0.23720682" />
       <window_info anchor="right" id="SciView" order="5" weight="0.32995737" />
       <window_info anchor="right" id="Database" order="6" weight="0.32995737" />
-      <window_info anchor="right" x="0" y="0" width="434" height="866" id="Documentation" order="7" side_tool="true" weight="0.32995737" />
+      <window_info anchor="right" x="0" y="0" width="434" height="866" id="Documentation" order="7" sideWeight="0.5005513" side_tool="true" weight="0.37206823" />
       <window_info anchor="right" id="Terminal" order="8" weight="0.3880597" />
       <window_info anchor="right" id="Python Console" order="9" sideWeight="0.4978678" weight="0.42643923" />
-      <window_info active="true" anchor="right" id="Debug" order="10" visible="true" weight="0.37206823" />
+      <window_info anchor="right" id="Debug" order="10" sideWeight="0.49944875" weight="0.37206823" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -613,53 +624,57 @@
     <watches-manager>
       <configuration name="PythonConfigurationType">
         <watch expression="self" />
+        <watch expression="self.vice" />
+        <watch expression="self.press" />
+        <watch expression="self.yellow" />
+        <watch expression="self.orange" />
       </configuration>
     </watches-manager>
   </component>
   <component name="debuggerHistoryManager">
     <expressions id="evaluateCodeFragment">
       <expression>
-        <expression-string>self.vice</expression-string>
+        <expression-string>self.orange.inputs == self.yellow.inputs</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>self.pressPumpPrecisionEnable.set(HIGH)</expression-string>
+        <expression-string>self</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>self.pressPumpPrecisionEnable.set(LOW)</expression-string>
+        <expression-string>self.callbackRising</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>self.pressSidePressureSensor</expression-string>
+        <expression-string>self.serial.timeout</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>self.pressTopPressureSensor</expression-string>
+        <expression-string>self.serial.readlines()</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>self.pressTopPressureSensor.update()</expression-string>
+        <expression-string>self.serial.inWaiting()</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>self.vice.resettingState=0</expression-string>
+        <expression-string>parts</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>self.vice.resettingState</expression-string>
+        <expression-string>data</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>self.vice.state</expression-string>
+        <expression-string>data = self.serial.readline().decode().strip('\r\n')</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
@@ -677,6 +692,11 @@
       </expression>
     </expressions>
     <expressions id="setValue">
+      <expression>
+        <expression-string>Press.COMPRESSING</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
       <expression>
         <expression-string>0</expression-string>
         <language-id>Python</language-id>
@@ -747,61 +767,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$USER_HOME$/.PyCharm2018.3/system/remote_sources/1459766174/-1171821208/werkzeug/_internal.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="199" selection-start-line="199" selection-end-line="199" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.PyCharm2018.3/system/remote_sources/1868590399/201545290/email/_policybase.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="279" selection-start-line="279" selection-end-line="279" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Plank/static/scripts/materialize.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="190">
-          <caret line="10462" column="30" selection-start-line="10462" selection-start-column="30" selection-end-line="10462" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Plank/static/scripts/blockrain.jquery.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="205">
-          <caret line="917" column="17" selection-start-line="917" selection-start-column="17" selection-end-line="917" selection-end-column="17" />
-          <folding>
-            <element signature="n#style#0;n#canvas#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.PyCharm2018.3/system/remote_sources/1459766174/-1171821208/werkzeug/wrappers.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="757" selection-start-line="757" selection-end-line="757" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.PyCharm2018.3/system/python_stubs/1868590399/math.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="17" column="22" lean-forward="true" selection-start-line="17" selection-start-column="22" selection-end-line="17" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external/lib.dom.d.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="368">
-          <caret line="13735" column="4" selection-start-line="13735" selection-start-column="4" selection-end-line="13735" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/.PyCharm2018.3/system/remote_sources/1868590399/201545290/logging/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="289">
@@ -819,20 +784,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Plank/templates/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2833">
-          <caret line="125" column="34" lean-forward="true" selection-start-line="125" selection-start-column="34" selection-end-line="125" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Plank/templates/layout.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="345">
-          <caret line="73" column="51" selection-start-line="73" selection-start-column="51" selection-end-line="73" selection-end-column="51" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/pydevd.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="694">
@@ -844,13 +795,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="289">
           <caret line="116" column="4" selection-start-line="116" selection-start-column="4" selection-end-line="116" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.PyCharm2018.3/system/remote_sources/1459766174/-1171821208/werkzeug/local.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="141" column="22" lean-forward="true" selection-start-line="141" selection-start-column="22" selection-end-line="141" selection-end-column="22" />
         </state>
       </provider>
     </entry>
@@ -882,13 +826,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/.PyCharm2018.3/system/remote_sources/1459766174/-1171821208/werkzeug/serving.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="196" selection-start-line="196" selection-end-line="196" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Plank/templates/inputs.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="161">
@@ -900,13 +837,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="289">
           <caret line="528" selection-start-line="528" selection-end-line="528" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/_pydev_bundle/pydev_monkey.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="631" selection-start-line="631" selection-end-line="631" />
         </state>
       </provider>
     </entry>
@@ -931,36 +861,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="207">
           <caret line="9" selection-start-line="9" selection-end-line="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Plank/Engine.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="805">
-          <caret line="35" column="26" selection-start-line="35" selection-start-column="26" selection-end-line="35" selection-end-column="26" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Plank/Servo.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-902">
-          <caret line="3" lean-forward="true" selection-start-line="3" selection-end-line="3" />
-          <folding>
-            <element signature="e#0#26#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Plank/LimitEngine.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="46">
-          <caret line="2" selection-start-line="2" selection-end-line="2" />
-          <folding>
-            <element signature="e#0#31#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -992,27 +892,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Plank/ArduinoIO.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="23">
-          <caret line="17" selection-start-line="17" selection-end-line="17" />
-          <folding>
-            <element signature="e#0#65#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Plank/templates/times.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="317">
           <caret line="104" column="18" lean-forward="true" selection-start-line="104" selection-start-column="18" selection-end-line="104" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Plank/Output.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="391">
-          <caret line="17" lean-forward="true" selection-start-line="17" selection-end-line="17" />
         </state>
       </provider>
     </entry>
@@ -1043,10 +926,68 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/.PyCharm2018.3/system/remote_sources/1459766174/-1171821208/serial/serialposix.py">
+    <entry file="file://$PROJECT_DIR$/Plank/static/scripts/updater.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="570">
+          <caret line="68" column="53" selection-start-line="68" selection-start-column="53" selection-end-line="68" selection-end-column="53" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Plank/templates/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="579">
+          <caret line="137" column="21" lean-forward="true" selection-start-line="137" selection-start-column="21" selection-end-line="137" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Plank/templates/layout.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="207">
+          <caret line="64" column="5" selection-start-line="64" selection-start-column="5" selection-end-line="64" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Plank/templates/states.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="322">
+          <caret line="14" column="60" lean-forward="true" selection-start-line="14" selection-start-column="60" selection-end-line="14" selection-end-column="60" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharm2018.3/system/python_stubs/1868590399/builtins.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="4968" column="8" selection-start-line="4968" selection-start-column="8" selection-end-line="4968" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Plank/MegainoIO.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="282">
-          <caret line="472" selection-start-line="472" selection-end-line="472" />
+          <caret line="41" selection-start-line="41" selection-end-line="41" />
+          <folding>
+            <element signature="e#0#28#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Plank/__ArduinoIO.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="437">
+          <caret line="19" column="8" selection-start-line="19" selection-start-column="8" selection-end-line="19" selection-end-column="8" />
+          <folding>
+            <element signature="e#0#65#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Plank/Engine.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="276">
+          <caret line="12" column="93" lean-forward="true" selection-start-line="12" selection-start-column="93" selection-end-line="12" selection-end-column="93" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1057,57 +998,139 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Plank/static/scripts/updater.js">
+    <entry file="file://$USER_HOME$/.PyCharm2018.3/system/remote_sources/1459766174/-1171821208/werkzeug/local.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="570">
-          <caret line="68" column="53" selection-start-line="68" selection-start-column="53" selection-end-line="68" selection-end-column="53" />
+        <state relative-caret-position="289">
+          <caret line="69" selection-start-line="69" selection-end-line="69" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Plank/templates/states.html">
+    <entry file="file://$PROJECT_DIR$/Plank/LimitEngine.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="317">
-          <caret line="62" column="36" selection-start-line="62" selection-start-column="36" selection-end-line="62" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Plank/Input.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="282">
-          <caret line="71" selection-start-line="71" selection-end-line="71" />
+        <state relative-caret-position="23">
+          <caret line="1" column="25" selection-start-line="1" selection-start-column="25" selection-end-line="1" selection-end-column="25" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Plank/Server.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="639">
-          <caret line="169" column="66" selection-start-line="169" selection-start-column="66" selection-end-line="169" selection-end-column="66" />
+        <state relative-caret-position="161">
+          <caret line="14" selection-start-line="14" selection-end-line="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharm2018.3/system/remote_sources/1868590399/201545290/codecs.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="308" selection-start-line="308" selection-end-line="308" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharm2018.3/system/remote_sources/1459766174/-1171821208/serial/serialposix.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="519">
+          <caret line="472" selection-start-line="472" selection-end-line="472" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/_pydev_bundle/pydev_monkey.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="631" selection-start-line="631" selection-end-line="631" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/3/io.pyi">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1278">
+          <caret line="104" column="53" lean-forward="true" selection-start-line="104" selection-start-column="53" selection-end-line="104" selection-end-column="53" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharm2018.3/system/remote_sources/-379660152/-1171821208/serial/serialutil.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="394" column="8" selection-start-line="394" selection-start-column="8" selection-end-line="394" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Plank/Servo.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="294">
+          <caret line="54" column="8" selection-start-line="54" selection-start-column="8" selection-end-line="54" selection-end-column="8" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Plank/Output.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="368">
+          <caret line="16" selection-start-line="16" selection-end-line="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharm2018.3/system/remote_sources/1459766174/-1171821208/werkzeug/serving.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="271" selection-start-line="271" selection-end-line="271" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Plank/Vice.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="414">
-          <caret line="18" column="17" lean-forward="true" selection-start-line="18" selection-start-column="17" selection-end-line="18" selection-end-column="17" />
+        <state relative-caret-position="673">
+          <caret line="96" lean-forward="true" selection-start-line="96" selection-end-line="96" />
           <folding>
             <element signature="e#0#28#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Plank/BigBoy.py">
+    <entry file="file://$PROJECT_DIR$/Plank/Press.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="302">
-          <caret line="116" column="60" selection-start-line="116" selection-start-column="60" selection-end-line="116" selection-end-column="60" />
+        <state relative-caret-position="-3915">
+          <caret line="107" selection-start-line="107" selection-end-line="107" />
+          <folding>
+            <element signature="e#0#28#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Plank/Press.py">
+    <entry file="file://$PROJECT_DIR$/Plank/AnalogInput.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2133">
-          <caret line="33" column="26" lean-forward="true" selection-start-line="33" selection-start-column="26" selection-end-line="33" selection-end-column="26" />
+        <state>
+          <caret column="5" selection-start-column="5" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Plank/ArduinoIO.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="486">
+          <caret line="61" column="8" selection-start-line="61" selection-start-column="8" selection-end-line="61" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Plank/Input.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="302">
+          <caret line="88" column="29" lean-forward="true" selection-start-line="88" selection-start-column="29" selection-end-line="88" selection-end-column="29" />
           <folding>
-            <element signature="e#0#28#0" expanded="true" />
+            <element signature="e#985#2339#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Plank/BigBoy.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1086">
+          <caret line="154" column="43" selection-start-line="154" selection-start-column="43" selection-end-line="154" selection-end-column="43" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
           </folding>
         </state>
       </provider>

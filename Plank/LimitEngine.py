@@ -1,5 +1,5 @@
 from Plank.Engine import Engine
-from Plank.Input import Input, HIGH
+from Plank.Input import *
 
 class LimitEngine:
     IDLE = 0
