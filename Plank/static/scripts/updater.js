@@ -1,3 +1,20 @@
+const VICE_STATES = [
+    'Wolna',
+    'Upuszczanie',
+    'Kompresowanie',
+    'Skompresowana',
+    'Dekompresowanie',
+    'Rozładowywanie',
+];
+const PRESS_STATES = [
+    'Wolna',
+    'Ładowanie',
+    'Kompresowanie',
+    'Skompresowana',
+    'Dekompresowanie',
+    'Rozładowywanie',
+];
+
 const freq = 1 / 30;
 let timer;
 
@@ -56,8 +73,8 @@ function getStatesData( ) {
 }
 
 function updateStates( states ) {
-    $('#viceState').val( states.viceState );
-    $('#pressState').val( states.pressState );
+    $('#viceState').text( VICE_STATES[ states.viceState ] );
+    $('#pressState').text( PRESS_STATES[ states.pressState ] );
     $('#currentSlat').text( states.currentSlat );
     $('#slatsPerBoard').text( states.slatsPerBoard );
     $('#currentBoard').text( states.currentBoard );
@@ -65,7 +82,7 @@ function updateStates( states ) {
     $('#currentRow').text( states.currentRow );
     $('#rowsPerSet').text( states.rowsPerSet );
     $('#pressTempTop').text( states.pressTempTop.toPrecision( 3 ) );
-    $('#pressTempDown').text( states.pressTempDown.toPrecision( 3 ) );
+    $('#pressTempBottom').text( states.pressTempBottom.toPrecision( 3 ) );
     $('#pressPressureTop').text( states.pressPressureTop );
     $('#pressPressureSide').text( states.pressPressureSide );
 

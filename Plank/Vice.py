@@ -1,6 +1,5 @@
 from time import time as now
 
-# from Plank.BigBoy import BigBoy
 from Plank.ArduinoSerialPortFinder import UNO_SN1
 from Plank.Encoder import Encoder
 from Plank.Input import Input
@@ -13,8 +12,6 @@ A1 = 55
 
 
 class Vice:
-    ROWS_GAP = 50
-
     IDLE = 0
     RELEASING = 1
     COMPRESSING = 2
@@ -52,21 +49,24 @@ class Vice:
 
     compressionStepsDuration = [
         2,  # opuszczenie zderzaka
-        3,  # tylni zacisk
+        7,  # tylni zacisk
         3,  # boczny zacisk
     ]
 
     compressedDuration = 15
 
     decompressionStepsDuration = [
-        5,  # zwolnienie bocznego zacisku
+        3,  # zwolnienie bocznego zacisku
         .25,  # zwolnienie tylniego zacisku
         2,  # podniesienie zderzaka
     ]
 
     def __init__( self, bigBoy ):
         self.bigBoy = bigBoy
-        # OUT
+
+        self.glueDisable = Output( bigBoy.orange, 49, LOW )
+        self.halfTurnMotorEnable = Output( bigBoy.yellow, 50 )
+        self.slatPusherEnable = Output( bigBoy.orange, 22 )
         self.slatDamperDisable = Output( bigBoy.orange, 51 )
         self.boardLowererEnable = Output( bigBoy.orange, 47 )
         self.boardReleaseEnable = Output( bigBoy.orange, 50 )
@@ -79,13 +79,12 @@ class Vice:
         self.bumperServo = SimpleServo(
             self.bumperEngineForwardEnable, self.bumperEngineBackwardEnable, Encoder( UNO_SN1 )
         )
-        # IN
-        self.rearViceDisabledSensor = Input( bigBoy.yellow, 7, name = 'Układarka, tylni ścisk - pozycja początkowa' )
-        self.bumperFrontLimit = Input( bigBoy.yellow, 2, name = 'Układarka, rozjazd - krańcówka przednia' )
-        self.bumperBackLimit = Input( bigBoy.yellow, 4, name = 'Układarka, rozjazd - krańcówka tylnia' )
+        self.bumperFrontLimit = Input(
+            bigBoy.yellow, 2, name = 'Układarka, rozjazd - krańcówka przednia', pausable = False )
+        self.bumperBackLimit = Input(
+            bigBoy.yellow, 4, name = 'Układarka, rozjazd - krańcówka tylnia', pausable = False )
 
         self.inputs += [
-            # self.rearViceDisabledSensor,
             self.bumperFrontLimit,
             self.bumperBackLimit,
         ]
@@ -101,12 +100,11 @@ class Vice:
         self.bumperBackLimit.setCallback( viceBumperBackLimitRising, RISING )
 
     def update( self ):
+        running = self.bigBoy.viceRunning
         for input in self.inputs:
-            input.update( )
+            input.update( not running )
 
         self.bumperServo.update( )
-
-        running = self.bigBoy.viceRunning
 
         if self.state == Vice.IDLE and running:
             self.handleIdle( )
@@ -222,25 +220,34 @@ class Vice:
 
         elif self.decompressingState == 3:
             if now( ) - self.timer > self.decompressionStepsDuration[ self.decompressingState - 1 ]:
+
+                distance = self.bigBoy.slatLength + self.bigBoy.rowsGap
                 if self.bigBoy.currentRow != 0:
-                    self.bigBoy.conveyorServo.move( self.bigBoy.slatLength + Vice.ROWS_GAP )
+                    self.bigBoy.conveyorServo.move( distance )
+                elif self.readyToUnload:
+                    distance = self.bigBoy.conveyorCorrection
+                    self.bigBoy.conveyorServo.move( distance )
+
                 self.decompressingState = 0
                 if self.readyToUnload:
+                    self.readyToUnload = False
                     self.state = Vice.UNLOADING
                 else:
+                    self.readyToUnload = False  # why even bother!?
                     self.state = Vice.IDLE
 
     def handleUnloading( self ):
-        #  move the vice conveyor back a little to match the press conveyor
         if self.unloadingState == 0:
             if self.bigBoy.conveyorServo.state == Servo.IDLE:
-                self.bigBoy.conveyorServo.move( - self.bigBoy.press.PRESS_CONVEYOR_CORRECTION )
-                self.unloadingState = 1
+                # self.bigBoy.conveyorServo.move( self.bigBoy.conveyorCorrection )
+                # self.timer = now( )
+                self.unloadingState = 2
 
         # wait for the conveyor to stop
         elif self.unloadingState == 1:
             if self.bigBoy.conveyorServo.state == Servo.IDLE:
-                self.unloadingState = 2
+                if now( ) - self.timer > 2:
+                    self.unloadingState = 2
 
         # pass the third step, the press controls when it starts
         elif self.unloadingState == 2:
@@ -248,20 +255,17 @@ class Vice:
 
         # start the conveyor
         elif self.unloadingState == 3:
-            #     if self.bigBoy.press.state == Press.IDLE:
-            #         if self.bigBoy.conveyorServo.state == Servo.IDLE:
             self.bigBoy.conveyorServo.engine.setForward( )
             self.bigBoy.conveyorServo.engine.start( )
             self.bigBoy.press.state = Plank.Press.Press.LOADING
-            # self.unloadingState = 4
+           # the press is controlling state 3 -> 4 transition
 
-        # the press is controling state 3 -> 4 transition
         elif self.unloadingState == 4:
             self.bigBoy.conveyorServo.engine.stop( )
             self.unloadingState = 0
             self.forceUnloading = False
-            self.state = Vice.IDLE
             self.readyToUnload = False
+            self.state = Vice.IDLE
 
     def handleResetting( self ):
         if self.resettingState == 0:

@@ -23,15 +23,13 @@ class Servo:
 
     def update( self ):
         if self.encoder.serial.inWaiting( ):
-            data = self.encoder.serial.readline( ).decode( ).strip( "\r\n" )
+            data = self.encoder.serial.read_until( ).decode( ).strip( "\r\n" )
             if data == "STOP":
                 self.engine.stop( )
                 self.state = self.IDLE
-                # self.thenCallback( )
-                # self.thenCallback = self.__blank
 
     def move( self, distance: int ):
-        value = distance * 1000 / 430  # 1000 impulses for full encoder rotation / 430mm fi
+        value = distance * 1000 / 450  # 1000 impulses for full encoder rotation / 430mm
         self.encoder.serial.write( 'm({});'.format( value ).encode( ) )
         self.engine.setDirection( CLOCKWISE if distance > 0 else ANTICLOCKWISE )
         self.engine.start( )
@@ -40,12 +38,11 @@ class Servo:
 
 class SimpleServo:
     RADIUS = 43.5
-    MINIMAL_DISTANCE = 430
+    MINIMAL_DISTANCE = 380
     ONE_TURN_TRAVEL_DISTANCE = 273
 
     IDLE = 0
     MOVING = 1
-    # RESETTING = 2
 
     state = IDLE
     forwardEnable = None  # type: Output

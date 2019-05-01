@@ -1,12 +1,13 @@
 from typing import Dict
 
+from Input import Input
 from Plank.Input import *
 from Plank.ArduinoSerialPortFinder import ArduinoSerialPortFinder
 from serial import Serial
 import time
 
 baudrate = 115200
-timeout = .5
+timeout = 1
 
 OUTPUT = 0
 INPUT = 1
@@ -22,31 +23,24 @@ BOTH = 2
 
 
 class ArduinoIO:
-    #inputs = { }  # type: Dict[int, Input]
-
-    # outputs = { }  # type: Dict[int, Output]
-
-    memory = ''
-
     def __init__( self, serialNumber, name = '' ):
+        self.memory = ''
         self.inputs = { }  # type: Dict[int, Input]
         self.port = ArduinoSerialPortFinder.getArduinoPort( serialNumber )
-        self.serial = Serial( self.port, baudrate, timeout = timeout, xonxoff = True )
-        time.sleep( 1 )
+        self.serial = Serial( self.port, baudrate, timeout = timeout )
         self.name = name
+        time.sleep( 1 )
 
     def setMode( self, pin, mode, io: Input = None ):
         self.serial.write( 'm({},{})'.format( pin, mode ).encode( ) )
         if mode in [ INPUT, INPUT_PULLUP, INPUT_ANALOG ]:
             self.inputs[ pin ] = io
-        # elif mode == OUTPUT:
-        #     self.outputs[ pin ] = io
 
     def write( self, pin, value ):
         self.serial.write( 'w({},{})'.format( pin, value ).encode( ) )
-        # self.outputs[ pin ] = value
 
-    def extractData( self, line: str ):
+    @staticmethod
+    def extractData( line: str ):
         # pin:value;
         parts = line.split( ';', 1 )[ 0 ].split( ':', 1 )
         pin = -1
@@ -76,27 +70,14 @@ class ArduinoIO:
 
     def update( self ):
         while self.serial.inWaiting( ):
-            # lines = self.readChunk( )
-            # for line in lines:  # type: str
-            #     if line == '':
-            #         continue
-            #     print( line )
-            #     pin, value = self.extractData( line )
-            #     print( '[{}] \t{}'.format( pin, value ) )
-            #     try:
-            #         self.inputs[ pin ].set( value )
-            #     except KeyError:
-            #         pass
-            #         print( line )
-            line = self.readLine()
-            print( line )
+            line = self.readLine( )
             pin, value = self.extractData( line )
+            print( '{}[{}]->{}: {}'.format( self.name, pin, self.inputs[ pin ].name, value ) )
             if pin != -1:
                 self.inputs[ pin ].set( value )
-                print( '[{}] \t{}'.format( pin, value ) )
 
     def start( self ):
-        self.serial.write( 's'.encode( ) )
+        self.serial.write( 's()'.encode( ) )
 
     def stop( self ):
-        self.serial.write( 'p'.encode( ) )
+        self.serial.write( 'p()'.encode( ) )

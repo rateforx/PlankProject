@@ -38,7 +38,7 @@
                            required
                     >
                     <label for="pressCompressedDuration">Czas prasowania - Prasa</label>
-                    <span class="helper-text" >30s - 600s</span>
+                    <span class="helper-text" >10s - 600s</span>
                 </div>
             </div>
 
@@ -101,6 +101,54 @@
                     >
                     <label for="pressLoosenDuration">Czas poluzowania</label>
                     <span class="helper-text">0ms - 3000ms</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="input-field col s6">
+                    <input id="conveyorCorrection"
+                           name="conveyorCorrection"
+                           class="validate"
+                           type="number"
+                           min="0"
+                           max="500"
+                           value="{{ data.conveyorCorrection }}"
+                           autocomplete="off"
+                           required
+                    >
+                    <label for="conveyorCorrection">Cofnięcie taśmy układarki</label>
+                    <span class="helper-text">0mm - 500mm</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="input-field col s6">
+                    <input id="viceConveyorSpeed"
+                           name="viceConveyorSpeed"
+                           class="validate"
+                           type="number"
+                           min="0"
+                           max="100"
+                           value="{{ data.viceConveyorSpeed }}"
+                           autocomplete="off"
+                           required
+                    >
+                    <label for="viceConveyorSpeed">Prędkość taśmy układarki</label>
+                    <span class="helper-text">0% - 100%</span>
+                </div>
+                <div class="input-field col s6">
+                    <input id="pressConveyorSpeed"
+                           name="pressConveyorSpeed"
+                           class="validate"
+                           type="number"
+                           min="0"
+                           max="100"
+                           value="{{ data.pressConveyorSpeed }}"
+                           autocomplete="off"
+                           required
+                    >
+                    <label for="pressConveyorSpeed">Prędkość taśmy prasy</label>
+                    <span class="helper-text">0% - 100%</span>
                 </div>
             </div>
 

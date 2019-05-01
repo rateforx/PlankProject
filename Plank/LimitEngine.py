@@ -33,9 +33,6 @@ class LimitEngine:
             self.state = LimitEngine.MOVING
 
     def update( self ):
-        self.minLimitSensor.update()
-        self.maxLimitSensor.update()
-
         if self.direction != LimitEngine.UNSET:
             if self.limitSensor is not None:
                 if self.limitSensor.lastState == HIGH:

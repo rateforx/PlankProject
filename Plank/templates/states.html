@@ -6,49 +6,46 @@
     <div class="container">
         <h3 class="header">Stan maszyny</h3>
         <div class="row">
-            <div class="input-field col s6">
-                <span class="helper-text">Stan układarki</span>
-                <select id="viceState" disabled>
-                    <option value="0">Wolna</option>
-                    <option value="1">Upuszczanie</option>
-                    <option value="2">Kompresowanie</option>
-                    <option value="3">Skompresowana</option>
-                    <option value="4">Dekompresowanie</option>
-                    <option value="5">Rozładowywanie</option>
-                </select>
-            </div>
-            <div class="input-field col s6">
-                <span class="helper-text">Stan prasy</span>
-                <select id="pressState" disabled>
-                    <option value="0">Wolna</option>
-                    <option value="1">Ładowanie</option>
-                    <option value="2">Kompresowanie</option>
-                    <option value="3">Skompresowana</option>
-                    <option value="4">Dekompresowanie</option>
-                    <option value="5">Rozładowywanie</option>
-                </select>
-            </div>
+            <ul class="collection" id="states-collection">
+                <li class="collection-item">
+                    <span>Stan układarki</span>
+                    <span id="viceState"
+                          class="badge new secondary-content cyan"
+                          data-badge-caption=""
+                    ></span>
+                </li>
+                <li class="collection-item">
+                    <span>Stan prasy</span>
+                    <span id="pressState"
+                          class="badge new secondary-content yellow darken-2"
+                          data-badge-caption=""
+                    ></span>
+                </li>
+            </ul>
         </div>
         <div class="row">
             <ul class="collection">
                 <li class="collection-item">
                     <span class="mdi mdi-power-on"></span>
                     <span>Lamelki</span>
-                    <span id="slatsPerBoard" class="badge secondary-content new purple darken-2" data-badge-caption="">0</span>
+                    <span id="slatsPerBoard" class="badge secondary-content new purple darken-2"
+                          data-badge-caption="">0</span>
                     <span class="secondary-content">/</span>
                     <span id='currentSlat' class="badge secondary-content new green" data-badge-caption="">0</span>
                 </li>
                 <li class="collection-item">
                     <span class="mdi mdi-view-column"></span>
                     <span>Płyty</span>
-                    <span id="boardsPerRow" class="badge secondary-content new orange darken-2" data-badge-caption="">0</span>
+                    <span id="boardsPerRow" class="badge secondary-content new orange darken-2"
+                          data-badge-caption="">0</span>
                     <span class="secondary-content">/</span>
                     <span id='currentBoard' class="badge secondary-content new purple" data-badge-caption="">0</span>
                 </li>
                 <li class="collection-item">
                     <span class="mdi mdi-view-module"></span>
                     <span>Rzędy</span>
-                    <span id="rowsPerSet" class="badge secondary-content new pink darken-1" data-badge-caption="">0</span>
+                    <span id="rowsPerSet" class="badge secondary-content new pink darken-1"
+                          data-badge-caption="">0</span>
                     <span class="secondary-content">/</span>
                     <span id='currentRow' class="badge secondary-content new orange" data-badge-caption="">0</span>
                 </li>
@@ -78,7 +75,7 @@
                     <span class="mdi mdi-arrow-collapse-down"></span>
                     <span class="mdi mdi-thermometer-lines"></span>
                     <span>Temperatura prasy dół</span>
-                    <span id="pressTempDown" class="badge red new" data-badge-caption="°C">0</span>
+                    <span id="pressTempBottom" class="badge red new" data-badge-caption="°C">0</span>
                 </li>
             </ul>
         </div>

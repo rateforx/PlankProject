@@ -7,49 +7,35 @@
         <h3 class="header">Parametry produkcji</h3>
         <form action="#" method="POST" autocomplete="off">
             <div class="row">
-                <div class="input-field col s3">
+                <div class="input-field col s4">
                     <input id="slatLength"
                            name="slatLength"
                            class="validate"
                            type="number"
-                           min="370"
+                           min="380"
                            max="2000"
                            value="{{ data.slatLength }}"
                            autocomplete="off"
                            required
                     >
                     <label for="slatLength">Długość lamelki</label>
-                    <span class="helper-text" >370mm - 2000mm</span>
+                    <span class="helper-text">380mm - 2000mm</span>
                 </div>
-                <div class="input-field col s3">
+                <div class="input-field col s4">
                     <input id="slatWidth"
                            name="slatWidth"
                            class="validate"
                            type="number"
                            min="10"
-                           max="120"
+                           max="500"
                            value="{{ data.slatWidth }}"
                            autocomplete="off"
                            required
                     >
                     <label for="slatWidth">Szerokość lamelki</label>
-                    <span class="helper-text" >10mm - 120mm</span>
+                    <span class="helper-text">10mm - 120mm ( 500mm )</span>
                 </div>
-                <div class="input-field col s3">
-                    <input id="slatHeight"
-                           name="slatHeight"
-                           class="validate"
-                           type="number"
-                           min="10"
-                           max="80"
-                           value="{{ data.slatHeight }}"
-                           autocomplete="off"
-                           required
-                    >
-                    <label for="slatHeight">Wysokość lamelki</label>
-                    <span class="helper-text" >10mm - 80mm</span>
-                </div>
-                <div class="input-field col s3">
+                <div class="input-field col s4">
                     <input id="slatsPerBoard"
                            name="slatsPerBoard"
                            class="validate"
@@ -61,15 +47,19 @@
                            required
                     >
                     <label for="slatsPerBoard">Lamelki / Płyta</label>
-                    <span class="helper-text" >2szt. - 190szt.</span>
+                    <span class="helper-text">2szt. - 190szt.</span>
                 </div>
             </div>
             <div class="row right-align">
-                <button class="btn-large red waves-effect waves-light" type="button" name="action" onclick="location.reload()">
+                <button class="btn-large red waves-effect waves-light" type="button" onclick="location.reload()">
                     <span>Anuluj</span>
                     <i class="material-icons left">undo</i>
                 </button>
-                <button class="btn-large waves-effect waves-light" type="submit" name="action">
+                <button class="btn-large orange waves-effect waves-light" type="submit" name="action" value="1">
+                    <span>Zastosuj i ustaw rozjazd</span>
+                    <i class="material-icons right">settings_ethernet</i>
+                </button>
+                <button class="btn-large waves-effect waves-light" type="submit" name="action" value="0">
                     <span>Zastosuj</span>
                     <i class="material-icons right">send</i>
                 </button>
@@ -79,18 +69,15 @@
         <div class="row">
             <div class="input-field col s4">
                 <input id="boardWidth" value="{{ data.boardWidth }}" disabled>
-{#                <label for="boardWidth">Szerokość płyty</label>#}
-                <span class="helper-text" >Szerokość płyty</span>
+                <span class="helper-text">Szerokość płyty ( mm )</span>
             </div>
             <div class="input-field col s4">
                 <input id="boardsPerRow" value="{{ data.boardsPerRow }}" disabled>
-{#                <label for="boardsPerRow">Płyty / Rząd</label>#}
-                <span class="helper-text" >Płyty / Rząd</span>
+                <span class="helper-text">Płyty / Rząd</span>
             </div>
             <div class="input-field col s4">
                 <input id="rowsPerSet" value="{{ data.rowsPerSet }}" disabled>
-{#                <label for="rowsPerSet">Rzędy / Seria</label>#}
-                <span class="helper-text" >Rzędy / Seria</span>
+                <span class="helper-text">Rzędy / Seria</span>
             </div>
         </div>
     </div>

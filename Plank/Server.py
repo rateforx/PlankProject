@@ -1,6 +1,7 @@
 import sys
 import subprocess
 import _thread
+# import logging
 
 from flask import Flask, render_template, request
 from flask.json import jsonify
@@ -10,6 +11,8 @@ from Plank.BigBoy import *
 
 class Server:
     app = None  # type: Flask
+    # log = logging.getLogger( 'werkzeug' )
+    # log.setLevel( logging.ERROR )
 
     def __init__( self ):
         self.bigBoy = BigBoy( )
@@ -68,14 +71,14 @@ class Server:
             elif request.method == 'POST':
                 slatLength = 0
                 slatWidth = 0
-                slatHeight = 0
                 slatsPerBoard = 0
+                bumperReset = 0
 
                 try:
                     slatLength = int( request.form[ 'slatLength' ] )
                     slatWidth = int( request.form[ 'slatWidth' ] )
-                    slatHeight = int( request.form[ 'slatHeight' ] )
                     slatsPerBoard = int( request.form[ 'slatsPerBoard' ] )
+                    bumperReset = int( request.form[ 'action' ] )
                 except ValueError:
                     data[ 'error' ] = 'Podano niewłaświwą wartość!'
                 finally:
@@ -90,8 +93,12 @@ class Server:
                         return render_template( 'params.html', data = data )
 
                     else:
-                        self.bigBoy.setParams( slatLength, slatWidth, slatHeight, slatsPerBoard )
+                        self.bigBoy.setParams( slatLength, slatWidth, slatsPerBoard )
                         self.bigBoy.recalculateParams( )
+
+                        if bumperReset:
+                            self.bigBoy.vice.state = Vice.RESETTING
+
                         data[ 'success' ] = 'Ustawiono parametry.'
                         data.update( self.getProductionParams( ) )
                         return render_template( 'params.html', data = data )
@@ -100,12 +107,12 @@ class Server:
         def states( ):
             return render_template( 'states.html', data = self.getStates( ) )
 
-        @self.app.route( '/times', methods = [ 'GET', 'POST' ] )
-        def times( ):
+        @self.app.route( '/prefs', methods = [ 'GET', 'POST' ] )
+        def prefs( ):
             data = { }
             if request.method == 'GET':
-                data.update( self.getTimes( ) )
-                return render_template( 'times.html', data = data )
+                data.update( self.getPrefs( ) )
+                return render_template( 'prefs.html', data = data )
             elif request.method == 'POST':
                 viceCompressedDuration = 0
                 pressCompressedDuration = 0
@@ -113,6 +120,9 @@ class Server:
                 pressSideTargetPressure = 0
                 pumpTogglePressureThreshold = 0
                 pressLoosenDuration = 0
+                conveyorCorrection = 0
+                viceConveyorSpeed = 0
+                pressConveyorSpeed = 0
 
                 try:
                     viceCompressedDuration = int( request.form[ 'viceCompressedDuration' ] )
@@ -121,6 +131,9 @@ class Server:
                     pressSideTargetPressure = int( request.form[ 'pressSideTargetPressure' ] )
                     pumpTogglePressureThreshold = int( request.form[ 'pumpTogglePressureThreshold' ] )
                     pressLoosenDuration = int( request.form[ 'pressLoosenDuration' ] )
+                    conveyorCorrection = int( request.form[ 'conveyorCorrection' ] )
+                    viceConveyorSpeed = int( request.form[ 'viceConveyorSpeed' ] )
+                    pressConveyorSpeed = int( request.form[ 'pressConveyorSpeed' ] )
                 except ValueError:
                     data[ 'error' ] = 'Podano niewłaświwą wartość!'
                 finally:
@@ -128,10 +141,15 @@ class Server:
                     self.bigBoy.press.compressedDuration = pressCompressedDuration
                     self.bigBoy.press.topTargetPressure = pressTopTargetPressure
                     self.bigBoy.press.sideTargetPressure = pressSideTargetPressure
-                    self.bigBoy.press.pumpTogglePressureThreshold = pumpTogglePressureThreshold
+                    self.bigBoy.press.setPressureThreshold( pumpTogglePressureThreshold )
                     self.bigBoy.press.loosenDuration = pressLoosenDuration
-                    data.update( self.getTimes( ) )
-                    return render_template( 'times.html', data = data )
+                    self.bigBoy.conveyorCorrection = conveyorCorrection
+                    self.bigBoy.viceConveyorSpeed = viceConveyorSpeed
+                    self.bigBoy.conveyorServo.engine.setSpeed( viceConveyorSpeed )
+                    self.bigBoy.pressConveyorSpeed = pressConveyorSpeed
+                    self.bigBoy.press.pressConveyorEngine.engine.setSpeed( pressConveyorSpeed )
+                    data.update( self.getPrefs( ) )
+                    return render_template( 'prefs.html', data = data )
 
     def getStates( self ):
         return {
@@ -144,7 +162,7 @@ class Server:
             'currentRow': self.bigBoy.currentRow,
             'rowsPerSet': self.bigBoy.rowsPerSet,
             'pressTempTop': self.bigBoy.press.tempTop.lastState,
-            'pressTempDown': self.bigBoy.press.tempDown.lastState,
+            'pressTempBottom': self.bigBoy.press.tempBottom.lastState,
             'pressPressureTop': self.bigBoy.press.pressTopPressureSensor.lastState,
             'pressPressureSide': self.bigBoy.press.pressSidePressureSensor.lastState,
         }
@@ -153,17 +171,15 @@ class Server:
         return {
             'slatLength': self.bigBoy.slatLength,
             'slatWidth': self.bigBoy.slatWidth,
-            'slatHeight': self.bigBoy.slatHeight,
             'slatsPerBoard': self.bigBoy.slatsPerBoard,
             'boardsPerRow': self.bigBoy.boardsPerRow,
             'rowsPerSet': self.bigBoy.rowsPerSet,
             'slatsPerSet': self.bigBoy.slatsPerSet,
             'boardLength': self.bigBoy.boardLength,
             'boardWidth': self.bigBoy.boardWidth,
-            'boardHeight': self.bigBoy.boardHeight,
         }
 
-    def getTimes( self ):
+    def getPrefs( self ):
         return {
             'viceCompressedDuration': self.bigBoy.vice.compressedDuration,
             'pressCompressedDuration': self.bigBoy.press.compressedDuration,
@@ -171,6 +187,9 @@ class Server:
             'pressSideTargetPressure': self.bigBoy.press.sideTargetPressure,
             'pumpTogglePressureThreshold': self.bigBoy.press.pumpTogglePressureThreshold,
             'pressLoosenDuration': self.bigBoy.press.loosenDuration,
+            'conveyorCorrection': self.bigBoy.conveyorCorrection,
+            'viceConveyorSpeed': self.bigBoy.viceConveyorSpeed,
+            'pressConveyorSpeed': self.bigBoy.pressConveyorSpeed,
         }
 
     def start( self ):

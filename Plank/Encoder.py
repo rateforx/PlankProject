@@ -13,18 +13,10 @@ class Encoder:
 
     def __init__( self, arduinoSN ):
         port = ArduinoSerialPortFinder.getArduinoPort( arduinoSN )
-        # print( 'Connecting to Arduino serial: {}'.format( port ) )
         self.serial = Serial( port, baudrate, timeout = timeout )
         time.sleep( .25 )
-        # self.getCounter( )
-
-    # def requestCounter( self ):
-    #     self.serial.write( 'r'.encode( ) )
 
     def getCounter( self ):
-        # self.serial.write( 'r'.encode( ) )
-        # value = int( self.serial.readline( ).decode( ).strip( "\r\n" ) )
-
         self.readCounter += 1
 
         try:
@@ -41,11 +33,6 @@ class Encoder:
             print( "{}: {}".format( self.readCounter, value ) )
 
         return value
-
-    # def start( self ):
-    #     while True:
-    #         print( int( self.serial.readline( ) ) )
-
 
 if __name__ == "__main__":
 

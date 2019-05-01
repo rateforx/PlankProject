@@ -137,3 +137,7 @@ body {
 input:disabled {
     color: black !important;
 }
+
+#states-collection .badge {
+    min-width: 16em;
+}

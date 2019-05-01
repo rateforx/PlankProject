@@ -5,19 +5,7 @@ $( () => {
     // combo regex
     $.keyboard.language.love = $.extend($.keyboard.language.en);
 
-    $(
-        `
-        #slatLength, 
-        #slatWidth, 
-        #slatHeight, 
-        #slatsPerBoard,
-        #pumpTogglePressureThreshold,
-        #pressTopTargetPressure,
-        #pressSideTargetPressure,
-        #viceCompressedDuration,
-        #pressCompressedDuration
-        `
-    ).keyboard({
+    $( 'input[type=number]').keyboard({
         // set this to ISO 639-1 language code to override language set by
         // the layout: http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
         // language defaults to ["en"] if not found

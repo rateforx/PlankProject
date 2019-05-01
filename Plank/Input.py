@@ -18,78 +18,30 @@ class Input:
     def __blank( self ):
         pass
 
-    pin = -1
-    lastState = 0
-    callbackRising = __blank
-    callbackFalling = __blank
-    callbackLow = __blank
-    callbackHigh = __blank
-    thresholdRising = None
-    thresholdFalling = None
-    callbackRisingActivated = False
-    callbackFallingActivated = False
-
-    verbose = False
-    analog = False
-
-    def __init__( self, arduinoIO, pin, analog = False, name = '', pausable = False ):
+    def __init__( self, arduinoIO, pin, name, pausable, analog = False ):
+        self.callbackRising = self.__blank
+        self.callbackFalling = self.__blank
+        self.callbackLow = self.__blank
+        self.callbackHigh = self.__blank
+        self.thresholdRising = None
+        self.thresholdFalling = None
+        self.callbackRisingActivated = False
+        self.callbackFallingActivated = False
+        self.lastState = -1
         self.arduinoIO = arduinoIO
         self.pin = pin
         self.analog = analog
+        self.verbose = False
         self.name = name
+        self.pausable = pausable
+        self.paused = True
 
         mode = INPUT_ANALOG if analog else INPUT
         arduinoIO.setMode( pin, mode, self )
-        # self.lastState = self.getState()
-
-    def update( self ):
-        return
-        state = self.getState( )
-
-        if self.verbose:
-            if self.name != '':
-                print( '{}: {}'.format( self.name, state ) )
-            else:
-                print( '_: {}'.format( state ) )
-
-        if state != self.lastState:
-
-            change = RISING if state > self.lastState else FALLING
-            self.lastState = state
-
-            if not self.analog:
-                if state == FALLING:
-                    self.callbackFalling( )
-                if state == RISING:
-                    self.callbackRising( )
-
-            else:
-                if change == RISING and self.thresholdRising is not None and state > self.thresholdRising:
-                    if not self.callbackRisingActivated:
-                        self.callbackRising( )
-
-                    self.callbackRisingActivated = True
-                    self.callbackFallingActivated = False
-
-                elif change == FALLING and self.thresholdFalling is not None and state < self.thresholdFalling:
-                    if not self.callbackFallingActivated:
-                        self.callbackFalling( )
-
-                    self.callbackFallingActivated = True
-                    self.callbackRisingActivated = False
-
-        if state == LOW:
-            self.callbackLow( )
-        if state == HIGH:
-            self.callbackHigh( )
 
     def getState( self ):
         if self.analog:
-            self.arduinoIO.serial.write( 'a({})'.format( self.pin ) )
-        # if not self.analog:
-        #     return self.arduinoIO.readChunk( self.pin )
-        # else:
-        #     return self.arduinoIO.analogRead( self.pin )
+            self.arduinoIO.serial.write( 'a({})'.format( self.pin ).encode( ) )
 
     def setCallback( self, function, edge ):
         if edge == FALLING:
@@ -129,32 +81,38 @@ class Input:
         self.callbackLow = self.__blank
         self.callbackHigh = self.__blank
 
+    def update( self, paused ):
+        self.paused = paused
+
+        if not self.pausable or not self.paused:
+            if self.lastState == LOW:
+                self.callbackLow( )
+            if self.lastState == HIGH:
+                self.callbackHigh( )
+
     def set( self, value ):
         change = RISING if value > self.lastState else FALLING
         self.lastState = value
 
-        if not self.analog:
-            if value == FALLING:
-                self.callbackFalling( )
-            if value == RISING:
-                self.callbackRising( )
+        if not self.pausable or not self.paused:
 
-        else:
-            if change == RISING and self.thresholdRising is not None and value > self.thresholdRising:
-                if not self.callbackRisingActivated:
+            if not self.analog:
+                if value == LOW:
+                    self.callbackFalling( )
+                if value == HIGH:
                     self.callbackRising( )
 
-                self.callbackRisingActivated = True
-                self.callbackFallingActivated = False
+            else:
+                if change == RISING and self.thresholdRising is not None and value > self.thresholdRising:
+                    if not self.callbackRisingActivated:
+                        self.callbackRising( )
 
-            elif change == FALLING and self.thresholdFalling is not None and value < self.thresholdFalling:
-                if not self.callbackFallingActivated:
-                    self.callbackFalling( )
+                    self.callbackRisingActivated = True
+                    self.callbackFallingActivated = False
 
-                self.callbackFallingActivated = True
-                self.callbackRisingActivated = False
+                elif change == FALLING and self.thresholdFalling is not None and value < self.thresholdFalling:
+                    if not self.callbackFallingActivated:
+                        self.callbackFalling( )
 
-        if value == LOW:
-            self.callbackLow( )
-        if value == HIGH:
-            self.callbackHigh( )
+                    self.callbackFallingActivated = True
+                    self.callbackRisingActivated = False
