@@ -47,6 +47,8 @@ class Press:
     topTargetPressure = 50
     sideTargetPressure = 50
 
+    hysteresis = 15
+
     def __init__( self, bigBoy ):
         self.bigBoy = bigBoy
 
@@ -65,10 +67,7 @@ class Press:
         self.pressSideMoveOut = Output( bigBoy.yellow, 24 )
         self.pressPumpEnable = Output( bigBoy.yellow, 53 )
         self.pressPumpPrecisionEnable = Output( bigBoy.yellow, 52 )
-        # self.pressDepressurizeVentEnable = Output( bigBoy.yellow, 51 )
 
-        # self.waterPumpTop = Output( self.bigBoy.yellow, 49 )
-        # self.waterPumpBottom = Output( self.bigBoy.yellow, 48 )
         self.tempTop = TemperatureSensor( 0 )
         self.tempBottom = TemperatureSensor( 1 )
 
@@ -80,8 +79,8 @@ class Press:
                 bigBoy.yellow, A0, name = 'Czujnik indukcyjny: prasa - koniec', pausable = False ),
         )
 
-        def SAFKOSTOP():
-            self.pressConveyorEngine.engine.stop()
+        def SAFKOSTOP( ):
+            self.pressConveyorEngine.engine.stop( )
             self.pressConveyorEngine.state = self.pressConveyorEngine.IDLE
 
         self.pressConveyorEngine.minLimitSensor.setCallback( SAFKOSTOP, RISING )
@@ -157,13 +156,13 @@ class Press:
             self.pumpTogglePressureThreshold, RISING, pressureSensorThresholdRising
         )
         self.pressTopPressureSensor.setThreshold(
-            self.pumpTogglePressureThreshold, FALLING, pressureSensorThresholdFalling
+            self.pumpTogglePressureThreshold - 5, FALLING, pressureSensorThresholdFalling
         )
         self.pressSidePressureSensor.setThreshold(
             self.pumpTogglePressureThreshold, RISING, pressureSensorThresholdRising
         )
         self.pressSidePressureSensor.setThreshold(
-            self.pumpTogglePressureThreshold, FALLING, pressureSensorThresholdFalling
+            self.pumpTogglePressureThreshold - 5, FALLING, pressureSensorThresholdFalling
         )
 
     def update( self ):
@@ -286,14 +285,14 @@ class Press:
             self.state = Press.DECOMPRESSING
             return
 
-        if self.pressTopPressureSensor.lastState < self.topTargetPressure - 5:
+        if self.pressTopPressureSensor.lastState < self.topTargetPressure - self.hysteresis:
             self.pressPumpEnable.set( LOW )
             self.pressTopMoveDown.set( LOW )
         elif self.pressTopPressureSensor.lastState >= self.topTargetPressure:
             self.pressPumpEnable.set( HIGH )
             self.pressTopMoveDown.set( HIGH )
 
-        if self.pressSidePressureSensor.lastState < self.sideTargetPressure - 5:
+        if self.pressSidePressureSensor.lastState < self.sideTargetPressure - self.hysteresis:
             self.pressPumpEnable.set( LOW )
             self.pressSideMoveIn.set( LOW )
         elif self.pressSidePressureSensor.lastState >= self.sideTargetPressure:
@@ -365,6 +364,30 @@ class Press:
                 self.decompressingState = 9
 
         elif self.decompressingState == 9:
+            if now( ) - self.timer > self.shakeDuration:
+                self.timer = now( )
+                self.partymakerEnable.set( LOW )
+                self.decompressingState = 10
+
+        elif self.decompressingState == 10:
+            if now( ) - self.timer > self.shakeDuration:
+                self.timer = now( )
+                self.partymakerEnable.set( HIGH )
+                self.decompressingState = 11
+
+        elif self.decompressingState == 11:
+            if now( ) - self.timer > self.shakeDuration:
+                self.timer = now( )
+                self.partymakerEnable.set( LOW )
+                self.decompressingState = 12
+
+        elif self.decompressingState == 12:
+            if now( ) - self.timer > self.shakeDuration:
+                self.timer = now( )
+                self.partymakerEnable.set( HIGH )
+                self.decompressingState = 13
+
+        elif self.decompressingState == 13:
             if self.pressTopHomeSensor.lastState == HIGH:
                 self.pressTopMoveUp.set( HIGH )
                 self.pressPumpEnable.set( HIGH )
@@ -386,6 +409,8 @@ class Press:
             if self.pressConveyorEngine.state == LimitEngine.IDLE:
                 self.pressConveyorEngine.stop( )  # just in case :V
                 self.unloadingState = 0
+                self.bigBoy.sumTotalArea( )
+                self.bigBoy.sumTotalHours( )
                 self.state = Press.IDLE
 
     def setPressureThreshold( self, value ):

@@ -75,6 +75,7 @@ class Vice:
         self.sideViceEnable = Output( bigBoy.orange, 52 )
         self.bumperEngineForwardEnable = Output( bigBoy.yellow, 47 )
         self.bumperEngineBackwardEnable = Output( bigBoy.yellow, 46 )
+        self.glueSiorbakEnable = Output( bigBoy.orange, 48 )
 
         self.bumperServo = SimpleServo(
             self.bumperEngineForwardEnable, self.bumperEngineBackwardEnable, Encoder( UNO_SN1 )
@@ -83,6 +84,7 @@ class Vice:
             bigBoy.yellow, 2, name = 'Układarka, rozjazd - krańcówka przednia', pausable = False )
         self.bumperBackLimit = Input(
             bigBoy.yellow, 4, name = 'Układarka, rozjazd - krańcówka tylnia', pausable = False )
+
 
         self.inputs += [
             self.bumperFrontLimit,
@@ -220,13 +222,8 @@ class Vice:
 
         elif self.decompressingState == 3:
             if now( ) - self.timer > self.decompressionStepsDuration[ self.decompressingState - 1 ]:
-
-                distance = self.bigBoy.slatLength + self.bigBoy.rowsGap
                 if self.bigBoy.currentRow != 0:
-                    self.bigBoy.conveyorServo.move( distance )
-                elif self.readyToUnload:
-                    distance = self.bigBoy.conveyorCorrection
-                    self.bigBoy.conveyorServo.move( distance )
+                    self.bigBoy.conveyorServo.move( self.bigBoy.slatLength + self.bigBoy.rowsGap )
 
                 self.decompressingState = 0
                 if self.readyToUnload:
@@ -239,15 +236,13 @@ class Vice:
     def handleUnloading( self ):
         if self.unloadingState == 0:
             if self.bigBoy.conveyorServo.state == Servo.IDLE:
-                # self.bigBoy.conveyorServo.move( self.bigBoy.conveyorCorrection )
-                # self.timer = now( )
+                self.bigBoy.conveyorServo.move( self.bigBoy.conveyorCorrection )
                 self.unloadingState = 2
 
         # wait for the conveyor to stop
         elif self.unloadingState == 1:
             if self.bigBoy.conveyorServo.state == Servo.IDLE:
-                if now( ) - self.timer > 2:
-                    self.unloadingState = 2
+                self.unloadingState = 2
 
         # pass the third step, the press controls when it starts
         elif self.unloadingState == 2:

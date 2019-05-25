@@ -93,6 +93,8 @@ class Input:
     def set( self, value ):
         change = RISING if value > self.lastState else FALLING
         self.lastState = value
+        if self.verbose:
+            print( '{}: {}'.format( self.name, value) )
 
         if not self.pausable or not self.paused:
 

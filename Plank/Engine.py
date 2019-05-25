@@ -19,9 +19,9 @@ class Engine:
         self.__speed = dutyCycle
         self.__direction = CLOCKWISE
 
-        GPIO.setup( pwmPin, GPIO.OUT )
-        self.__pwm = GPIO.PWM( pwmPin, frequency )
-        self.__pwm.start( dutyCycle )
+        # GPIO.setup( pwmPin, GPIO.OUT )
+        # self.__pwm = GPIO.PWM( pwmPin, frequency )
+        # self.__pwm.start( dutyCycle )
 
         arduinoIO.setMode( runPin, OUTPUT )
         arduinoIO.write( runPin, HIGH )
@@ -30,7 +30,7 @@ class Engine:
 
     def start( self ):
         self.__arduinoIO.write( self.__runPin, LOW )
-        self.__pwm.start( self.__speed )
+        # self.__pwm.start( self.__speed )
 
     def slowStart( self, speed, duration = 3 ):
         self.setSpeed( 0 )
@@ -42,7 +42,7 @@ class Engine:
     def stop( self ):
         self.__arduinoIO.write( self.__runPin, HIGH )
         # self.setSpeed( 0 )
-        self.__pwm.stop( )
+        # self.__pwm.stop( )
 
     def slowStop( self, duration = 3 ):
         for dutyCycle in range( self.__speed, -1, -1 ):
@@ -52,7 +52,7 @@ class Engine:
     def setSpeed( self, value ):
         """value [ 0 - 100 ]"""
         self.__speed = value
-        self.__pwm.ChangeDutyCycle( value )
+        # self.__pwm.ChangeDutyCycle( value )
 
     def setForward( self ):
         self.__arduinoIO.write( self.__dirPin, CLOCKWISE )

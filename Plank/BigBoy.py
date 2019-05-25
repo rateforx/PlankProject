@@ -1,4 +1,5 @@
 import math
+import json
 
 from Plank.Encoder import *
 from Plank.Press import *
@@ -22,11 +23,16 @@ A13 = 67
 A14 = 68
 A15 = 69
 
+STATS_JSON = 'stats.json'
+
 
 class BigBoy:
     PRESS_LENGTH = 4400  # mm
     PRESS_WIDTH = 1800  # mm
     MIN_GAP = 50  # mm
+    conveyorCorrection = 0  # mm
+
+    paramsSet = False
 
     AUTOMATIC = 0
     MANUAL = 1
@@ -38,6 +44,7 @@ class BigBoy:
     # slatHeight = 0
     slatsPerBoard = 0
     boardsPerRow = 0
+    slatsPerRow = 0
     rowsPerSet = 0
     slatsPerSet = 0
     rowsGap = 0
@@ -50,6 +57,7 @@ class BigBoy:
     boardLength = 0
     boardWidth = 0
     boardHeight = 0
+    boardArea = 0
 
     updateRate = 60
 
@@ -76,9 +84,12 @@ class BigBoy:
     yellow = None
     orange = None
 
-    def __init__( self ):
+    runTimer = 0
+    totalArea = 0
+    totalHours = 0
 
-        self.conveyorCorrection = 70  # mm
+    def __init__( self ):
+        self.runTimer = now()
 
         self.orange = ArduinoIO( MEGA_SN1, 'orange' )
         self.yellow = ArduinoIO( MEGA_SN0, 'yellow' )
@@ -87,6 +98,7 @@ class BigBoy:
         self.retractSensor = Input( self.yellow, 10, name = 'Czujnik cofania popychacza', pausable = True )
         self.stackerSensor = Input( self.yellow, 8, name = 'Czujnik układarki', pausable = True )
         self.halfTurnMotorSensor = Input( self.yellow, 12, name = 'Czujnik półobrotu', pausable = False )
+        self.glueLevelSensor = Input( self.orange, 16, name = 'Sensor kleju', pausable = False )
 
         self.viceAMSwitch = Input(
             self.yellow, A11, name = 'Układarka przełącznik - automat / manual', pausable = False )
@@ -161,6 +173,7 @@ class BigBoy:
             self.retractSensor,
             self.stackerSensor,
             self.halfTurnMotorSensor,
+            self.glueLevelSensor,
         ]
 
         self.pressAMIndicatorEnable = Output( self.orange, 24 )
@@ -177,7 +190,7 @@ class BigBoy:
 
         def conveyorSensorCallback( ):
             if self.slatState == 0:
-                if self.vice.state != Vice.RELEASING:
+                if self.vice.state != Vice.RELEASING and self.currentSlat < self.slatsPerRow:
                     self.vice.slatPusherEnable.set( LOW )
                     self.slatState = 1
 
@@ -215,6 +228,17 @@ class BigBoy:
 
         self.halfTurnMotorSensor.do( halfTurnMotorSensorCallbackHigh, HIGH )
 
+        def glueLevelSensorRising( ):
+            self.vice.glueSiorbakEnable.set( HIGH )
+
+        def glueLevelSensorFalling( ):
+            self.vice.glueSiorbakEnable.set( LOW )
+
+        self.glueLevelSensor.setCallback( glueLevelSensorRising, RISING )
+        # self.glueLevelSensor.do( glueLevelSensorRising, HIGH )
+        self.glueLevelSensor.setCallback( glueLevelSensorFalling, FALLING )
+        # self.glueLevelSensor.do( glueLevelSensorFalling, LOW )
+
         def viceAMSwitchFalling( ):
             self.conveyorServo.engine.stop( )
             self.vice.bumperEngineBackwardEnable.set( HIGH )
@@ -223,6 +247,7 @@ class BigBoy:
             self.viceRunning = False
 
         def viceAMSwitchRising( ):
+            self.sumTotalHours( )
             self.viceControls = BigBoy.MANUAL
             self.viceAMIndicatorEnable.set( HIGH )
             self.viceRunning = False
@@ -231,11 +256,12 @@ class BigBoy:
         self.viceAMSwitch.setCallback( viceAMSwitchRising, RISING )
 
         def viceStartButtonRising( ):
-            if self.viceControls == BigBoy.AUTOMATIC:
+            if self.viceControls == BigBoy.AUTOMATIC and self.paramsSet:
                 self.viceAMIndicatorEnable.set( LOW )
                 self.viceRunning = True
 
         def viceStopButtonRising( ):
+            self.sumTotalHours( )
             self.viceRunning = False
             self.viceAMIndicatorEnable.set( HIGH )
 
@@ -304,6 +330,7 @@ class BigBoy:
             self.pressRunning = False
 
         def pressAMSwitchRising( ):
+            self.sumTotalHours( )
             self.pressControls = BigBoy.MANUAL
             self.pressAMIndicatorEnable.set( HIGH )
             self.pressRunning = False
@@ -312,11 +339,12 @@ class BigBoy:
         self.pressAMSwitch.setCallback( pressAMSwitchRising, RISING )
 
         def pressStartButtonRising( ):
-            if self.pressControls == BigBoy.AUTOMATIC:
+            if self.pressControls == BigBoy.AUTOMATIC and self.paramsSet:
                 self.pressAMIndicatorEnable.set( LOW )
                 self.pressRunning = True
 
         def pressStopButtonRising( ):
+            self.sumTotalHours( )
             self.pressAMIndicatorEnable.set( HIGH )
             self.pressRunning = False
 
@@ -442,7 +470,6 @@ class BigBoy:
         def forcePusherButtonRising( ):
             if self.viceControls == BigBoy.MANUAL:
                 self.vice.slatPusherEnable.set( LOW )
-            self.conveyorServo.move( self.conveyorCorrection )
 
         def forcePusherButtonFalling( ):
             if self.viceControls == BigBoy.MANUAL:
@@ -531,6 +558,8 @@ class BigBoy:
         self.currentSlat = 0
         self.currentBoard = 0
         self.currentRow = 0
+        self.slatState = 0
+        self.vice.glueDisable.set( HIGH )
 
     def setParams( self, length, width, slatsPerBoard ):
         self.slatLength = length
@@ -538,6 +567,7 @@ class BigBoy:
         self.slatsPerBoard = slatsPerBoard
         self.boardLength = length
         self.boardWidth = width * slatsPerBoard
+        self.paramsSet = True
         self.resetCounters( )
 
     def recalculateParams( self ):
@@ -545,9 +575,31 @@ class BigBoy:
             return
 
         self.boardsPerRow = math.floor( BigBoy.PRESS_WIDTH / (self.slatWidth * self.slatsPerBoard) )
+        self.slatsPerRow = self.boardsPerRow * self.slatsPerBoard
+        self.boardArea = self.slatLength * self.boardWidth
         self.rowsPerSet = math.floor( BigBoy.PRESS_LENGTH / (self.slatLength + self.MIN_GAP) )
         self.slatsPerSet = self.slatsPerSet * self.boardsPerRow * self.slatsPerBoard
         self.rowsGap = (BigBoy.PRESS_LENGTH - (self.rowsPerSet * self.slatLength)) / (self.rowsPerSet - 1)
+
+    def loadStatsFromFile( self ):
+        with open( STATS_JSON ) as file:
+            data = json.load( file )
+            self.totalArea = data[ 'totalArea' ]
+            self.totalHours = data[ 'totalHours' ]
+
+    def updateStatsFile( self ):
+        data = { 'totalArea': self.totalArea, 'totalHours': self.totalHours }
+        with open( STATS_JSON, 'w+' ) as file:
+            json.dump( data, file )
+
+    def sumTotalArea( self ):
+        self.totalArea += self.boardsPerRow * self.rowsPerSet * self.boardArea / 1000000  # mm^2 -> m^2
+        self.updateStatsFile( )
+
+    def sumTotalHours( self ):
+        self.totalHours += ( now( ) - self.runTimer ) / 3600  # s -> h
+        self.updateStatsFile( )
+        self.runTimer = now()
 
     def update( self ):
         for input in self.inputs:
@@ -562,6 +614,7 @@ class BigBoy:
         self.press.update( )
 
     def run( self ):
+        self.loadStatsFromFile( )
         self.orange.start( )
         self.yellow.start( )
 

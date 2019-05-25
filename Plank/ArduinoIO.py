@@ -72,7 +72,7 @@ class ArduinoIO:
         while self.serial.inWaiting( ):
             line = self.readLine( )
             pin, value = self.extractData( line )
-            print( '{}[{}]->{}: {}'.format( self.name, pin, self.inputs[ pin ].name, value ) )
+            # print( '{}[{}]->{}: {}'.format( self.name, pin, self.inputs[ pin ].name, value ) )
             if pin != -1:
                 self.inputs[ pin ].set( value )
 

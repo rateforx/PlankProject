@@ -1,7 +1,7 @@
 import sys
 import subprocess
 import _thread
-# import logging
+import logging
 
 from flask import Flask, render_template, request
 from flask.json import jsonify
@@ -11,8 +11,8 @@ from Plank.BigBoy import *
 
 class Server:
     app = None  # type: Flask
-    # log = logging.getLogger( 'werkzeug' )
-    # log.setLevel( logging.ERROR )
+    log = logging.getLogger( 'werkzeug' )
+    log.setLevel( logging.ERROR )
 
     def __init__( self ):
         self.bigBoy = BigBoy( )
@@ -25,7 +25,10 @@ class Server:
 
         @self.app.route( '/' )
         def index( ):
-            data = { }
+            data = {
+                'totalArea': round( self.bigBoy.totalArea, 3 ),
+                'totalHours': round( self.bigBoy.totalHours, 2 ),
+            }
             return render_template( 'index.html', data = data )
 
         @self.app.route( '/inputs' )
@@ -121,8 +124,6 @@ class Server:
                 pumpTogglePressureThreshold = 0
                 pressLoosenDuration = 0
                 conveyorCorrection = 0
-                viceConveyorSpeed = 0
-                pressConveyorSpeed = 0
 
                 try:
                     viceCompressedDuration = int( request.form[ 'viceCompressedDuration' ] )
@@ -132,8 +133,6 @@ class Server:
                     pumpTogglePressureThreshold = int( request.form[ 'pumpTogglePressureThreshold' ] )
                     pressLoosenDuration = int( request.form[ 'pressLoosenDuration' ] )
                     conveyorCorrection = int( request.form[ 'conveyorCorrection' ] )
-                    viceConveyorSpeed = int( request.form[ 'viceConveyorSpeed' ] )
-                    pressConveyorSpeed = int( request.form[ 'pressConveyorSpeed' ] )
                 except ValueError:
                     data[ 'error' ] = 'Podano niewłaświwą wartość!'
                 finally:
@@ -144,10 +143,6 @@ class Server:
                     self.bigBoy.press.setPressureThreshold( pumpTogglePressureThreshold )
                     self.bigBoy.press.loosenDuration = pressLoosenDuration
                     self.bigBoy.conveyorCorrection = conveyorCorrection
-                    self.bigBoy.viceConveyorSpeed = viceConveyorSpeed
-                    self.bigBoy.conveyorServo.engine.setSpeed( viceConveyorSpeed )
-                    self.bigBoy.pressConveyorSpeed = pressConveyorSpeed
-                    self.bigBoy.press.pressConveyorEngine.engine.setSpeed( pressConveyorSpeed )
                     data.update( self.getPrefs( ) )
                     return render_template( 'prefs.html', data = data )
 
@@ -194,7 +189,14 @@ class Server:
 
     def start( self ):
         _thread.start_new_thread( self.bigBoy.run, ( ) )
-        subprocess.Popen( [ 'chromium-browser', '--start-fullscreen', '--name=Stolmat', '--app=http://localhost:5000/' ] )
+        subprocess.Popen( [
+            'chromium-browser',
+            '--profile-directory=Default',
+            '--app-id=mleldakmoebeolhcnjndafbokokbkgcn',
+            '--name=Stolmat',
+            '--start-fullscreen',
+        #     '--app=http://localhost:5000/'
+        ] )
         self.app.run(
             host = '0.0.0.0',
             port = 5000,

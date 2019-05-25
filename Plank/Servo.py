@@ -1,6 +1,7 @@
 from Plank.Engine import *
 from Plank.Encoder import Encoder
 from Plank.Output import Output
+from time import time as now
 
 
 class Servo:
@@ -16,12 +17,19 @@ class Servo:
     thenCallback = __blank
 
     state = IDLE
+    timer = 0
+    delayDuration = 1
 
     def __init__( self, engine: Engine, encoder: Encoder ):
         self.engine = engine
         self.encoder = encoder
 
     def update( self ):
+        if self.timer != 0:
+            if now( ) - self.timer > self.delayDuration:
+                self.engine.start( )
+                self.timer = 0
+
         if self.encoder.serial.inWaiting( ):
             data = self.encoder.serial.read_until( ).decode( ).strip( "\r\n" )
             if data == "STOP":
@@ -32,7 +40,7 @@ class Servo:
         value = distance * 1000 / 450  # 1000 impulses for full encoder rotation / 430mm
         self.encoder.serial.write( 'm({});'.format( value ).encode( ) )
         self.engine.setDirection( CLOCKWISE if distance > 0 else ANTICLOCKWISE )
-        self.engine.start( )
+        self.timer = now( )
         self.state = self.MOVING
 
 
@@ -44,7 +52,15 @@ class SimpleServo:
     IDLE = 0
     MOVING = 1
 
+    BACKWARD = -1
+    UNSET = 0
+    FORWARD = 1
+
+    direction = UNSET
     state = IDLE
+    timer = 0
+    delayDuration = 1
+
     forwardEnable = None  # type: Output
     backwardEnable = None  # type: Output
     encoder = None  # type: Encoder
@@ -55,6 +71,11 @@ class SimpleServo:
         self.encoder = encoder
 
     def update( self ):
+        if self.timer != 0:
+            if now( ) - self.timer > self.delayDuration:
+                self.forwardEnable.set( LOW ) if self.direction == self.FORWARD else self.backwardEnable.set( LOW )
+                self.timer = 0
+
         if self.encoder.serial.inWaiting( ):
             data = self.encoder.serial.readline( ).decode( ).strip( '\r\n' )
             if data == 'STOP':
@@ -63,8 +84,8 @@ class SimpleServo:
                 self.state = SimpleServo.IDLE
 
     def move( self, distance: int ):
-        value = ( distance - self.MINIMAL_DISTANCE ) * 1000 / self.ONE_TURN_TRAVEL_DISTANCE
+        value = (distance - self.MINIMAL_DISTANCE) * 1000 / self.ONE_TURN_TRAVEL_DISTANCE
         self.encoder.serial.write( 'm({})'.format( value ).encode( ) )
-
-        self.forwardEnable.set( LOW ) if distance > 0 else self.backwardEnable.set( LOW )
+        self.direction = self.FORWARD if distance > 0 else self.BACKWARD
+        self.timer = now( )
         self.state = SimpleServo.MOVING

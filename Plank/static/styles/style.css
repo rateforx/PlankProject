@@ -63,7 +63,7 @@ li.collection-item:hover {
 
 .ui-keyboard {
     transform-origin: bottom left;
-    transform: scale( 2 );
+    transform: scale(2);
 }
 
 #logo {
@@ -77,24 +77,21 @@ span.badge.new {
     min-width: 75px;
 }
 
-.container::-webkit-scrollbar-track
-{
-	background-color: transparent;
+.container::-webkit-scrollbar-track {
+    background-color: transparent;
 }
 
-.container::-webkit-scrollbar
-{
-	width: 40px;
-	background-color: transparent;
+.container::-webkit-scrollbar {
+    width: 40px;
+    background-color: transparent;
     opacity: .5;
     position: absolute;
     right: 0;
 }
 
-.container::-webkit-scrollbar-thumb
-{
-	border-radius: 3px;
-	background-color: lightgrey;
+.container::-webkit-scrollbar-thumb {
+    border-radius: 3px;
+    background-color: lightgrey;
     padding: 1em;
     margin: 1em;
 }
@@ -120,7 +117,24 @@ body {
     height: 100%;
     background-color: white;
     align-items: center;
-    align-content: center;
+}
+
+.stats-wrapper {
+    margin: 2em;
+}
+
+.stats-wrapper:first-child {
+    order: 1;
+}
+
+.stats-wrapper:last-child {
+    order: 3;
+}
+
+.svg-wrapper {
+    order: 2;
+    flex-grow: 2;
+    align-self: center;
     -webkit-transform: scaleX(-1);
     -moz-transform: scaleX(-1);
     -ms-transform: scaleX(-1);
