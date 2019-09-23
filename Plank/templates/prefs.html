@@ -24,7 +24,7 @@
                            required
                     >
                     <label for="viceCompressedDuration">Czas prasowania - Układarka</label>
-                    <span class="helper-text" >5s - 900s</span>
+                    <span class="helper-text">5 - 900 <b>[s]</b></span>
                 </div>
                 <div class="input-field col s6">
                     <input id="pressCompressedDuration"
@@ -38,7 +38,7 @@
                            required
                     >
                     <label for="pressCompressedDuration">Czas prasowania - Prasa</label>
-                    <span class="helper-text" >10s - 1800s</span>
+                    <span class="helper-text">10 - 1800 <b>[s]</b></span>
                 </div>
             </div>
 
@@ -55,7 +55,7 @@
                            required
                     >
                     <label for="pressTopTargetPressure">Prasa góra - docelowe ciśnienie</label>
-                    <span class="helper-text">0bar - 250bar</span>
+                    <span class="helper-text">0 - 250 <b>[bar]</b></span>
                 </div>
                 <div class="input-field col s6">
                     <input id="pressSideTargetPressure"
@@ -69,7 +69,7 @@
                            required
                     >
                     <label for="pressSideTargetPressure">Prasa bok - docelowe ciśnienie</label>
-                    <span class="helper-text">0bar - 250bar</span>
+                    <span class="helper-text">0 - 250 <b>[bar]</b></span>
                 </div>
             </div>
 
@@ -86,7 +86,7 @@
                            required
                     >
                     <label for="pumpTogglePressureThreshold">Ciśnienie przełączenia pompy</label>
-                    <span class="helper-text">0bar - 250bar</span>
+                    <span class="helper-text">0 - 250 <b>[bar]</b></span>
                 </div>
                 <div class="input-field col s6">
                     <input id="pressLoosenDuration"
@@ -100,12 +100,30 @@
                            required
                     >
                     <label for="pressLoosenDuration">Czas poluzowania</label>
-                    <span class="helper-text">0ms - 3000ms</span>
+                    <span class="helper-text">0 - 3000 <b>[ms]</b></span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="input-field col s6">
+                    <input id="hysteresis"
+                           name="hysteresis"
+                           class="validate"
+                           type="number"
+                           min="0"
+                           max="30"
+                           value="{{ data.hysteresis }}"
+                           autocomplete="off"
+                           required
+                    >
+                    <label for="hysteresis">Histereza ciśnienia</label>
+                    <span class="helper-text">0 - 30 <b>[bar]</b></span>
                 </div>
             </div>
 
             <div class="row right-align">
-                <button class="btn-large red waves-effect waves-light" type="button" name="action" onclick="location.reload()">
+                <button class="btn-large red waves-effect waves-light" type="button" name="action"
+                        onclick="location.reload()">
                     <span>Anuluj</span>
                     <i class="material-icons left">undo</i>
                 </button>
@@ -114,6 +132,29 @@
                     <i class="material-icons right">send</i>
                 </button>
             </div>
+        </form>
+
+        <form action="/reset" method="POST" autocomplete="off">
+            <div class="row" style="align-items: baseline; margin-top: 2em;">
+                <div class="col">
+                    <h5 class="header">Reset wszystkich stanów.</h5>
+                </div>
+                <div class="col">
+                    <p>
+                        <label>
+                            <input type="checkbox" required/>
+                            <span>Czy jesteś pewny?</span>
+                        </label>
+                    </p>
+                </div>
+                <div class="col">
+                    <button class="btn-large red waves-effect waves-light" type="submit" name="action">
+                    <span>Reset</span>
+                    <i class="material-icons right">clear</i>
+                </button>
+                </div>
+            </div>
+            <p>
         </form>
     </div>
 {% endblock %}

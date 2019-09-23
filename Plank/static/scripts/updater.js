@@ -85,6 +85,13 @@ function updateStates( states ) {
     $('#pressTempBottom').text( states.pressTempBottom.toPrecision( 3 ) );
     $('#pressPressureTop').text( states.pressPressureTop );
     $('#pressPressureSide').text( states.pressPressureSide );
+    $('#pump').text(states.pump ? 'Duża' : 'Mała');
+
+    if( states.pressState === 3 )
+        $('#timer').text( Math.floor( states.timer ) );
+    else
+        $('#timer').text( '0' );
+
 
     if ( Date.now( ) - timer > freq )
         getStatesData( );

@@ -44,10 +44,11 @@ class Press:
     depressurizationDuration = 3
     shakeDuration = 1
     pumpTogglePressureThreshold = 35
+    pumpToggleDuration = 1
     topTargetPressure = 50
     sideTargetPressure = 50
 
-    hysteresis = 15
+    hysteresis = 5
 
     def __init__( self, bigBoy ):
         self.bigBoy = bigBoy
@@ -143,6 +144,8 @@ class Press:
         # self.conveyorOscillationSensorRight.do( conveyorOscillationSensorRightHigh, HIGH )
 
         def pressureSensorThresholdRising( ):
+            if self.bigBoy.pressControls == AUTOMATIC:
+                return
             if LOW in [
                 self.pressTopMoveDown.lastState,
                 self.pressSideMoveIn.lastState,
@@ -150,19 +153,21 @@ class Press:
                 self.pressPumpPrecisionEnable.set( LOW )
 
         def pressureSensorThresholdFalling( ):
+            if self.bigBoy.pressControls == AUTOMATIC:
+                return
             self.pressPumpPrecisionEnable.set( HIGH )
 
         self.pressTopPressureSensor.setThreshold(
             self.pumpTogglePressureThreshold, RISING, pressureSensorThresholdRising
         )
         self.pressTopPressureSensor.setThreshold(
-            self.pumpTogglePressureThreshold - 5, FALLING, pressureSensorThresholdFalling
+            self.pumpTogglePressureThreshold - self.hysteresis, FALLING, pressureSensorThresholdFalling
         )
         self.pressSidePressureSensor.setThreshold(
             self.pumpTogglePressureThreshold, RISING, pressureSensorThresholdRising
         )
         self.pressSidePressureSensor.setThreshold(
-            self.pumpTogglePressureThreshold - 5, FALLING, pressureSensorThresholdFalling
+            self.pumpTogglePressureThreshold - self.hysteresis, FALLING, pressureSensorThresholdFalling
         )
 
     def update( self ):
@@ -175,9 +180,10 @@ class Press:
             if self.state in [
                 Press.COMPRESSING,
                 Press.COMPRESSED,
+                # Press.DECOMPRESSING,
             ] or HIGH in [
                 self.bigBoy.pressSideMoveInSwitch.lastState,
-                self.bigBoy.pressTopMoveDownSwitch.lastState
+                self.bigBoy.pressTopMoveDownSwitch.lastState,
             ]:
                 self.pressTopPressureSensor.getState( )
                 self.pressSidePressureSensor.getState( )
@@ -236,29 +242,71 @@ class Press:
                 self.timer = now( )
 
     def handleCompressing( self ):
+        # if self.pressTopPressureSensor.lastState > self.pumpTogglePressureThreshold \
+        #         and self.pressSideMoveIn.lastState == HIGH:
+        #     self.pressPumpPrecisionEnable.set( LOW )
+
+        # if self.pressSidePressureSensor.lastState > self.pumpTogglePressureThreshold \
+        #         and self.pressTopMoveDown.lastState == HIGH:
+        #     self.pressPumpPrecisionEnable.set( LOW )
+
+        # turn the pump on and start pressing down
         if self.compressingState == 0:
             if self.pressTopHomeSensor.lastState == HIGH:
-                self.pressPumpEnable.set( LOW )
+                self.pressPumpPrecisionEnable.set( HIGH )
                 self.pressTopMoveDown.set( LOW )
+                self.pressPumpEnable.set( LOW )
                 self.compressingState = 1
 
+        # when pressure reached stop pressing down and start pressing from the side
         elif self.compressingState == 1:
-            if self.pressTopPressureSensor.lastState > self.topTargetPressure:
+            if self.pressTopPressureSensor.lastState >= self.pumpTogglePressureThreshold:
+                self.pressTopMoveDown.set( HIGH )
+                self.timer = now( )
+                self.compressingState = 1.25
+
+        elif self.compressingState == 1.25:
+            if now( ) - self.timer >= self.pumpToggleDuration:
+                self.pressPumpPrecisionEnable.set( LOW )
+                self.timer = now( )
+                self.compressingState = 1.5
+
+        elif self.compressingState == 1.5:
+            if now( ) - self.timer >= self.pumpToggleDuration:
+                self.pressTopMoveDown.set( LOW )
+                self.compressingState = 1.75
+
+        elif self.compressingState == 1.75:
+            if self.pressTopPressureSensor.lastState >= self.topTargetPressure:
                 self.pressTopMoveDown.set( HIGH )
                 self.pressTopMoveUp.set( LOW )
-                self.pressSideMoveOut.set( LOW )
-                self.pressPumpEnable.set( HIGH )
+                self.pressPumpEnable.set( LOW )
+                self.pressPumpPrecisionEnable.set( HIGH )
                 self.timer = now( )
                 self.compressingState = 2
 
         elif self.compressingState == 2:
             if now( ) - self.timer >= self.loosenDuration / 1000:
                 self.pressTopMoveUp.set( HIGH )
-                self.pressSideMoveOut.set( HIGH )
-                self.pressPumpPrecisionEnable.set( HIGH )
                 self.pressSideMoveIn.set( LOW )
                 self.pressPumpEnable.set( LOW )
+                self.compressingState = 2.25
+
+        elif self.compressingState == 2.25:
+            if self.pressSidePressureSensor.lastState >= self.pumpTogglePressureThreshold:
+                self.pressSideMoveIn.set( HIGH )
                 self.timer = now( )
+                self.compressingState = 2.5
+
+        elif self.compressingState == 2.5:
+            if now( ) - self.timer >= self.pumpToggleDuration:
+                self.pressPumpPrecisionEnable.set( LOW )
+                self.timer = now( )
+                self.compressingState = 2.75
+
+        elif self.compressingState == 2.75:
+            if now( ) - self.timer >= self.pumpToggleDuration:
+                self.pressSideMoveIn.set( LOW )
                 self.compressingState = 3
 
         elif self.compressingState == 3:
@@ -270,7 +318,7 @@ class Press:
         elif self.compressingState == 4:
             if self.pressTopPressureSensor.lastState > self.topTargetPressure:
                 self.pressTopMoveDown.set( HIGH )
-                self.pressPumpEnable.set( HIGH )
+                # self.pressPumpEnable.set( HIGH ) # leave pump enabled for entire compression
                 self.compressingState = 0
                 self.state = Press.COMPRESSED
                 self.timer = now( )
@@ -280,7 +328,6 @@ class Press:
             self.pressTopMoveDown.set( HIGH )
             self.pressSideMoveIn.set( HIGH )
             self.pressPumpEnable.set( HIGH )
-            self.pressPumpPrecisionEnable.set( HIGH )
             self.timer = now( )
             self.state = Press.DECOMPRESSING
             return
@@ -289,18 +336,20 @@ class Press:
             self.pressPumpEnable.set( LOW )
             self.pressTopMoveDown.set( LOW )
         elif self.pressTopPressureSensor.lastState >= self.topTargetPressure:
-            self.pressPumpEnable.set( HIGH )
+            # self.pressPumpEnable.set( HIGH )
             self.pressTopMoveDown.set( HIGH )
 
         if self.pressSidePressureSensor.lastState < self.sideTargetPressure - self.hysteresis:
             self.pressPumpEnable.set( LOW )
             self.pressSideMoveIn.set( LOW )
         elif self.pressSidePressureSensor.lastState >= self.sideTargetPressure:
-            self.pressPumpEnable.set( HIGH )
+            # self.pressPumpEnable.set( HIGH )
             self.pressSideMoveIn.set( HIGH )
 
     def handleDecompressing( self ):
+        # depressurisation
         if self.decompressingState == 0:
+            # self.pressPumpEnable.set( HIGH )
             self.pressTopMoveUp.set( LOW )
             self.pressSideMoveIn.set( LOW )
             self.timer = now( )

@@ -6,7 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$/Plank" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/Trashed" />
     </content>
-    <orderEntry type="jdk" jdkName="Remote Python 3.5.3 (ssh://pi@192.168.1.111:22/usr/bin/python3)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Remote Python 3.5.3 (ssh://pi@192.168.0.111:22/usr/bin/python3)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PyDocumentationSettings">

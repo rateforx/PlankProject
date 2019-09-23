@@ -155,3 +155,7 @@ input:disabled {
 #states-collection .badge {
     min-width: 16em;
 }
+
+#timer {
+    font-variant: tabular-nums slashed-zero;
+}

@@ -42,7 +42,7 @@ class Vice:
         1.5,  # odchylenie amortyzatora
         1.5,  # opuszczanie
         1.5,  # zwolnienie L
-        .25,  # podnoszenie
+        1.25,  # podnoszenie
         2.25,  # zaciśnięcie L
         2,  # powrót amortyzatora
     ]
@@ -236,7 +236,7 @@ class Vice:
     def handleUnloading( self ):
         if self.unloadingState == 0:
             if self.bigBoy.conveyorServo.state == Servo.IDLE:
-                self.bigBoy.conveyorServo.move( self.bigBoy.conveyorCorrection )
+                # self.bigBoy.conveyorServo.move( self.bigBoy.conveyorCorrection )
                 self.unloadingState = 2
 
         # wait for the conveyor to stop

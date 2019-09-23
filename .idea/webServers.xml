@@ -2,8 +2,8 @@
 <project version="4">
   <component name="WebServers">
     <option name="servers">
-      <webServer id="b459e416-17a2-44a9-a1cd-6c369cd50994" name="RPi XLan" url="http://192.168.1.111">
-        <fileTransfer host="192.168.1.111" port="22" rootFolder="/home/pi/Desktop/BigBoy" accessType="SFTP">
+      <webServer id="b459e416-17a2-44a9-a1cd-6c369cd50994" name="RPi XLan" url="http://192.168.0.111">
+        <fileTransfer host="192.168.0.111" port="22" rootFolder="/home/pi/Desktop/BigBoy" accessType="SFTP">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
           </advancedOptions>

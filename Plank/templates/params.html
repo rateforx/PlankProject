@@ -19,7 +19,7 @@
                            required
                     >
                     <label for="slatLength">Długość lamelki</label>
-                    <span class="helper-text">380mm - 2000mm</span>
+                    <span class="helper-text">380 - 2000 <b>[mm]</b></span>
                 </div>
                 <div class="input-field col s4">
                     <input id="slatWidth"
@@ -33,7 +33,7 @@
                            required
                     >
                     <label for="slatWidth">Szerokość lamelki</label>
-                    <span class="helper-text">10mm - 120mm ( 500mm )</span>
+                    <span class="helper-text">10 - 120 <b>[mm]</b></span>
                 </div>
                 <div class="input-field col s4">
                     <input id="slatsPerBoard"
@@ -47,7 +47,7 @@
                            required
                     >
                     <label for="slatsPerBoard">Lamelki / Płyta</label>
-                    <span class="helper-text">2szt. - 190szt.</span>
+                    <span class="helper-text">2 - 190 <b>[szt.]</b></span>
                 </div>
             </div>
             <div class="row right-align">
@@ -69,7 +69,7 @@
         <div class="row">
             <div class="input-field col s4">
                 <input id="boardWidth" value="{{ data.boardWidth }}" disabled>
-                <span class="helper-text">Szerokość płyty ( mm )</span>
+                <span class="helper-text">Szerokość płyty <b>[mm]</b></span>
             </div>
             <div class="input-field col s4">
                 <input id="boardsPerRow" value="{{ data.boardsPerRow }}" disabled>
@@ -78,6 +78,16 @@
             <div class="input-field col s4">
                 <input id="rowsPerSet" value="{{ data.rowsPerSet }}" disabled>
                 <span class="helper-text">Rzędy / Seria</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s6">
+                <input id="rowWidth" value="{{ data.boardWidth * data.boardsPerRow }}" disabled>
+                <span class="helper-text">Szerokość rzędu <b>[mm]</b></span>
+            </div>
+            <div class="input-field col s6">
+                <input id="slatsPerSet" value="{{ data.slatsPerBoard * data.boardsPerRow * data.rowsPerSet }}">
+                <span class="helper-text">Lamelki / Seria</span>
             </div>
         </div>
     </div>

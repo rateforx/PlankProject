@@ -54,13 +54,28 @@
         <div class="row">
             <ul class="collection">
                 <li class="collection-item">
-                    <span class="mdi mdi-arrow-collapse-up"></span>
+                    <i class="material-icons">timer</i>
+                    <span>Pozostały czas prasowania</span>
+                    <span id="timer" class="badge black white-text new" data-badge-caption="s">0</span>
+                </li>
+            </ul>
+        </div>
+        <div class="row">
+            <ul class="collection">
+                <li class="collection-item">
+{#                    <span class="mdi mdi-crop_3_2"></span>#}
+{#                    <span class="mdi mdi-size"></span>#}
+                    <span>Aktywna pompa</span>
+                    <span id="pump" class="badge yellow darken-3 new" data-badge-caption=" "></span>
+                </li>
+                <li class="collection-item">
+                    <span class="mdi mdi-arrow-collapse-down"></span>
                     <span class="mdi mdi-gauge"></span>
                     <span>Ciśnienie docisku górnego</span>
                     <span id="pressPressureTop" class="badge lime darken-1 new" data-badge-caption="bar">0</span>
                 </li>
                 <li class="collection-item">
-                    <span class="mdi mdi-arrow-collapse-left"></span>
+                    <span class="mdi mdi-arrow-collapse-right"></span>
                     <span class="mdi mdi-gauge"></span>
                     <span>Ciśnienie docisku bocznego</span>
                     <span id="pressPressureSide" class="badge teal new" data-badge-caption="bar">0</span>

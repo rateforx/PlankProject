@@ -1,0 +1,9 @@
+{
+  "viceCompressedDuration": 15,
+  "pressCompressedDuration": 10,
+  "hysteresis": 5,
+  "sideTargetPressure": 50,
+  "topTargetPressure": 50,
+  "pumpTogglePressureThreshold": 30,
+  "loosenDuration": 600
+}

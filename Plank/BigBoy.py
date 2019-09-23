@@ -24,9 +24,11 @@ A14 = 68
 A15 = 69
 
 STATS_JSON = 'stats.json'
+PARAMS_JSON = 'params.json'
+SETTINGS_JSON = 'settings.json'
 
 
-class BigBoy:
+class BigBoy :
     PRESS_LENGTH = 4400  # mm
     PRESS_WIDTH = 1800  # mm
     MIN_GAP = 50  # mm
@@ -88,8 +90,8 @@ class BigBoy:
     totalArea = 0
     totalHours = 0
 
-    def __init__( self ):
-        self.runTimer = now()
+    def __init__( self ) :
+        self.runTimer = now( )
 
         self.orange = ArduinoIO( MEGA_SN1, 'orange' )
         self.yellow = ArduinoIO( MEGA_SN0, 'yellow' )
@@ -188,65 +190,66 @@ class BigBoy:
         self.vice = Vice( self )
         self.press = Press( self )
 
-        def conveyorSensorCallback( ):
-            if self.slatState == 0:
-                if self.vice.state != Vice.RELEASING and self.currentSlat < self.slatsPerRow:
+        def conveyorSensorCallback( ) :
+            if self.slatState == 0 :
+                if self.vice.state != Vice.RELEASING and self.currentSlat < self.slatsPerRow and not self.vice.readyToRelease:
                     self.vice.slatPusherEnable.set( LOW )
                     self.slatState = 1
 
         self.conveyorSensor.do( conveyorSensorCallback, HIGH )
 
-        def counterSensorCallback( ):
-            if self.slatState == 1:
+        def counterSensorCallback( ) :
+            if self.slatState == 1 :
                 self.vice.slatPusherEnable.set( HIGH )
                 self.slatState = 2
 
         self.retractSensor.do( counterSensorCallback, HIGH )
 
-        def stackerSensorCallback( ):
-            if self.slatState == 2:
+        def stackerSensorCallback( ) :
+            if self.slatState == 2 :
                 self.vice.halfTurnMotorEnable.set( LOW )
                 self.slatState = 4
 
         self.stackerSensor.do( stackerSensorCallback, HIGH )
 
-        def halfTurnMotorSensorCallbackLow( ):
-            if self.slatState == 3:
+        def halfTurnMotorSensorCallbackLow( ) :
+            if self.slatState == 3 :
                 self.slatState = 4
 
         self.halfTurnMotorSensor.do( halfTurnMotorSensorCallbackLow, LOW )
 
-        def halfTurnMotorSensorCallbackHigh( ):
-            if self.slatState == 4:
+        def halfTurnMotorSensorCallbackHigh( ) :
+            if self.slatState == 4 :
                 self.vice.halfTurnMotorEnable.set( HIGH )
                 self.slatState = 0
                 self.currentSlat += 1
                 self.next( )
 
-            if self.viceControls == BigBoy.MANUAL:
+            if self.viceControls == BigBoy.MANUAL :
                 self.vice.halfTurnMotorEnable.set( HIGH )
 
         self.halfTurnMotorSensor.do( halfTurnMotorSensorCallbackHigh, HIGH )
 
-        def glueLevelSensorRising( ):
+        def glueLevelSensorRising( ) :
             self.vice.glueSiorbakEnable.set( HIGH )
 
-        def glueLevelSensorFalling( ):
+        def glueLevelSensorFalling( ) :
             self.vice.glueSiorbakEnable.set( LOW )
 
         self.glueLevelSensor.setCallback( glueLevelSensorRising, RISING )
         # self.glueLevelSensor.do( glueLevelSensorRising, HIGH )
         self.glueLevelSensor.setCallback( glueLevelSensorFalling, FALLING )
+
         # self.glueLevelSensor.do( glueLevelSensorFalling, LOW )
 
-        def viceAMSwitchFalling( ):
+        def viceAMSwitchFalling( ) :
             self.conveyorServo.engine.stop( )
             self.vice.bumperEngineBackwardEnable.set( HIGH )
             self.vice.bumperEngineForwardEnable.set( HIGH )
             self.viceControls = BigBoy.AUTOMATIC
             self.viceRunning = False
 
-        def viceAMSwitchRising( ):
+        def viceAMSwitchRising( ) :
             self.sumTotalHours( )
             self.viceControls = BigBoy.MANUAL
             self.viceAMIndicatorEnable.set( HIGH )
@@ -255,12 +258,12 @@ class BigBoy:
         self.viceAMSwitch.setCallback( viceAMSwitchFalling, FALLING )
         self.viceAMSwitch.setCallback( viceAMSwitchRising, RISING )
 
-        def viceStartButtonRising( ):
-            if self.viceControls == BigBoy.AUTOMATIC and self.paramsSet:
+        def viceStartButtonRising( ) :
+            if self.viceControls == BigBoy.AUTOMATIC and self.paramsSet :
                 self.viceAMIndicatorEnable.set( LOW )
                 self.viceRunning = True
 
-        def viceStopButtonRising( ):
+        def viceStopButtonRising( ) :
             self.sumTotalHours( )
             self.viceRunning = False
             self.viceAMIndicatorEnable.set( HIGH )
@@ -268,48 +271,48 @@ class BigBoy:
         self.viceStartButton.setCallback( viceStartButtonRising, RISING )
         self.viceStopButton.setCallback( viceStopButtonRising, RISING )
 
-        def viceConveyorForwardSwitchRising( ):
-            if self.viceControls == BigBoy.MANUAL:
+        def viceConveyorForwardSwitchRising( ) :
+            if self.viceControls == BigBoy.MANUAL :
                 self.conveyorServo.engine.setForward( )
                 self.conveyorServo.engine.setSpeed( self.viceConveyorSpeed )
                 self.conveyorServo.engine.start( )
 
-        def viceConveyorForwardSwitchFalling( ):
-            if self.viceControls == BigBoy.MANUAL:
+        def viceConveyorForwardSwitchFalling( ) :
+            if self.viceControls == BigBoy.MANUAL :
                 self.conveyorServo.engine.stop( )
 
         self.viceConveyorForwardSwitch.setCallback( viceConveyorForwardSwitchRising, RISING )
         self.viceConveyorForwardSwitch.setCallback( viceConveyorForwardSwitchFalling, FALLING )
 
-        def viceConveyorBackwardSwitchRising( ):
-            if self.viceControls == BigBoy.MANUAL:
+        def viceConveyorBackwardSwitchRising( ) :
+            if self.viceControls == BigBoy.MANUAL :
                 self.conveyorServo.engine.setBackward( )
                 self.conveyorServo.engine.setSpeed( self.viceConveyorSpeed )
                 self.conveyorServo.engine.start( )
 
-        def viceConveyorBackwardSwitchFalling( ):
-            if self.viceControls == BigBoy.MANUAL:
+        def viceConveyorBackwardSwitchFalling( ) :
+            if self.viceControls == BigBoy.MANUAL :
                 self.conveyorServo.engine.stop( )
 
         self.viceConveyorBackwardSwitch.setCallback( viceConveyorBackwardSwitchRising, RISING )
         self.viceConveyorBackwardSwitch.setCallback( viceConveyorBackwardSwitchFalling, FALLING )
 
-        def viceBumperForwardSwitchRising( ):
-            if self.viceControls == BigBoy.MANUAL:
-                if self.vice.bumperFrontLimit.lastState == LOW:
+        def viceBumperForwardSwitchRising( ) :
+            if self.viceControls == BigBoy.MANUAL :
+                if self.vice.bumperFrontLimit.lastState == LOW :
                     self.vice.bumperEngineForwardEnable.set( LOW )
 
-        def viceBumperForwardSwitchFalling( ):
-            if self.viceControls == BigBoy.MANUAL:
+        def viceBumperForwardSwitchFalling( ) :
+            if self.viceControls == BigBoy.MANUAL :
                 self.vice.bumperEngineForwardEnable.set( HIGH )
 
-        def viceBumperBackwardSwitchRising( ):
-            if self.viceControls == BigBoy.MANUAL:
-                if self.vice.bumperBackLimit.lastState == LOW:
+        def viceBumperBackwardSwitchRising( ) :
+            if self.viceControls == BigBoy.MANUAL :
+                if self.vice.bumperBackLimit.lastState == LOW :
                     self.vice.bumperEngineBackwardEnable.set( LOW )
 
-        def viceBumperBackwardSwitchFalling( ):
-            if self.viceControls == BigBoy.MANUAL:
+        def viceBumperBackwardSwitchFalling( ) :
+            if self.viceControls == BigBoy.MANUAL :
                 self.vice.bumperEngineBackwardEnable.set( HIGH )
 
         self.viceBumperForwardSwitch.setCallback( viceBumperForwardSwitchRising, RISING )
@@ -319,7 +322,7 @@ class BigBoy:
 
         # PRESS Controls
 
-        def pressAMSwitchFalling( ):
+        def pressAMSwitchFalling( ) :
             self.press.pressConveyorEngine.engine.stop( )
             self.press.pressPumpEnable.set( HIGH )
             self.press.pressSideMoveIn.set( HIGH )
@@ -329,7 +332,7 @@ class BigBoy:
             self.pressControls = BigBoy.AUTOMATIC
             self.pressRunning = False
 
-        def pressAMSwitchRising( ):
+        def pressAMSwitchRising( ) :
             self.sumTotalHours( )
             self.pressControls = BigBoy.MANUAL
             self.pressAMIndicatorEnable.set( HIGH )
@@ -338,12 +341,12 @@ class BigBoy:
         self.pressAMSwitch.setCallback( pressAMSwitchFalling, FALLING )
         self.pressAMSwitch.setCallback( pressAMSwitchRising, RISING )
 
-        def pressStartButtonRising( ):
-            if self.pressControls == BigBoy.AUTOMATIC and self.paramsSet:
+        def pressStartButtonRising( ) :
+            if self.pressControls == BigBoy.AUTOMATIC and self.paramsSet :
                 self.pressAMIndicatorEnable.set( LOW )
                 self.pressRunning = True
 
-        def pressStopButtonRising( ):
+        def pressStopButtonRising( ) :
             self.sumTotalHours( )
             self.pressAMIndicatorEnable.set( HIGH )
             self.pressRunning = False
@@ -351,62 +354,62 @@ class BigBoy:
         self.pressStartButton.setCallback( pressStartButtonRising, RISING )
         self.pressStopButton.setCallback( pressStopButtonRising, RISING )
 
-        def pressConveyorForwardSwitchRising( ):
-            if self.pressControls == BigBoy.MANUAL:
+        def pressConveyorForwardSwitchRising( ) :
+            if self.pressControls == BigBoy.MANUAL :
                 self.press.pressConveyorEngine.engine.setSpeed( self.pressConveyorSpeed )
                 self.press.pressConveyorEngine.engine.setForward( )
                 self.press.pressConveyorEngine.engine.start( )
 
-        def pressConveyorForwardSwitchFalling( ):
-            if self.pressControls == BigBoy.MANUAL:
+        def pressConveyorForwardSwitchFalling( ) :
+            if self.pressControls == BigBoy.MANUAL :
                 self.press.pressConveyorEngine.engine.stop( )
 
         self.pressConveyorForwardSwitch.setCallback( pressConveyorForwardSwitchRising, RISING )
         self.pressConveyorForwardSwitch.setCallback( pressConveyorForwardSwitchFalling, FALLING )
 
-        def pressConveyorBackwardSwitchRising( ):
-            if self.pressControls == BigBoy.MANUAL:
+        def pressConveyorBackwardSwitchRising( ) :
+            if self.pressControls == BigBoy.MANUAL :
                 self.press.pressConveyorEngine.engine.setSpeed( self.pressConveyorSpeed )
                 self.press.pressConveyorEngine.engine.setBackward( )
                 self.press.pressConveyorEngine.engine.start( )
 
-        def pressConveyorBackwardSwitchFalling( ):
-            if self.pressControls == BigBoy.MANUAL:
+        def pressConveyorBackwardSwitchFalling( ) :
+            if self.pressControls == BigBoy.MANUAL :
                 self.press.pressConveyorEngine.engine.stop( )
 
         self.pressConveyorBackwardSwitch.setCallback( pressConveyorBackwardSwitchRising, RISING )
         self.pressConveyorBackwardSwitch.setCallback( pressConveyorBackwardSwitchFalling, FALLING )
 
-        def pressTopMoveDownSwitchRising( ):
-            if self.pressControls == BigBoy.MANUAL:
+        def pressTopMoveDownSwitchRising( ) :
+            if self.pressControls == BigBoy.MANUAL :
                 self.press.pressTopMoveDown.set( LOW )
                 self.press.pressPumpEnable.set( LOW )
 
-        def pressTopMoveDownSwitchFalling( ):
-            if self.pressControls == BigBoy.MANUAL:
+        def pressTopMoveDownSwitchFalling( ) :
+            if self.pressControls == BigBoy.MANUAL :
                 self.press.pressTopMoveDown.set( HIGH )
                 if HIGH not in [
                     self.pressTopMoveUpSwitch.lastState,
                     self.pressSideMoveInSwitch.lastState,
                     self.pressSideMoveOutSwitch.lastState,
-                ]:
+                ] :
                     self.press.pressPumpEnable.set( HIGH )
 
-        def pressTopMoveUpSwitchRising( ):
-            if self.pressControls == BigBoy.MANUAL:
-                if self.press.pressTopHomeSensor.lastState == LOW:
+        def pressTopMoveUpSwitchRising( ) :
+            if self.pressControls == BigBoy.MANUAL :
+                if self.press.pressTopHomeSensor.lastState == LOW :
                     self.press.pressTopMoveUp.set( LOW )
                     self.press.pressPumpEnable.set( LOW )
                     self.press.pressPumpPrecisionEnable.set( HIGH )
 
-        def pressTopMoveUpSwitchFalling( ):
-            if self.pressControls == BigBoy.MANUAL:
+        def pressTopMoveUpSwitchFalling( ) :
+            if self.pressControls == BigBoy.MANUAL :
                 self.press.pressTopMoveUp.set( HIGH )
                 if HIGH not in [
                     self.pressTopMoveDownSwitch.lastState,
                     self.pressSideMoveInSwitch.lastState,
                     self.pressSideMoveOutSwitch.lastState,
-                ]:
+                ] :
                     self.press.pressPumpEnable.set( HIGH )
 
         self.pressTopMoveDownSwitch.setCallback( pressTopMoveDownSwitchRising, RISING )
@@ -414,36 +417,36 @@ class BigBoy:
         self.pressTopMoveUpSwitch.setCallback( pressTopMoveUpSwitchRising, RISING )
         self.pressTopMoveUpSwitch.setCallback( pressTopMoveUpSwitchFalling, FALLING )
 
-        def pressSideMoveInSwitchRising( ):
-            if self.pressControls == BigBoy.MANUAL:
+        def pressSideMoveInSwitchRising( ) :
+            if self.pressControls == BigBoy.MANUAL :
                 self.press.pressSideMoveIn.set( LOW )
                 self.press.pressPumpEnable.set( LOW )
 
-        def pressSideMoveInSwitchFalling( ):
-            if self.pressControls == BigBoy.MANUAL:
+        def pressSideMoveInSwitchFalling( ) :
+            if self.pressControls == BigBoy.MANUAL :
                 self.press.pressSideMoveIn.set( HIGH )
                 if HIGH not in [
                     self.pressTopMoveUpSwitch.lastState,
                     self.pressTopMoveDownSwitch.lastState,
                     self.pressSideMoveOutSwitch.lastState,
-                ]:
+                ] :
                     self.press.pressPumpEnable.set( HIGH )
 
-        def pressSideMoveOutSwitchRising( ):
-            if self.pressControls == BigBoy.MANUAL:
-                if self.press.pressSideHomeSensor.lastState == LOW:
+        def pressSideMoveOutSwitchRising( ) :
+            if self.pressControls == BigBoy.MANUAL :
+                if self.press.pressSideHomeSensor.lastState == LOW :
                     self.press.pressSideMoveOut.set( LOW )
                     self.press.pressPumpEnable.set( LOW )
                     self.press.pressPumpPrecisionEnable.set( HIGH )
 
-        def pressSideMoveOutSwitchFalling( ):
-            if self.pressControls == BigBoy.MANUAL:
+        def pressSideMoveOutSwitchFalling( ) :
+            if self.pressControls == BigBoy.MANUAL :
                 self.press.pressSideMoveOut.set( HIGH )
                 if HIGH not in [
                     self.pressTopMoveUpSwitch.lastState,
                     self.pressTopMoveDownSwitch.lastState,
                     self.pressSideMoveInSwitch.lastState,
-                ]:
+                ] :
                     self.press.pressPumpEnable.set( HIGH )
 
         self.pressSideMoveInSwitch.setCallback( pressSideMoveInSwitchRising, RISING )
@@ -451,52 +454,64 @@ class BigBoy:
         self.pressSideMoveOutSwitch.setCallback( pressSideMoveOutSwitchRising, RISING )
         self.pressSideMoveOutSwitch.setCallback( pressSideMoveOutSwitchFalling, FALLING )
 
-        def pressDepressurizeButtonRising( ):
-            if self.pressControls == BigBoy.MANUAL:
-                if HIGH not in [ self.pressSideMoveInSwitch.lastState, self.pressTopMoveDownSwitch.lastState ]:
+        def pressDepressurizeButtonRising( ) :
+            if self.pressControls == BigBoy.MANUAL :
+                if HIGH not in [
+                    self.pressSideMoveInSwitch.lastState,
+                    self.pressTopMoveDownSwitch.lastState,
+                    self.pressSideMoveOutSwitch.lastState,
+                    self.pressTopMoveUpSwitch.lastState,
+                ] :
                     self.press.pressTopMoveUp.set( LOW )
                     self.press.pressSideMoveOut.set( LOW )
+                    # self.press.pressTopMoveDown.set( LOW )
+                    # self.press.pressSideMoveIn.set( LOW )
 
-        def pressDepressurizeButtonFalling( ):
-            if self.pressControls == BigBoy.MANUAL:
-                if self.pressTopMoveUpSwitch.lastState == LOW:
+        def pressDepressurizeButtonFalling( ) :
+            if self.pressControls == BigBoy.MANUAL :
+                if self.pressTopMoveUpSwitch.lastState == LOW :
                     self.press.pressTopMoveUp.set( HIGH )
-                if self.pressSideMoveInSwitch.lastState == LOW:
+                if self.pressTopMoveDownSwitch.lastState == LOW :
+                    self.press.pressTopMoveUp.set( HIGH )
+                if self.pressSideMoveInSwitch.lastState == LOW :
+                    self.press.pressSideMoveIn.set( HIGH )
+                if self.pressSideMoveOutSwitch.lastState == LOW :
                     self.press.pressSideMoveOut.set( HIGH )
 
         self.pressDepressurizeButton.setCallback( pressDepressurizeButtonRising, RISING )
         self.pressDepressurizeButton.setCallback( pressDepressurizeButtonFalling, FALLING )
 
-        def forcePusherButtonRising( ):
-            if self.viceControls == BigBoy.MANUAL:
+        def forcePusherButtonRising( ) :
+            if self.viceControls == BigBoy.MANUAL :
                 self.vice.slatPusherEnable.set( LOW )
 
-        def forcePusherButtonFalling( ):
-            if self.viceControls == BigBoy.MANUAL:
+        def forcePusherButtonFalling( ) :
+            if self.viceControls == BigBoy.MANUAL :
                 self.vice.slatPusherEnable.set( HIGH )
 
         self.forcePusherButton.setCallback( forcePusherButtonRising, RISING )
         self.forcePusherButton.setCallback( forcePusherButtonFalling, FALLING )
 
-        def forceHalfTurnButtonRising( ):
-            if self.viceControls == BigBoy.MANUAL:
+        def forceHalfTurnButtonRising( ) :
+            if self.viceControls == BigBoy.MANUAL :
                 self.vice.halfTurnMotorEnable.set( LOW )
 
         self.forceHalfTurnButton.setCallback( forceHalfTurnButtonRising, RISING )
 
-        def forceViceReleaseButtonRising( ):
-            if self.viceControls == BigBoy.MANUAL:
+        def forceViceReleaseButtonRising( ) :
+            if self.viceControls == BigBoy.MANUAL :
                 self.vice.state = Vice.RELEASING
                 self.vice.resettingState = 0
 
         self.forceViceReleaseButton.setCallback( forceViceReleaseButtonRising, RISING )
 
-        def forcePressLoadButtonRising( ):
+        def forcePressLoadButtonRising( ) :
             if BigBoy.AUTOMATIC not in [
                 self.viceControls,
                 self.pressControls,
-            ]:
-                if self.vice.state == Vice.IDLE and self.press.state == Press.IDLE:
+            ] :
+                if self.vice.state in [ Vice.IDLE, Vice.UNLOADING ] \
+                        and self.press.state in [ Press.IDLE, Press.LOADING ] :
                     self.vice.state = Vice.UNLOADING
                     self.vice.forceUnloading = True
                     self.press.state = Press.LOADING
@@ -504,64 +519,62 @@ class BigBoy:
 
         self.forcePressLoadButton.setCallback( forcePressLoadButtonRising, RISING )
 
-    def next( self ):
+    def next( self ) :
         self.slatCheck( )
 
-    def slatCheck( self ):
-        if self.currentSlat == 0:
+    def slatCheck( self ) :
+        if self.currentSlat == 0 :
             self.vice.glueDisable.set( HIGH )
 
-        elif 0 < self.currentSlat < self.slatsPerBoard:
+        elif 0 < self.currentSlat < self.slatsPerBoard :
             self.vice.glueDisable.set( HIGH )
 
-        elif self.currentSlat == self.slatsPerBoard:
+        elif self.currentSlat == self.slatsPerBoard :
             self.vice.glueDisable.set( LOW )
             self.currentBoard += 1
             self.currentSlat = 0
             self.boardCheck( )
 
-    def boardCheck( self ):
-        if self.currentBoard == 0:
+    def boardCheck( self ) :
+        if self.currentBoard == 0 :
             pass
 
-        elif 0 < self.currentBoard < self.boardsPerRow:
+        elif 0 < self.currentBoard < self.boardsPerRow :
             pass
 
-        elif self.currentBoard == self.boardsPerRow:
+        elif self.currentBoard == self.boardsPerRow :
             self.currentRow += 1
             self.currentBoard = 0
             self.rowCheck( )
 
-    def rowCheck( self ):
-        if self.currentRow == 0:
+    def rowCheck( self ) :
+        if self.currentRow == 0 :
             self.vice.readyToRelease = True
 
-        elif 0 < self.currentRow < self.rowsPerSet:
+        elif 0 < self.currentRow < self.rowsPerSet :
             self.vice.readyToRelease = True
 
-        elif self.currentRow == self.rowsPerSet:
+        elif self.currentRow == self.rowsPerSet :
             self.vice.readyToRelease = True
             self.currentRow = 0
             self.vice.readyToUnload = True
             # if self.vice.state == Vice.IDLE:
             #     self.vice.state = Vice.RELEASING
-            if self.press.state == Press.IDLE:
+            if self.press.state == Press.IDLE :
                 self.press.state = Press.LOADING
-                self.currentRow = 0
-                self.vice.readyToUnload = True
-            else:
-                pass  # todo błąd: prasa nie gotowa, zwolnij prasę
+            # else:
+            #     pass  # todo błąd: prasa nie gotowa, zwolnij prasę
             # else:
             #     pass  # todo błąd: układarka nie gotowa, zwolnij taśmę pod układarką
 
-    def resetCounters( self ):
+    def resetCounters( self ) :
         self.currentSlat = 0
         self.currentBoard = 0
         self.currentRow = 0
         self.slatState = 0
-        self.vice.glueDisable.set( HIGH )
+        self.vice.glueDisable.set( LOW )
 
-    def setParams( self, length, width, slatsPerBoard ):
+    def setParams( self, length, width, slatsPerBoard ) :
         self.slatLength = length
         self.slatWidth = width
         self.slatsPerBoard = slatsPerBoard
@@ -570,8 +583,8 @@ class BigBoy:
         self.paramsSet = True
         self.resetCounters( )
 
-    def recalculateParams( self ):
-        if not self.slatLength or not self.slatWidth or not self.slatsPerBoard:
+    def recalculateParams( self ) :
+        if not self.slatLength or not self.slatWidth or not self.slatsPerBoard :
             return
 
         self.boardsPerRow = math.floor( BigBoy.PRESS_WIDTH / (self.slatWidth * self.slatsPerBoard) )
@@ -579,30 +592,73 @@ class BigBoy:
         self.boardArea = self.slatLength * self.boardWidth
         self.rowsPerSet = math.floor( BigBoy.PRESS_LENGTH / (self.slatLength + self.MIN_GAP) )
         self.slatsPerSet = self.slatsPerSet * self.boardsPerRow * self.slatsPerBoard
-        self.rowsGap = (BigBoy.PRESS_LENGTH - (self.rowsPerSet * self.slatLength)) / (self.rowsPerSet - 1)
+        self.rowsGap = (BigBoy.PRESS_LENGTH - (self.rowsPerSet * self.slatLength)) / (self.rowsPerSet + 1)
 
-    def loadStatsFromFile( self ):
-        with open( STATS_JSON ) as file:
+    def loadStatsFromFile( self ) :
+        with open( STATS_JSON ) as file :
             data = json.load( file )
             self.totalArea = data[ 'totalArea' ]
             self.totalHours = data[ 'totalHours' ]
 
-    def updateStatsFile( self ):
-        data = { 'totalArea': self.totalArea, 'totalHours': self.totalHours }
-        with open( STATS_JSON, 'w+' ) as file:
+    def updateStatsFile( self ) :
+        data = {
+            'totalArea'  : self.totalArea,
+            'totalHours' : self.totalHours
+        }
+        with open( STATS_JSON, 'w+' ) as file :
             json.dump( data, file )
 
-    def sumTotalArea( self ):
+    def loadParamsFromFile( self ) :
+        with open( PARAMS_JSON ) as file :
+            data = json.load( file )
+            self.slatLength = data[ 'slatLength' ]
+            self.slatWidth = data[ 'slatWidth' ]
+            self.slatsPerBoard = data[ 'slatsPerBoard' ]
+
+    def updateParamsFile( self ) :
+        data = {
+            'slatLength'    : self.slatLength,
+            'slatWidth'     : self.slatWidth,
+            'slatsPerBoard' : self.slatsPerBoard,
+        }
+        with open( PARAMS_JSON, 'w+' ) as file :
+            json.dump( data, file )
+
+    def loadSettingsFromFile( self ) :
+        with open( SETTINGS_JSON ) as file :
+            data = json.load( file )
+            self.vice.compressedDuration = data[ 'viceCompressedDuration' ]
+            self.press.compressedDuration = data[ 'pressCompressedDuration' ]
+            self.press.topTargetPressure = data[ 'topTargetPressure' ]
+            self.press.sideTargetPressure = data[ 'sideTargetPressure' ]
+            self.press.pumpTogglePressureThreshold = data[ 'pumpTogglePressureThreshold' ]
+            self.press.loosenDuration = data[ 'loosenDuration' ]
+            self.press.hysteresis = data[ 'hysteresis' ]
+
+    def updateSettingsFile( self ) :
+        data = {
+            'viceCompressedDuration'      : self.vice.compressedDuration,
+            'pressCompressedDuration'     : self.press.compressedDuration,
+            'topTargetPressure'           : self.press.topTargetPressure,
+            'sideTargetPressure'          : self.press.sideTargetPressure,
+            'pumpTogglePressureThreshold' : self.press.pumpTogglePressureThreshold,
+            'loosenDuration'              : self.press.loosenDuration,
+            'hysteresis'                  : self.press.hysteresis,
+        }
+        with open( SETTINGS_JSON, 'w+' ) as file :
+            json.dump( data, file )
+
+    def sumTotalArea( self ) :
         self.totalArea += self.boardsPerRow * self.rowsPerSet * self.boardArea / 1000000  # mm^2 -> m^2
         self.updateStatsFile( )
 
-    def sumTotalHours( self ):
-        self.totalHours += ( now( ) - self.runTimer ) / 3600  # s -> h
+    def sumTotalHours( self ) :
+        self.totalHours += (now( ) - self.runTimer) / 3600  # s -> h
         self.updateStatsFile( )
-        self.runTimer = now()
+        self.runTimer = now( )
 
-    def update( self ):
-        for input in self.inputs:
+    def update( self ) :
+        for input in self.inputs :
             input.update( not self.viceRunning )
 
         self.orange.update( )
@@ -613,19 +669,25 @@ class BigBoy:
         self.vice.update( )
         self.press.update( )
 
-    def run( self ):
+        if self.vice.readyToUnload and self.press.state == self.press.IDLE or \
+            self.vice.readyToUnload and self.press.state == self.press.LOADING :
+            self.press.state = self.press.LOADING
+
+    def run( self ) :
         self.loadStatsFromFile( )
+        self.loadParamsFromFile( )
+        self.loadSettingsFromFile( )
         self.orange.start( )
         self.yellow.start( )
 
         self.press.tempTop.start( )
         self.press.tempBottom.start( )
 
-        while True:
+        while True :
             self.update( )
 
 
-if __name__ == "__main__":
+if __name__ == "__main__" :
     bigBoy = BigBoy( )
     bigBoy.setParams( 2000, 450, 2 )
     bigBoy.recalculateParams( )
