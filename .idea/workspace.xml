@@ -5,12 +5,9 @@
     <bookmark url="file://$PROJECT_DIR$/Plank/BigBoy.py" description="self.vice.readyToUnload and self.press.state == se..." line="672" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="186d52f9-d3e7-4f7d-8db1-654290318de5" name="Default Changelist" comment="Serwis pogwarancyjny">
-      <change afterPath="$PROJECT_DIR$/Arduino/EncoderSerial/EncoderSerial.ino" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Arduino/megaIO/megaIO.ino" afterDir="false" />
+    <list default="true" id="186d52f9-d3e7-4f7d-8db1-654290318de5" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plank/Engine.py" beforeDir="false" afterPath="$PROJECT_DIR$/Plank/Engine.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plank/Vice.py" beforeDir="false" afterPath="$PROJECT_DIR$/Plank/Vice.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -49,11 +46,26 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Plank/Vice.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="115">
-              <caret line="5" column="26" selection-start-line="5" selection-start-column="26" selection-end-line="5" selection-end-column="26" />
+            <state relative-caret-position="161">
+              <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
+              <folding>
+                <element signature="e#0#28#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/README.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+            <state split_layout="SPLIT">
+              <first_editor relative-caret-position="230">
+                <caret line="10" column="24" lean-forward="true" selection-start-line="10" selection-start-column="24" selection-end-line="10" selection-end-column="24" />
+              </first_editor>
+              <second_editor />
             </state>
           </provider>
         </entry>
@@ -148,7 +160,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/Tests/Thermometer.py" />
         <option value="$PROJECT_DIR$/Plank/views/style.css" />
         <option value="$PROJECT_DIR$/Plank/views/layout.html" />
         <option value="$PROJECT_DIR$/Plank/views/index.html" />
@@ -199,6 +210,7 @@
         <option value="$PROJECT_DIR$/Plank/ArduinoIO.py" />
         <option value="$PROJECT_DIR$/Plank/Engine.py" />
         <option value="$PROJECT_DIR$/Plank/Vice.py" />
+        <option value="$PROJECT_DIR$/README.md" />
       </list>
     </option>
   </component>
@@ -253,6 +265,11 @@
             <path>
               <item name="BigBoyProject" type="b2602c69:ProjectViewProjectNode" />
               <item name="PlankProject" type="462c0819:PsiDirectoryNode" />
+              <item name="Pics" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="BigBoyProject" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PlankProject" type="462c0819:PsiDirectoryNode" />
               <item name="Plank" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -293,11 +310,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Snippy\PycharmProjects\PlankProject\Pics" />
       <recent name="C:\Users\Snippy\PycharmProjects\PlankProject\Arduino" />
       <recent name="C:\Users\Snippy\PycharmProjects\PlankProject\Plank\static\images" />
       <recent name="C:\Users\Snippy\PycharmProjects\PlankProject\Plank\static" />
       <recent name="C:\Users\Snippy\PycharmProjects\PlankProject" />
-      <recent name="C:\Users\Snippy\PycharmProjects\PlankProject\Tests" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Snippy\PycharmProjects\PlankProject\Plank\static\images" />
@@ -551,7 +568,7 @@
       <workItem from="1567683938279" duration="10616000" />
       <workItem from="1568007332791" duration="16615000" />
       <workItem from="1568884292112" duration="2647000" />
-      <workItem from="1569217680339" duration="20885000" />
+      <workItem from="1569217680339" duration="21999000" />
     </task>
     <task id="LOCAL-00002" summary="Serwis pogwarancyjny">
       <created>1569233151938</created>
@@ -560,11 +577,18 @@
       <option name="project" value="LOCAL" />
       <updated>1569233151938</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Added arduino programs dir">
+      <created>1569326598846</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1569326598846</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1014008000" />
+    <option name="totallyTimeSpent" value="1015122000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -612,7 +636,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Serwis pogwarancyjny" />
-    <option name="LAST_COMMIT_MESSAGE" value="Serwis pogwarancyjny" />
+    <MESSAGE value="Added arduino programs dir" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added arduino programs dir" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -799,13 +824,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/pydevd.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="694">
-          <caret line="1740" selection-start-line="1740" selection-end-line="1740" />
-        </state>
-      </provider>
-    </entry>
     <entry file="uml://JavaScript-modules-diagram/C:/Users/Snippy/PycharmProjects/PlankProject/Plank">
       <provider selected="true" editor-type-id="UmlEditorProvider">
         <state>
@@ -1201,8 +1219,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Plank/Vice.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="115">
-          <caret line="5" column="26" selection-start-line="5" selection-start-column="26" selection-end-line="5" selection-end-column="26" />
+        <state relative-caret-position="161">
+          <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
+          <folding>
+            <element signature="e#0#28#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="230">
+            <caret line="10" column="24" lean-forward="true" selection-start-line="10" selection-start-column="24" selection-end-line="10" selection-end-column="24" />
+          </first_editor>
+          <second_editor />
         </state>
       </provider>
     </entry>
