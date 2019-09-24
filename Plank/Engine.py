@@ -1,8 +1,8 @@
-import RPi.GPIO as GPIO
+# import RPi.GPIO as GPIO
 from Plank.ArduinoIO import *
 
-GPIO.setmode( GPIO.BCM )
-GPIO.setwarnings( False )
+# GPIO.setmode( GPIO.BCM )
+# GPIO.setwarnings( False )
 
 CLOCKWISE = 1
 ANTICLOCKWISE = 0

@@ -1,10 +1,9 @@
 from time import time as now
 
+import Plank.Press
 from Plank.ArduinoSerialPortFinder import UNO_SN1
 from Plank.Encoder import Encoder
-from Plank.Input import Input
 from Plank.Output import *
-import Plank.Press
 from Plank.Servo import Servo, SimpleServo
 
 A0 = 54
