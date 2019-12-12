@@ -680,8 +680,8 @@ class BigBoy :
         self.orange.start( )
         self.yellow.start( )
 
-        self.press.tempTop.start( )
-        self.press.tempBottom.start( )
+        # self.press.tempTop.start( )
+        # self.press.tempBottom.start( )
 
         while True :
             self.update( )

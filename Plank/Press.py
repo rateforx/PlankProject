@@ -4,7 +4,7 @@ from Plank.LimitEngine import LimitEngine
 from Plank.Engine import Engine
 from Plank.Input import Input
 from Plank.Output import *
-from Plank.TemperatureSensor import TemperatureSensor
+# from Plank.TemperatureSensor import TemperatureSensor
 
 AUTOMATIC = 0
 MANUAL = 1
@@ -69,8 +69,8 @@ class Press:
         self.pressPumpEnable = Output( bigBoy.yellow, 53 )
         self.pressPumpPrecisionEnable = Output( bigBoy.yellow, 52 )
 
-        self.tempTop = TemperatureSensor( 0 )
-        self.tempBottom = TemperatureSensor( 1 )
+        # self.tempTop = TemperatureSensor( 0 )
+        # self.tempBottom = TemperatureSensor( 1 )
 
         self.pressConveyorEngine = LimitEngine(
             Engine( bigBoy.yellow, pwmPin = 24, runPin = 28, dirPin = 29, dutyCycle = 50 ),
